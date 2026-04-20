@@ -1,4 +1,4 @@
-# 📅 Projet EventSync - Plateforme de Gestion d'Événements
+#  Projet EventSync - Plateforme de Gestion d'Événements
 
 ## 👥 Organisation de l'Équipe & Rôles
 
