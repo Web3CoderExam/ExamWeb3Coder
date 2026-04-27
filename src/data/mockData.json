@@ -13,6 +13,7 @@
           "duration": 2,
           "title": "Introduction",
           "speaker": "Ben",
+          "room": "Room A",
           "description": "Présentation générale du programme."
         },
         {
@@ -21,6 +22,7 @@
           "duration": 1,
           "title": "Drones et Capteurs",
           "speaker": "Aina",
+          "room": "Room B",
           "description": "Utilisation des drones pour collecter des données."
         }
       ]
