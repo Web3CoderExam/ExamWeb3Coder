@@ -1,0 +1,46 @@
+.body {
+  margin: 0;
+  background: #0b0f1a;
+  color: white;
+  font-family: Arial, sans-serif;
+}
+
+/* CONTENEUR GLOBAL */
+.container {
+  display: flex;
+}
+
+/* SIDEBAR FIXE (IMPORTANT) */
+.sidebar {
+  width: 260px;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: #111827;
+  z-index: 1000;
+  transition: transform 0.3s ease;
+}
+
+/* SIDEBAR FERMÉ */
+.sidebarClosed {
+  transform: translateX(-100%);
+}
+
+/* CONTENU PRINCIPAL */
+.main {
+  flex: 1;
+  padding: 30px;
+  margin-left: 260px; /* espace pour sidebar */
+  transition: margin-left 0.3s ease;
+}
+
+/* SI SIDEBAR FERMÉ */
+.mainFull {
+  margin-left: 0;
+}
+
+/* OVERLAY (OPTIONNEL - PLUS LÉGER) */
+.overlay {
+  display: none; /* on le désactive pour éviter blocage UI */
+}
