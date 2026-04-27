@@ -19,5 +19,6 @@ Le projet utilise le répertoire `src/` pour une meilleure isolation :
 ## 🚀 Installation
 ```bash
 npm install
+npm install lucide-react
 npm run dev
 ```
