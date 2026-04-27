@@ -63,14 +63,6 @@ export default function Sidebar({ isOpen }) {
           <span>Favorites</span>
         </Link>
 
-        <Link
-          href="/settings"
-          className={`${styles.item} ${pathname === "/settings" ? styles.active : ""}`}
-        >
-          <Settings className={styles.icon} />
-          <span>Settings</span>
-        </Link>
-
       </nav>
     </div>
   );

@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import styles from "./layout.module.css";
-import Navbar from "../components/Navbar/Navbar";
-import Sidebar from "../components/Sidebar/Sidebar";
+import Navbar from "../components/layout/Navbar/Navbar";
+import Sidebar from "../components/layout/Sidebar/Sidebar";
 
 export default function RootLayout({ children }) {
   const [isOpen, setIsOpen] = useState(false);
