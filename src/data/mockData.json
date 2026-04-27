@@ -7,8 +7,22 @@
       "location": "Antananarivo",
       "description": "Utilisation de l'IA pour l'aide à la décision agricole.",
       "sessions": [
-        {"id": 101, "time": "09:00", "title": "Introduction", "speaker": "Ben"},
-        {"id": 102, "time": "11:00", "title": "Drones et Capteurs", "speaker": "Aina"}
+        {
+          "id": 101,
+          "time": "09:00",
+          "duration": 2,
+          "title": "Introduction",
+          "speaker": "Ben",
+          "description": "Présentation générale du programme."
+        },
+        {
+          "id": 102,
+          "time": "11:00",
+          "duration": 1,
+          "title": "Drones et Capteurs",
+          "speaker": "Aina",
+          "description": "Utilisation des drones pour collecter des données."
+        }
       ]
     }
   ]
