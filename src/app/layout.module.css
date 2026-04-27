@@ -5,12 +5,12 @@
   font-family: Arial, sans-serif;
 }
 
-/* CONTENEUR GLOBAL */
+
 .container {
   display: flex;
 }
 
-/* SIDEBAR FIXE (IMPORTANT) */
+
 .sidebar {
   width: 260px;
   height: 100vh;
@@ -22,25 +22,24 @@
   transition: transform 0.3s ease;
 }
 
-/* SIDEBAR FERMÉ */
+
 .sidebarClosed {
   transform: translateX(-100%);
 }
 
-/* CONTENU PRINCIPAL */
+
 .main {
   flex: 1;
   padding: 30px;
-  margin-left: 260px; /* espace pour sidebar */
+  margin-left: 260px;
   transition: margin-left 0.3s ease;
 }
 
-/* SI SIDEBAR FERMÉ */
 .mainFull {
   margin-left: 0;
 }
 
-/* OVERLAY (OPTIONNEL - PLUS LÉGER) */
+
 .overlay {
-  display: none; /* on le désactive pour éviter blocage UI */
+  display: none; 
 }
