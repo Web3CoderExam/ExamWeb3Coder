@@ -1,0 +1,168 @@
+.container {
+  background: #0b1020;
+  color: white;
+  padding: 20px;
+  padding-top: 80px; 
+  overflow-x: auto;
+}
+
+/* HEADER */
+.header {
+  display: grid;
+  margin-bottom: 10px;
+}
+
+.roomHeader {
+  text-align: center;
+  font-weight: bold;
+  opacity: 0.7;
+}
+
+/* GRID */
+.grid {
+  display: grid;
+  justify-content: start;
+}
+
+/* HEURES */
+.timeColumn {
+  display: flex;
+  flex-direction: column;
+}
+
+.timeCell {
+  height: 100px;
+  font-size: 12px;
+  opacity: 0.6;
+}
+
+/* COLONNE SALLE */
+.roomColumn {
+  position: relative;
+  border-left: 1px solid rgba(255,255,255,0.08);
+}
+
+/* lignes horizontales */
+.hline {
+  height: 100px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+/* EVENT */
+.event {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  background: linear-gradient(135deg, #6366f1, #ec4899);
+  border-radius: 10px;
+  padding: 10px;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(99,102,241,0.5);
+}
+
+/* DETAIL */
+.detail {
+  margin-top: 20px;
+  background: #111827;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  opacity: 0.85;
+  margin: 6px 0;
+}
+
+.roomTag {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  background: rgba(99,102,241,0.15);
+  color: #a5b4fc;
+  padding: 4px 8px;
+  border-radius: 8px;
+}
+
+.closeBtn {
+  margin-top: 15px;
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #6366f1, #ec4899);
+  color: white;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.smallCard {
+  position: fixed;
+  top: 120px;
+  right: 20px;
+  width: 260px;
+
+  background: rgba(17, 24, 39, 0.95);
+  backdrop-filter: blur(10px);
+
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
+
+  padding: 14px;
+
+  box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+  animation: slideIn 0.2s ease;
+  z-index: 1000;
+}
+
+.smallHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.closeX {
+  cursor: pointer;
+  opacity: 0.7;
+  display: flex;
+  align-items: center;
+}
+
+.closeX:hover {
+  opacity: 1;
+}
+
+.smallRow {
+  font-size: 13px;
+  opacity: 0.85;
+  margin: 6px 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.smallDesc {
+  font-size: 12px;
+  opacity: 0.7;
+  margin-top: 8px;
+  line-height: 1.4;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}

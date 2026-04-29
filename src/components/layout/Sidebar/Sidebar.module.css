@@ -1,26 +1,21 @@
 .sidebar {
   position: fixed;
-  top: 0;
+  top: 70px; /* hauteur navbar */
   left: 0;
-  width: 260px;
-  height: 100vh;
-  background: #0b0f1a;
-  border-right: 1px solid #1f2937;
+  bottom: 0;
+  width: 220px;
+
+  background: #0b1020;
+  border-right: 1px solid rgba(255,255,255,0.05);
+
   padding: 20px;
-
-  transform: translateX(-100%);
-  transition: transform 0.3s ease;
-  z-index: 1000;
-}
-
-.open {
-  transform: translateX(0);
+  overflow-y: auto;
 }
 
 .title {
   font-size: 14px;
-  color: #9ca3af;
   margin-bottom: 20px;
+  opacity: 0.6;
 }
 
 .menu {
@@ -32,55 +27,28 @@
 .item {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px;
-  border-radius: 10px;
-  cursor: pointer;
-  color: #d1d5db;
-}
-
-.icon {
-  width: 20px;
-  height: 20px;
-  color: #9ca3af;
-}
-
-.item:hover {
-  background: #1f2937;
-  color: white;
-}
-
-.item:hover .icon {
-  color: white;
-}
-
-.active {
-  background: linear-gradient(90deg, #7c3aed, #2563eb);
-  color: white;
-}
-
-.active .icon {
-  color: white;
-}
-
-
-.item {
-  display: flex;
-  align-items: center;
   gap: 10px;
+
   padding: 10px;
   border-radius: 8px;
   text-decoration: none;
   color: white;
+
+  opacity: 0.7;
   transition: 0.2s;
-  cursor: pointer;
 }
 
 .item:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255,255,255,0.05);
+  opacity: 1;
 }
 
 .active {
-  background: #4f46e5; 
-  color: white;
+  background: linear-gradient(135deg, #6366f1, #ec4899);
+  opacity: 1;
+}
+
+.icon {
+  width: 18px;
+  height: 18px;
 }

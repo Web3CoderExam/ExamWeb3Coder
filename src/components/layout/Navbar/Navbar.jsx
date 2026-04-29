@@ -1,19 +1,18 @@
 "use client";
 
 import styles from "./Navbar.module.css";
-import { Bell, Search, User, Menu } from "lucide-react";
+import { Bell, Search, User } from "lucide-react";
 
-export default function Navbar({ toggleSidebar }) {
+export default function Navbar() {
   return (
     <header className={styles.navbar}>
 
-      {/* Left */}
+      {/* LEFT */}
       <div className={styles.left}>
-        <Menu className={styles.menuIcon} onClick={toggleSidebar} />
         <h1 className={styles.logo}>EventSync</h1>
       </div>
 
-      {/* Search */}
+      {/* SEARCH */}
       <div className={styles.searchWrapper}>
         <Search className={styles.searchIcon} />
         <input
@@ -23,7 +22,7 @@ export default function Navbar({ toggleSidebar }) {
         />
       </div>
 
-      {/* Right */}
+      {/* RIGHT */}
       <div className={styles.right}>
         <Bell className={styles.icon} />
         <User className={styles.icon} />
