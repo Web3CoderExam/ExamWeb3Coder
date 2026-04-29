@@ -19,11 +19,29 @@
         {
           "id": 102,
           "time": "11:00",
-          "duration": 1,
-          "title": "Drones et Capteurs",
-          "speaker": "Aina",
+          "duration": 1.5,
+          "title": "Données et IA",
+          "speaker": "Alice",
           "room": "Room B",
-          "description": "Utilisation des drones pour collecter des données."
+          "description": "Collecte et utilisation des données agricoles."
+        },
+        {
+          "id": 103,
+          "time": "14:00",
+          "duration": 2,
+          "title": "Outils d'aide à la décision",
+          "speaker": "Charlie",
+          "room": "Room A",
+          "description": "Présentation d'outils basés sur l'IA pour les agriculteurs."
+        },
+        {
+          "id": 104,
+          "time": "10:30",
+          "duration": 1,
+          "title": "Agriculture Durable",
+          "speaker": "David",
+          "room": "Room C",
+          "description": "Techniques agricoles modernes."
         }
       ]
     }

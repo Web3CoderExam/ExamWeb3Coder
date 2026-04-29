@@ -9,15 +9,14 @@ import {
   Calendar,
   LayoutGrid,
   Mic,
-  Star,
-  Settings
+  Star
 } from "lucide-react";
 
-export default function Sidebar({ isOpen }) {
+export default function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <div className={`${styles.sidebar} ${isOpen ? styles.open : ""}`}>
+    <div className={styles.sidebar}>
 
       <h2 className={styles.title}>MENU</h2>
 
