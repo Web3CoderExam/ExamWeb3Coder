@@ -1,5 +1,8 @@
-import { redirect } from "next/navigation";
-
 export default function Page() {
-  redirect("/events");
+  return (
+    <main>
+      <h1>EventSync</h1>
+      <p>Découvrez et participez aux meilleurs événements</p>
+    </main>
+  );
 }

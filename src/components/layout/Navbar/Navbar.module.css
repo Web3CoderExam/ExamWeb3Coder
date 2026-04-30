@@ -3,85 +3,80 @@
   top: 0;
   left: 0;
   right: 0;
+
   height: 70px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 20px;
-  background: #0b1020;
-  border-bottom: 1px solid rgba(255,255,255,0.05);
+
+  padding: 0 40px;
+
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(10px);
+
+  border-bottom: 1px solid rgba(255,255,255,0.08);
   z-index: 1000;
 }
-.left {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
 
-.menuIcon {
-  width: 22px;
-  height: 22px;
-  color: #9ca3af;
-  cursor: pointer;
-}
-
-.menuIcon:hover {
-  color: white;
-}
-
+/* LOGO */
 .logo {
   font-size: 20px;
-  font-weight: bold;
+  font-weight: 700;
   background: linear-gradient(90deg, #7c3aed, #2563eb);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+
+  text-decoration: none;
 }
 
-.searchWrapper {
+/* NAV */
+.nav {
   display: flex;
-  align-items: center;
-  background: #111827;
-  border: 1px solid #374151;
-  border-radius: 8px;
-  padding: 0 10px;
-  width: 350px;
+  gap: 30px;
 }
 
-.searchIcon {
-  width: 18px;
-  height: 18px;
-  color: #9ca3af;
+.nav a {
+  color: #cbd5f5;
+  text-decoration: none;
+  font-size: 14px;
+  position: relative;
+  transition: 0.3s;
 }
 
-.search {
-  flex: 1;
-  padding: 10px;
-  border: none;
-  background: transparent;
+.nav a:hover {
   color: white;
-  outline: none;
 }
 
+/* ACTIVE LINK */
+.active {
+  color: white;
+  font-weight: 600;
+}
+
+.active::after {
+  content: "";
+  position: absolute;
+  bottom: -6px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #7c3aed, #2563eb);
+  border-radius: 2px;
+}
+
+/* RIGHT */
 .right {
   display: flex;
   align-items: center;
-  gap: 16px;
 }
 
 .icon {
-  width: 20px;
-  height: 20px;
-  color: #9ca3af;
+  width: 22px;
+  height: 22px;
+  color: #cbd5f5;
   cursor: pointer;
 }
 
 .icon:hover {
   color: white;
-}
-
-.avatar {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  background: linear-gradient(90deg, #7c3aed, #2563eb);
 }
