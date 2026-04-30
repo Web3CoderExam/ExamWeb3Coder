@@ -1,137 +1,186 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import styles from "./PlanningPage.module.css";
-import { Clock, Mic, MapPin, X } from "lucide-react";
-
-const START = 9;
-const END = 18;
-const HOUR_HEIGHT = 100;
 
 export default function PlanningPage({ events = [] }) {
   const [selected, setSelected] = useState(null);
-  const [pos, setPos] = useState({ x: 0, y: 0 });
+  const [activeCell, setActiveCell] = useState(null);
 
   if (!events.length) return <p>Aucun événement</p>;
 
-  const sessions = events[0].sessions;
+  const event = events[0];
+  const sessions = event.sessions;
 
   const rooms = ["Room A", "Room B", "Room C"];
 
-  const gridTemplate = `80px repeat(${rooms.length}, 250px)`;
+  const dates = [event.date];
+  const [selectedDate, setSelectedDate] = useState(event.date);
+
+  //  END TIME
+  const getEndTime = (time, duration) => {
+    const [h, m] = time.split(":").map(Number);
+    const d = new Date();
+    d.setHours(h, m + duration * 60);
+    return d.toTimeString().slice(0, 5);
+  };
+
+  //  LIVE
+  const now = new Date();
+
+  const isLive = (session) => {
+    const [h, m] = session.time.split(":").map(Number);
+
+    const start = new Date();
+    start.setHours(h, m, 0);
+
+    const end = new Date(start);
+    end.setMinutes(end.getMinutes() + session.duration * 60);
+
+    return now >= start && now <= end;
+  };
+
+  // HOURS
+  const hoursUsed = useMemo(() => {
+    const hours = sessions.map((s) =>
+      parseInt(s.time.split(":")[0])
+    );
+
+    const min = Math.min(...hours);
+    const max = Math.max(...hours);
+
+    return {
+      start: Math.max(0, min - 1),
+      end: max + 2,
+    };
+  }, [sessions]);
+
+  const hours = Array.from({
+    length: hoursUsed.end - hoursUsed.start + 1,
+  });
 
   return (
     <div className={styles.container}>
 
+      {/* DATE TABS */}
+      <div className={styles.dateTabs}>
+        {dates.map((d) => {
+          const isActive = selectedDate === d;
+
+          return (
+            <div
+              key={d}
+              className={`${styles.dateTab} ${
+                isActive ? styles.activeTab : ""
+              }`}
+              onClick={() => setSelectedDate(d)}
+            >
+              {new Date(d).toLocaleDateString("fr-FR", {
+                weekday: "short",
+                day: "numeric",
+                month: "short",
+              })}
+            </div>
+          );
+        })}
+      </div>
+
       {/* HEADER */}
-      <div
-        className={styles.header}
-        style={{ gridTemplateColumns: gridTemplate }}
-      >
+      <div className={styles.headerGrid}>
         <div></div>
         {rooms.map((room) => (
-          <div key={room} className={styles.roomHeader}>
+          <div key={room} className={styles.headerCell}>
             {room}
           </div>
         ))}
       </div>
 
       {/* GRID */}
-      <div
-        className={styles.grid}
-        style={{ gridTemplateColumns: gridTemplate }}
-      >
+      <div className={styles.grid}>
+        {hours.map((_, i) => {
+          const hour = hoursUsed.start + i;
 
-        {/* HOURS */}
-        <div className={styles.timeColumn}>
-          {Array.from({ length: END - START }).map((_, i) => (
-            <div key={i} className={styles.timeCell}>
-              {START + i}:00
-            </div>
-          ))}
-        </div>
+          return (
+            <div key={hour} className={styles.row}>
+              <div className={styles.timeCell}>
+                {hour}:00
+              </div>
 
-        {/* ROOMS */}
-        {rooms.map((room) => (
-          <div key={room} className={styles.roomColumn}>
+              {rooms.map((room) => {
+                const eventItem = sessions.find(
+                  (s) =>
+                    s.room === room &&
+                    parseInt(s.time) === hour
+                );
 
-            {sessions
-              .filter((s) => s.room === room)
-              .map((s) => {
-                const [h, m] = s.time.split(":").map(Number);
-
-                const top =
-                  (h - START) * HOUR_HEIGHT +
-                  (m / 60) * HOUR_HEIGHT;
-
-                const height = (s.duration || 1) * HOUR_HEIGHT;
+                const cellId = room + hour;
+                const isActive = activeCell === cellId;
 
                 return (
-                  <div
-                    key={s.id}
-                    className={styles.event}
-                    style={{ top, height }}
-                    onClick={(e) => {
-                      setSelected(s);
-                      setPos({
-                        x: e.clientX,
-                        y: e.clientY,
-                      });
-                    }}
-                  >
-                    <strong>{s.title}</strong>
-                    <br />
-                    <small>{s.speaker}</small>
+                  <div key={cellId} className={styles.cell}>
+
+                    {eventItem && (
+                      <div
+                        className={styles.event}
+                        onClick={() => {
+                          setSelected(eventItem);
+                          setActiveCell(cellId);
+                        }}
+                      >
+                        <strong>{eventItem.title}</strong>
+                        <small>{eventItem.speaker}</small>
+
+                        {isLive(eventItem) && (
+                          <span className={styles.liveBadge}>
+                            LIVE
+                          </span>
+                        )}
+                      </div>
+                    )}
+
+                    {selected && isActive && (
+                      <div className={styles.inlinePopup}>
+                        <div className={styles.popupHeader}>
+                          <h4>{selected.title}</h4>
+                          <span onClick={() => {
+                            setSelected(null);
+                            setActiveCell(null);
+                          }}>
+                            ✕
+                          </span>
+                        </div>
+
+                        <div className={styles.popupRow}>
+                          {selected.time} -{" "}
+                          {getEndTime(
+                            selected.time,
+                            selected.duration
+                          )}
+                        </div>
+
+                        <div className={styles.popupRow}>
+                          {selected.speaker}
+                        </div>
+
+                        <div className={styles.popupRow}>
+                          {selected.room}
+                        </div>
+
+                        {isLive(selected) && (
+                          <div className={styles.liveText}>
+                            🔴 Session en cours
+                          </div>
+                        )}
+                      </div>
+                    )}
+
                   </div>
                 );
               })}
-          </div>
-        ))}
+            </div>
+          );
+        })}
       </div>
-
-      {/* SMALL CARD */}
-      {selected && (
-        <div
-          className={styles.smallCard}
-          style={{
-            top: Math.min(pos.y, window.innerHeight - 200),
-            left: Math.min(pos.x + 15, window.innerWidth - 280),
-            transform: "translateY(-50%)",
-          }}
-        >
-
-          <div className={styles.smallHeader}>
-            <h4>{selected.title}</h4>
-
-            <span
-              className={styles.closeX}
-              onClick={() => setSelected(null)}
-            >
-              <X size={16} />
-            </span>
-          </div>
-
-          <div className={styles.smallRow}>
-            <Clock size={14} /> {selected.time}
-          </div>
-
-          <div className={styles.smallRow}>
-            <Mic size={14} /> {selected.speaker}
-          </div>
-
-          <div className={styles.smallRow}>
-            <MapPin size={14} /> {selected.room}
-          </div>
-
-          {selected.description && (
-            <p className={styles.smallDesc}>
-              {selected.description}
-            </p>
-          )}
-
-        </div>
-      )}
-
     </div>
   );
 }
