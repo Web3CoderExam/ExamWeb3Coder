@@ -34,19 +34,15 @@
 /* GRID */
 .grid {
   flex: 1;
-  display: flex;
-  flex-direction: column;
-
-  overflow: hidden;        
+  display: grid;
+  grid-auto-rows: 1fr; 
 }
 
 /* ROW */
 .row {
   display: grid;
   grid-template-columns: 80px repeat(3, 1fr);
-
-  flex: 1;               
-
+  flex: 1;              
   border-bottom: 1px solid rgba(255,255,255,0.05);
 }
 
@@ -96,7 +92,6 @@
 .inlinePopup {
   position: absolute;
   width: 220px;
-
   top: 50%;
   left: 50%;
 
@@ -139,4 +134,66 @@
     opacity: 1;
     transform: translate(-50%, -50%) scale(1);
   }
+}
+
+
+
+/* HEADER */
+.eventHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
+}
+
+.eventTitle {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.eventDate {
+  font-size: 13px;
+  opacity: 0.6;
+}
+
+/* BUTTON */
+.todayBtn {
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: none;
+  background: #7c3aed;
+  color: white;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+/* DROPDOWN */
+.dateSelector {
+  padding: 0 15px 10px;
+}
+
+.dropdown {
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: none;
+  background: #1f2937;
+  color: white;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.joinBtn {
+  margin-top: 10px;
+  width: 100%;
+  padding: 8px;
+  border-radius: 8px;
+  border: none;
+  background: #22c55e;
+  color: white;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.joinBtn:hover {
+  background: #16a34a;
 }

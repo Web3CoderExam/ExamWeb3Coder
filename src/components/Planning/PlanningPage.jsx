@@ -1,9 +1,12 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { useRouter } from "next/navigation";
 import styles from "./PlanningPage.module.css";
 
 export default function PlanningPage({ events = [] }) {
+  const router = useRouter();
+
   const [selected, setSelected] = useState(null);
   const [activeCell, setActiveCell] = useState(null);
 
@@ -14,25 +17,14 @@ export default function PlanningPage({ events = [] }) {
 
   const rooms = ["Room A", "Room B", "Room C"];
 
-  const dates = [event.date];
-  const [selectedDate, setSelectedDate] = useState(event.date);
-
-  //  END TIME
-  const getEndTime = (time, duration) => {
-    const [h, m] = time.split(":").map(Number);
-    const d = new Date();
-    d.setHours(h, m + duration * 60);
-    return d.toTimeString().slice(0, 5);
-  };
-
-  //  LIVE
-  const now = new Date();
-
+  // LIVE CHECK 
   const isLive = (session) => {
+    const now = new Date();
+
     const [h, m] = session.time.split(":").map(Number);
 
     const start = new Date();
-    start.setHours(h, m, 0);
+    start.setHours(h, m, 0, 0);
 
     const end = new Date(start);
     end.setMinutes(end.getMinutes() + session.duration * 60);
@@ -40,52 +32,27 @@ export default function PlanningPage({ events = [] }) {
     return now >= start && now <= end;
   };
 
-  // HOURS
-  const hoursUsed = useMemo(() => {
-    const hours = sessions.map((s) =>
+  // heures du planning
+  const hours = useMemo(() => {
+    const allHours = sessions.map((s) =>
       parseInt(s.time.split(":")[0])
     );
 
-    const min = Math.min(...hours);
-    const max = Math.max(...hours);
+    const min = Math.min(...allHours);
+    const max = Math.max(...allHours);
 
-    return {
-      start: Math.max(0, min - 1),
-      end: max + 2,
-    };
+    return Array.from({ length: max - min + 2 }, (_, i) => min - 1 + i);
   }, [sessions]);
-
-  const hours = Array.from({
-    length: hoursUsed.end - hoursUsed.start + 1,
-  });
 
   return (
     <div className={styles.container}>
 
-      {/* DATE TABS */}
-      <div className={styles.dateTabs}>
-        {dates.map((d) => {
-          const isActive = selectedDate === d;
-
-          return (
-            <div
-              key={d}
-              className={`${styles.dateTab} ${
-                isActive ? styles.activeTab : ""
-              }`}
-              onClick={() => setSelectedDate(d)}
-            >
-              {new Date(d).toLocaleDateString("fr-FR", {
-                weekday: "short",
-                day: "numeric",
-                month: "short",
-              })}
-            </div>
-          );
-        })}
+      {/* HEADER */}
+      <div className={styles.eventHeader}>
+        <h2 className={styles.eventTitle}>{event.title}</h2>
       </div>
 
-      {/* HEADER */}
+      {/* GRID HEADER */}
       <div className={styles.headerGrid}>
         <div></div>
         {rooms.map((room) => (
@@ -97,89 +64,90 @@ export default function PlanningPage({ events = [] }) {
 
       {/* GRID */}
       <div className={styles.grid}>
-        {hours.map((_, i) => {
-          const hour = hoursUsed.start + i;
+        {hours.map((hour) => (
+          <div key={hour} className={styles.row}>
+            <div className={styles.timeCell}>{hour}:00</div>
 
-          return (
-            <div key={hour} className={styles.row}>
-              <div className={styles.timeCell}>
-                {hour}:00
-              </div>
+            {rooms.map((room) => {
+              const session = sessions.find((s) => {
+                const sessionHour = parseInt(s.time.split(":")[0]);
+                return s.room === room && sessionHour === hour;
+              });
 
-              {rooms.map((room) => {
-                const eventItem = sessions.find(
-                  (s) =>
-                    s.room === room &&
-                    parseInt(s.time) === hour
-                );
+              const cellId = room + hour;
 
-                const cellId = room + hour;
-                const isActive = activeCell === cellId;
+              return (
+                <div key={cellId} className={styles.cell}>
 
-                return (
-                  <div key={cellId} className={styles.cell}>
+                  {session && (
+                    <div
+                      className={styles.event}
+                      onClick={() => {
+                        setSelected(session);
+                        setActiveCell(cellId);
+                      }}
+                    >
+                      <strong>{session.title}</strong>
+                      <small>{session.speaker}</small>
 
-                    {eventItem && (
-                      <div
-                        className={styles.event}
-                        onClick={() => {
-                          setSelected(eventItem);
-                          setActiveCell(cellId);
-                        }}
-                      >
-                        <strong>{eventItem.title}</strong>
-                        <small>{eventItem.speaker}</small>
+                      {isLive(session) && (
+                        <span className={styles.liveBadge}>
+                          LIVE
+                        </span>
+                      )}
+                    </div>
+                  )}
 
-                        {isLive(eventItem) && (
-                          <span className={styles.liveBadge}>
-                            LIVE
-                          </span>
-                        )}
-                      </div>
-                    )}
-
-                    {selected && isActive && (
-                      <div className={styles.inlinePopup}>
-                        <div className={styles.popupHeader}>
-                          <h4>{selected.title}</h4>
-                          <span onClick={() => {
+                  {/* POPUP */}
+                  {selected && activeCell === cellId && (
+                    <div className={styles.inlinePopup}>
+                      <div className={styles.popupHeader}>
+                        <h4>{selected.title}</h4>
+                        <span
+                          onClick={() => {
                             setSelected(null);
                             setActiveCell(null);
-                          }}>
-                            ✕
-                          </span>
-                        </div>
-
-                        <div className={styles.popupRow}>
-                          {selected.time} -{" "}
-                          {getEndTime(
-                            selected.time,
-                            selected.duration
-                          )}
-                        </div>
-
-                        <div className={styles.popupRow}>
-                          {selected.speaker}
-                        </div>
-
-                        <div className={styles.popupRow}>
-                          {selected.room}
-                        </div>
-
-                        {isLive(selected) && (
-                          <div className={styles.liveText}>
-                            🔴 Session en cours
-                          </div>
-                        )}
+                          }}
+                        >
+                          ✕
+                        </span>
                       </div>
-                    )}
 
-                  </div>
-                );
-              })}
-            </div>
-          );
-        })}
+                      <div className={styles.popupRow}>
+                        {selected.time}
+                      </div>
+
+                      <div className={styles.popupRow}>
+                        {selected.speaker}
+                      </div>
+
+                      <div className={styles.popupRow}>
+                        {selected.room}
+                      </div>
+
+                      {isLive(selected) && (
+                        <div className={styles.liveText}>
+                          🔴 Live
+                        </div>
+                      )}
+
+                      {/* ACTION */}
+                      <button
+                        className={styles.joinBtn}
+                        onClick={() =>
+                          router.push(`/sessions/${selected.id}`)
+                        }
+                      >
+                        Rejoindre la session
+                      </button>
+                    </div>
+                  )}
+
+                </div>
+              );
+            })}
+          </div>
+        ))}
       </div>
     </div>
   );

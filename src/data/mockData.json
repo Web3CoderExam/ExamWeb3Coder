@@ -12,38 +12,94 @@
           "time": "09:00",
           "duration": 2,
           "title": "Introduction",
-          "speaker": "Ben",
+          "speakerId": "ben",
           "room": "Room A",
-          "description": "Présentation générale du programme."
+          "capacity": 120,
+          "description": "Présentation générale du programme.",
+          "questions": [
+            {
+              "id": 1,
+              "content": "Quels sont les objectifs principaux ?",
+              "author": "Jean",
+              "upvotes": 12,
+              "createdAt": "2026-05-15T09:15:00"
+            },
+            {
+              "id": 2,
+              "content": "Peut-on accéder aux slides ?",
+              "author": null,
+              "upvotes": 5,
+              "createdAt": "2026-05-15T09:20:00"
+            }
+          ]
         },
         {
           "id": 102,
-          "time": "11:00",
-          "duration": 1.5,
+          "time": "17:05",
+          "duration": 2,
           "title": "Données et IA",
-          "speaker": "Alice",
+          "speakerId": "alice",
           "room": "Room B",
-          "description": "Collecte et utilisation des données agricoles."
+          "capacity": 80,
+          "description": "Collecte et utilisation des données agricoles.",
+          "questions": []
         },
         {
           "id": 103,
           "time": "14:00",
           "duration": 2,
           "title": "Outils d'aide à la décision",
-          "speaker": "Charlie",
+          "speakerId": "charlie",
           "room": "Room A",
-          "description": "Présentation d'outils basés sur l'IA pour les agriculteurs."
+          "capacity": 120,
+          "description": "Outils IA pour agriculteurs.",
+          "questions": []
         },
         {
           "id": 104,
           "time": "10:30",
           "duration": 1,
           "title": "Agriculture Durable",
-          "speaker": "David",
+          "speakerId": "david",
           "room": "Room C",
-          "description": "Techniques agricoles modernes."
+          "capacity": 60,
+          "description": "Techniques agricoles modernes.",
+          "questions": []
         }
       ]
     }
-  ]
+  ],
+
+  "speakers": [
+    {
+      "id": "ben",
+      "name": "Ben",
+      "role": "Agriculture Expert",
+      "avatar": "https://i.pravatar.cc/150?img=12",
+      "bio": "Spécialiste des systèmes agricoles modernes."
+    },
+    {
+      "id": "alice",
+      "name": "Alice",
+      "role": "Data Scientist",
+      "avatar": "https://i.pravatar.cc/150?img=32",
+      "bio": "Experte en data appliquée à l'agriculture."
+    },
+    {
+      "id": "charlie",
+      "name": "Charlie",
+      "role": "AI Engineer",
+      "avatar": "https://i.pravatar.cc/150?img=45",
+      "bio": "Développe des outils IA pour l'agriculture."
+    },
+    {
+      "id": "david",
+      "name": "David",
+      "role": "Sustainability Expert",
+      "avatar": "https://i.pravatar.cc/150?img=60",
+      "bio": "Travaille sur l'agriculture durable."
+    }
+  ],
+
+  "favorites": [101, 103]
 }
