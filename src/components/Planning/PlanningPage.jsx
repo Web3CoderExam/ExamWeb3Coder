@@ -62,11 +62,13 @@ export default function PlanningPage({ events = [] }) {
         ))}
       </div>
 
+
       {/* GRID */}
       <div className={styles.grid}>
         {hours.map((hour) => (
           <div key={hour} className={styles.row}>
             <div className={styles.timeCell}>{hour}:00</div>
+
 
             {rooms.map((room) => {
               const session = sessions.find((s) => {
