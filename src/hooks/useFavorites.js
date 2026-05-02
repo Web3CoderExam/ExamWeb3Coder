@@ -1,36 +1,40 @@
 "use client";
+
 import { useEffect, useState } from "react";
 
-export default function useFavorites(eventId) {
+export default function useFavorites(defaultFavorites = []) {
   const [favorites, setFavorites] = useState([]);
 
   useEffect(() => {
-    const favs = JSON.parse(localStorage.getItem("favs") || "{}");
-    setFavorites(favs[eventId] || []);
-  }, [eventId]);
+    const timeout = setTimeout(() => {
+      const savedFavorites = localStorage.getItem("favs");
 
-  const save = (data) => {
-    const favs = JSON.parse(localStorage.getItem("favs") || "{}");
-    favs[eventId] = data;
-    localStorage.setItem("favs", JSON.stringify(favs));
-    setFavorites(data);
+      if (savedFavorites) {
+        setFavorites(JSON.parse(savedFavorites));
+        return;
+      }
+
+      localStorage.setItem("favs", JSON.stringify(defaultFavorites));
+      setFavorites(defaultFavorites);
+    }, 0);
+
+    return () => clearTimeout(timeout);
+  }, [defaultFavorites]);
+
+  const saveFavorites = (newFavorites) => {
+    localStorage.setItem("favs", JSON.stringify(newFavorites));
+    setFavorites(newFavorites);
   };
 
   const isFavorite = (sessionId) => {
-    return favorites.some(f => f.sessionId === sessionId);
+    return favorites.includes(sessionId);
   };
 
   const toggleFavorite = (sessionId) => {
     if (isFavorite(sessionId)) {
-      save(favorites.filter(f => f.sessionId !== sessionId));
+      saveFavorites(favorites.filter((id) => id !== sessionId));
     } else {
-      save([
-        ...favorites,
-        {
-          sessionId,
-          addedAt: new Date().toISOString(),
-        },
-      ]);
+      saveFavorites([...favorites, sessionId]);
     }
   };
 

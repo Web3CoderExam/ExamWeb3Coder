@@ -7,13 +7,17 @@ export default async function Page({ params }) {
   const sessionId = String(id);
 
   let session = null;
+  let selectedEvent = null;
 
   for (const event of data.events) {
     session = event.sessions.find(
       (s) => String(s.id) === sessionId
     );
 
-    if (session) break;
+    if (session) {
+      selectedEvent = event;
+      break;
+    }
   }
 
   if (!session) {
@@ -26,8 +30,9 @@ export default async function Page({ params }) {
 
   return (
     <SessionView
+      event={selectedEvent}
       session={session}
-      speakers={data.speakers}
+      speakers={data.speakers || []}
     />
   );
 }
