@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { ThumbsUp } from "lucide-react";
 import styles from "./SessionPage.module.css";
 
@@ -152,13 +153,17 @@ export default function SessionView({ session, speakers }) {
             <h2>Intervenant</h2>
 
             {sessionSpeakers.map((speaker) => (
-              <div key={speaker.id} className={styles.speaker}>
+              <Link
+                key={speaker.id}
+                href={`/speakers/${speaker.id}`}
+                className={styles.speaker}
+              >
                 <img src={speaker.avatar} alt={speaker.name} />
                 <div>
                   <strong>{speaker.name}</strong>
                   <span>{speaker.role}</span>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
 

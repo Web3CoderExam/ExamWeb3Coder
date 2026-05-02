@@ -69,37 +69,51 @@
       ]
     }
   ],
-
   "speakers": [
     {
       "id": "ben",
       "name": "Ben",
       "role": "Agriculture Expert",
       "avatar": "https://i.pravatar.cc/150?img=12",
-      "bio": "Spécialiste des systèmes agricoles modernes."
+      "bio": "Spécialiste des systèmes agricoles modernes.",
+      "links": {
+        "LinkedIn": "https://www.linkedin.com",
+        "Site web": "https://example.com"
+      }
     },
     {
       "id": "alice",
       "name": "Alice",
       "role": "Data Scientist",
       "avatar": "https://i.pravatar.cc/150?img=32",
-      "bio": "Experte en data appliquée à l'agriculture."
+      "bio": "Experte en data appliquée à l'agriculture.",
+      "links": {
+        "LinkedIn": "https://www.linkedin.com",
+        "Site web": "https://example.com"
+      }
     },
     {
       "id": "charlie",
       "name": "Charlie",
       "role": "AI Engineer",
       "avatar": "https://i.pravatar.cc/150?img=45",
-      "bio": "Développe des outils IA pour l'agriculture."
+      "bio": "Développe des outils IA pour l'agriculture.",
+      "links": {
+        "LinkedIn": "https://www.linkedin.com",
+        "Site web": "https://example.com"
+      }
     },
     {
       "id": "david",
       "name": "David",
       "role": "Sustainability Expert",
       "avatar": "https://i.pravatar.cc/150?img=60",
-      "bio": "Travaille sur l'agriculture durable."
+      "bio": "Travaille sur l'agriculture durable.",
+      "links": {
+        "LinkedIn": "https://www.linkedin.com",
+        "Site web": "https://example.com"
+      }
     }
   ],
-
   "favorites": [101, 103]
 }

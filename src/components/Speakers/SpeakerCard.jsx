@@ -1,8 +1,9 @@
+import Link from "next/link";
 import styles from "./SpeakerCard.module.css";
 
-export default function SpeakerCard({ speaker, sessionsCount, onClick }) {
+export default function SpeakerCard({ speaker, sessionsCount, href }) {
   return (
-    <div className={styles.card} onClick={onClick}>
+    <Link href={href} className={styles.card}>
       <div className={styles.left}>
         <div className={styles.avatarWrapper}>
           <img src={speaker.avatar} className={styles.avatar} alt={speaker.name} />
@@ -21,6 +22,6 @@ export default function SpeakerCard({ speaker, sessionsCount, onClick }) {
       <div className={styles.right}>
         <span className={styles.arrow}>&rsaquo;</span>
       </div>
-    </div>
+    </Link>
   );
 }
