@@ -7,13 +7,17 @@ export default async function Page({ params }) {
   const sessionId = String(id);
 
   let session = null;
+  let event = null;
 
-  for (const event of data.events) {
-    session = event.sessions.find(
+  for (const item of data.events) {
+    session = item.sessions.find(
       (s) => String(s.id) === sessionId
     );
 
-    if (session) break;
+    if (session) {
+      event = item;
+      break;
+    }
   }
 
   if (!session) {
@@ -26,8 +30,10 @@ export default async function Page({ params }) {
 
   return (
     <SessionView
+      event={event}
       session={session}
       speakers={data.speakers}
+      defaultFavorites={data.favorites}
     />
   );
 }

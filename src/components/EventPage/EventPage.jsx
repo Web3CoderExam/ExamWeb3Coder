@@ -5,7 +5,12 @@ import { useRouter } from "next/navigation";
 import useFavorites from "@/hooks/useFavorites";
 import styles from "./EventPage.module.css";
 
-export default function EventPage({ event, sessions, speakers, defaultFavorites }) {
+export default function EventPage({
+  event,
+  sessions,
+  speakers,
+  defaultFavorites,
+}) {
   const router = useRouter();
   const { isFavorite, toggleFavorite } = useFavorites(defaultFavorites);
 
@@ -23,7 +28,7 @@ export default function EventPage({ event, sessions, speakers, defaultFavorites 
     <div className={styles.container}>
       <section className={styles.hero}>
         <div>
-          <span className={styles.badge}>Evenement</span>
+          <span className={styles.badge}>Événement</span>
           <h1>{event.title}</h1>
           <p>{event.description}</p>
 
@@ -96,7 +101,9 @@ export default function EventPage({ event, sessions, speakers, defaultFavorites 
 
                   <button
                     type="button"
-                    className={favorite ? styles.favoriteActive : styles.favoriteBtn}
+                    className={
+                      favorite ? styles.favoriteActive : styles.favoriteBtn
+                    }
                     onClick={() => toggleFavorite(session.id)}
                   >
                     {favorite ? "Retirer" : "Ajouter"}

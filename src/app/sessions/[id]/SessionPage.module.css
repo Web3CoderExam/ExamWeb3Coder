@@ -159,6 +159,7 @@
 
 /* Boutons et champs */
 .favorite,
+.favoriteActive,
 .button,
 .vote,
 .tabs button {
@@ -175,7 +176,18 @@
   font-weight: 700;
 }
 
-.favorite:hover {
+.favoriteActive {
+  width: 100%;
+  padding: 13px 16px;
+  border: 1px solid rgba(239, 68, 68, 0.6);
+  border-radius: 12px;
+  background: rgba(239, 68, 68, 0.22);
+  color: #fecaca;
+  font-weight: 700;
+}
+
+.favorite:hover,
+.favoriteActive:hover {
   background: rgba(239, 68, 68, 0.16);
 }
 

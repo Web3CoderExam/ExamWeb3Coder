@@ -1,21 +1,11 @@
-
-/* =======================
-   CONTAINER
-======================= */
 .container {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  background:
-    radial-gradient(circle at 12% 0%, rgba(79, 70, 229, 0.2), transparent 34%),
-    linear-gradient(180deg, #0b1020 0%, #111827 100%);
-  color: #e5e7eb;
+  flex: 1;
+  min-height: 0;
   padding-bottom: 40px;
+  background: #0b1020;
+  color: #e5e7eb;
 }
 
-/* =======================
-   HEADER PAGE
-======================= */
 .headerPage {
   width: 100%;
   max-width: 1000px;
@@ -36,14 +26,12 @@
   font-size: 12px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 1px;
 }
 
 .headerPage h1 {
   margin: 14px 0 0;
-  font-size: 34px;
-  font-weight: 700;
   color: #f1f5f9;
+  font-size: 34px;
 }
 
 .headerPage p {
@@ -54,202 +42,18 @@
   line-height: 1.6;
 }
 
-/* =======================
-   GRID 
-======================= */
 .grid {
-  padding: 24px;
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 22px;
   width: 100%;
   max-width: 1000px;
   margin: 0 auto;
+  padding: 24px;
   box-sizing: border-box;
 }
 
-/* RESPONSIVE */
 @media (max-width: 768px) {
-  .grid {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-}
-
-/* =======================
-   OVERLAY
-======================= */
-.overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(2, 6, 23, 0.68);
-  backdrop-filter: blur(6px);
-  z-index: 999;
-}
-
-/* =======================
-   PANEL 
-======================= */
-.panel {
-  position: fixed;
-  top: 0;
-  right: 0;
-  height: 100vh;
-  width: 410px;
-  max-width: 100%;
-  background:
-    linear-gradient(180deg, rgba(15, 23, 42, 0.98), rgba(17, 24, 39, 0.98));
-  border-left: 1px solid rgba(129, 140, 248, 0.24);
-  z-index: 1000; 
-  transform: translateX(100%);
-  animation: slideIn 0.25s ease forwards;
-  box-shadow: -24px 0 60px rgba(2, 6, 23, 0.58);
-  overflow-y: auto;
-}
-
-@keyframes slideIn {
-  to {
-    transform: translateX(0);
-  }
-}
-
-.panelContent {
-  padding-bottom: 34px;
-}
-
-/* =======================
-   PANEL HEADER
-======================= */
-.header {
-  padding: 24px;
-  background:
-    linear-gradient(135deg, rgba(79, 70, 229, 0.95), rgba(124, 58, 237, 0.9)),
-    #4f46e5;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-}
-
-.headerTop {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
-.header img {
-  width: 78px;
-  height: 78px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 3px solid rgba(255, 255, 255, 0.32);
-  box-shadow: 0 14px 28px rgba(15, 23, 42, 0.28);
-}
-
-.close {
-  margin-left: auto;
-  cursor: pointer;
-  width: 34px;
-  height: 34px;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  border-radius: 50%;
-  background: rgba(15, 23, 42, 0.18);
-  color: #ffffff;
-  font-size: 22px;
-  line-height: 1;
-  opacity: 0.86;
-  transition: 0.2s;
-}
-
-.close:hover {
-  opacity: 1;
-  background: rgba(15, 23, 42, 0.32);
-}
-
-/* =======================
-   TEXT PANEL
-======================= */
-.title {
-  margin: 0;
-  font-size: 21px;
-  font-weight: 700;
-}
-
-.role {
-  margin: 4px 0 0;
-  font-size: 14px;
-  color: #c7d2fe;
-}
-
-/* =======================
-   SECTIONS
-======================= */
-.section {
-  padding: 0 24px;
-  margin-top: 24px;
-}
-
-.section h4 {
-  font-size: 11px;
-  letter-spacing: 1px;
-  color: #a5b4fc;
-  margin: 0 0 10px;
-}
-
-/* BIO */
-.bio {
-  margin: 0;
-  color: #cbd5e1;
-  font-size: 14px;
-  line-height: 1.65;
-}
-
-/* =======================
-   SOCIAL BUTTONS
-======================= */
-.socials {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.socials button {
-  background: rgba(124, 58, 237, 0.15);
-  border: 1px solid rgba(129, 140, 248, 0.22);
-  color: #e0e7ff;
-  padding: 8px 12px;
-  border-radius: 999px;
-  font-size: 12px;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-.socials button:hover {
-  background: rgba(124, 58, 237, 0.32);
-  border-color: rgba(167, 139, 250, 0.42);
-}
-
-/* =======================
-   SESSIONS
-======================= */
-.session {
-  margin-top: 10px;
-  padding: 14px;
-  border-radius: 14px;
-  background: rgba(15, 23, 42, 0.72);
-  border: 1px solid rgba(129, 140, 248, 0.18);
-}
-
-.session strong {
-  display: block;
-  color: #f8fafc;
-  font-size: 14px;
-}
-
-.session small {
-  display: block;
-  margin-top: 6px;
-  color: #a5b4fc;
-}
-
-@media (max-width: 520px) {
   .headerPage {
     padding-top: 28px;
   }
@@ -258,7 +62,8 @@
     font-size: 29px;
   }
 
-  .panel {
-    width: 100%;
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
   }
 }

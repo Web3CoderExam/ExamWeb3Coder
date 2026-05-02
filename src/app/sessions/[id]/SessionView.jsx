@@ -3,19 +3,31 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { ThumbsUp } from "lucide-react";
+import useFavorites from "@/hooks/useFavorites";
 import styles from "./SessionPage.module.css";
 
-export default function SessionView({ session, speakers }) {
+function mergeQuestions(defaultQuestions, savedQuestions) {
+  return [...defaultQuestions, ...savedQuestions].reduce((list, question) => {
+    const alreadyExists = list.find((item) => item.id === question.id);
+    if (!alreadyExists) list.push(question);
+    return list;
+  }, []);
+}
+
+export default function SessionView({ event, session, speakers, defaultFavorites }) {
   const [questions, setQuestions] = useState([]);
+  const [loadedSessionId, setLoadedSessionId] = useState(null);
   const [input, setInput] = useState("");
   const [name, setName] = useState("");
   const [tab, setTab] = useState("popular");
-  const [favorite, setFavorite] = useState(false);
   const [now, setNow] = useState(0);
+  const { isFavorite, toggleFavorite } = useFavorites(defaultFavorites);
 
   const sessionSpeakers = speakers.filter((speaker) => {
     return session.speakerId === speaker.id;
   });
+
+  const favorite = isFavorite(session.id);
 
   useEffect(() => {
     const timer = setInterval(() => setNow(Date.now()), 1000);
@@ -26,16 +38,11 @@ export default function SessionView({ session, speakers }) {
     if (!now) return false;
 
     const nowDate = new Date(now);
-    const [hour, minute] = session.time.split(":").map(Number);
-
-    const start = new Date();
-    start.setHours(hour, minute, 0, 0);
-
-    const end = new Date(start);
-    end.setHours(end.getHours() + session.duration);
+    const start = new Date(`${event.date}T${session.time}`);
+    const end = new Date(start.getTime() + session.duration * 60 * 60 * 1000);
 
     return nowDate >= start && nowDate <= end;
-  }, [now, session]);
+  }, [event.date, now, session]);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -44,48 +51,20 @@ export default function SessionView({ session, speakers }) {
       );
 
       const defaultQuestions = session.questions || [];
-
-      const mergedQuestions = [...defaultQuestions, ...savedQuestions].reduce(
-        (list, question) => {
-          const alreadyExists = list.find((item) => item.id === question.id);
-          if (!alreadyExists) list.push(question);
-          return list;
-        },
-        []
-      );
+      const mergedQuestions = mergeQuestions(defaultQuestions, savedQuestions);
 
       setQuestions(mergedQuestions);
+      setLoadedSessionId(session.id);
     }, 0);
 
     return () => clearTimeout(timeout);
   }, [session]);
 
   useEffect(() => {
+    if (loadedSessionId !== session.id) return;
+
     localStorage.setItem("questions-" + session.id, JSON.stringify(questions));
-  }, [questions, session.id]);
-
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      const favorites = JSON.parse(localStorage.getItem("favs") || "[]");
-      setFavorite(favorites.includes(session.id));
-    }, 0);
-
-    return () => clearTimeout(timeout);
-  }, [session.id]);
-
-  const toggleFavorite = () => {
-    let favorites = JSON.parse(localStorage.getItem("favs") || "[]");
-
-    if (favorites.includes(session.id)) {
-      favorites = favorites.filter((id) => id !== session.id);
-      setFavorite(false);
-    } else {
-      favorites.push(session.id);
-      setFavorite(true);
-    }
-
-    localStorage.setItem("favs", JSON.stringify(favorites));
-  };
+  }, [loadedSessionId, questions, session.id]);
 
   const addQuestion = () => {
     if (!input.trim()) return;
@@ -167,7 +146,11 @@ export default function SessionView({ session, speakers }) {
             ))}
           </div>
 
-          <button className={styles.favorite} onClick={toggleFavorite}>
+          <button
+            type="button"
+            className={favorite ? styles.favoriteActive : styles.favorite}
+            onClick={() => toggleFavorite(session.id)}
+          >
             {favorite ? "Retirer des favoris" : "Ajouter aux favoris"}
           </button>
         </div>
@@ -209,7 +192,7 @@ export default function SessionView({ session, speakers }) {
                   className={tab === "recent" ? styles.active : ""}
                   onClick={() => setTab("recent")}
                 >
-                  Recentes
+                  Récentes
                 </button>
               </div>
 

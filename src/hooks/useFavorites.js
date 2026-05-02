@@ -6,7 +6,7 @@ function normalizeFavorites(value) {
   if (Array.isArray(value)) {
     return value
       .map((item) => {
-        if (typeof item === "object") return item.sessionId;
+        if (item && typeof item === "object") return item.sessionId;
         return item;
       })
       .filter(Boolean);
@@ -16,7 +16,7 @@ function normalizeFavorites(value) {
     return Object.values(value)
       .flat()
       .map((item) => {
-        if (typeof item === "object") return item.sessionId;
+        if (item && typeof item === "object") return item.sessionId;
         return item;
       })
       .filter(Boolean);
@@ -25,15 +25,23 @@ function normalizeFavorites(value) {
   return [];
 }
 
+function readSavedFavorites() {
+  try {
+    return JSON.parse(localStorage.getItem("favs") || "null");
+  } catch {
+    return null;
+  }
+}
+
 export default function useFavorites(defaultFavorites = []) {
   const [favorites, setFavorites] = useState([]);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      const savedFavorites = localStorage.getItem("favs");
+      const savedFavorites = readSavedFavorites();
 
       if (savedFavorites) {
-        const cleanFavorites = normalizeFavorites(JSON.parse(savedFavorites));
+        const cleanFavorites = normalizeFavorites(savedFavorites);
         localStorage.setItem("favs", JSON.stringify(cleanFavorites));
         setFavorites(cleanFavorites);
         return;
@@ -47,8 +55,10 @@ export default function useFavorites(defaultFavorites = []) {
   }, [defaultFavorites]);
 
   const saveFavorites = (newFavorites) => {
-    localStorage.setItem("favs", JSON.stringify(newFavorites));
-    setFavorites(newFavorites);
+    const cleanFavorites = [...new Set(newFavorites)];
+
+    localStorage.setItem("favs", JSON.stringify(cleanFavorites));
+    setFavorites(cleanFavorites);
   };
 
   const isFavorite = (sessionId) => {

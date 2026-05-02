@@ -8,83 +8,101 @@ export default async function Page({ params }) {
 
   if (!speaker) {
     return (
-      <div className={styles.container}>
-        <div className={styles.card}>
+      <main className={styles.container}>
+        <div className={styles.notFound}>
           <h1>Intervenant introuvable</h1>
           <Link href="/speakers" className={styles.backLink}>
             Retour aux intervenants
           </Link>
         </div>
-      </div>
+      </main>
     );
   }
 
   const sessions = data.events
-    .flatMap((event) => event.sessions)
+    .flatMap((event) => {
+      return event.sessions.map((session) => ({
+        ...session,
+        eventTitle: event.title,
+      }));
+    })
     .filter((session) => session.speakerId === speaker.id);
 
-  const links = speaker.links || {};
-  const linkEntries = Object.entries(links);
+  const links = Object.entries(speaker.links || {});
 
   return (
-    <div className={styles.container}>
-      <section className={styles.hero}>
-        <img src={speaker.avatar} alt={speaker.name} className={styles.avatar} />
+    <main className={styles.container}>
+      <div className={styles.page}>
+        <Link href="/speakers" className={styles.backLink}>
+          Retour aux intervenants
+        </Link>
 
-        <div>
-          <span className={styles.badge}>Intervenant</span>
-          <h1>{speaker.name}</h1>
-          <p className={styles.role}>{speaker.role}</p>
-        </div>
-      </section>
+        <section className={styles.hero}>
+          <img src={speaker.avatar} alt={speaker.name} className={styles.avatar} />
 
-      <section className={styles.section}>
-        <div className={styles.card}>
-          <h2>Biographie</h2>
-          <p className={styles.bio}>{speaker.bio}</p>
-        </div>
+          <div className={styles.heroText}>
+            <span className={styles.badge}>Intervenant</span>
+            <h1>{speaker.name}</h1>
+            <p>{speaker.role}</p>
+          </div>
 
-        <div className={styles.card}>
-          <h2>Liens externes</h2>
+          <div className={styles.stat}>
+            <strong>{sessions.length}</strong>
+            <span>session{sessions.length > 1 ? "s" : ""}</span>
+          </div>
+        </section>
 
-          {linkEntries.length > 0 ? (
-            <div className={styles.links}>
-              {linkEntries.map(([label, href]) => (
-                <a key={label} href={href} target="_blank" rel="noreferrer">
-                  {label}
-                </a>
-              ))}
-            </div>
-          ) : (
-            <p className={styles.empty}>Aucun lien ajoute pour le moment.</p>
-          )}
-        </div>
+        <section className={styles.content}>
+          <article className={styles.card}>
+            <h2>Biographie</h2>
+            <p className={styles.bio}>{speaker.bio}</p>
+          </article>
 
-        <div className={styles.card}>
-          <h2>Sessions</h2>
+          <article className={styles.card}>
+            <h2>Liens externes</h2>
+
+            {links.length > 0 ? (
+              <div className={styles.links}>
+                {links.map(([label, href]) => (
+                  <a key={label} href={href} target="_blank" rel="noreferrer">
+                    {label}
+                  </a>
+                ))}
+              </div>
+            ) : (
+              <p className={styles.empty}>Aucun lien ajouté pour le moment.</p>
+            )}
+          </article>
+        </section>
+
+        <section className={styles.sessions}>
+          <div className={styles.sectionTitle}>
+            <span className={styles.badge}>Programme</span>
+            <h2>Sessions associées</h2>
+          </div>
 
           <div className={styles.sessionList}>
             {sessions.map((session) => (
               <Link
                 key={session.id}
                 href={`/sessions/${session.id}`}
-                className={styles.sessionLink}
+                className={styles.sessionCard}
               >
-                <strong>{session.title}</strong>
-                <span>
-                  {session.time} - {session.room}
-                </span>
+                <div>
+                  <strong>{session.title}</strong>
+                  <p>{session.eventTitle}</p>
+                </div>
+
+                <div className={styles.sessionMeta}>
+                  <span>{session.time}</span>
+                  <span>{session.room}</span>
+                  <span>{session.duration}h</span>
+                </div>
               </Link>
             ))}
           </div>
-        </div>
-      </section>
-
-      <div className={styles.footer}>
-        <Link href="/speakers" className={styles.backLink}>
-          Retour aux intervenants
-        </Link>
+        </section>
       </div>
-    </div>
+    </main>
   );
 }
