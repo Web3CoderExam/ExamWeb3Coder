@@ -1,10 +1,10 @@
-# 📅 Projet EventSync - Plateforme de Gestion d'Événements
+#  Projet EventSync - Plateforme de Gestion d'Événements
 
 ## 👥 Organisation de l'Équipe & Rôles
 
 * **Ben (Chef de Projet & Backend) :** Architecture des API, gestion de la base de données.
 * **Alpha (Structure & Layout) :** Architecture globale (layout.js), Navbar et Footer.
-* **Nirindra (Lead Design & UI) :** Charte graphique, styles globaux et design des composants.
+* **Narindra (Lead Design & UI) :** Charte graphique, styles globaux et design des composants.
 * **Fitiavana (Front-end Logic) :** Page d'accueil et logique d'affichage des événements.
 * **Aina Tsiory (Authentification & Sécurité) :** Interface Login et gestion des sessions.
 
