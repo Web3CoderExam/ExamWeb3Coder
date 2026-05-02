@@ -7,115 +7,99 @@
       "startDate": "2026-05-15",
       "endDate": "2026-05-16",
       "location": "Antananarivo",
+      "category": "Agriculture",
       "description": "Utilisation de l'IA pour l'aide à la décision agricole.",
+      "image": "https://images.unsplash.com/photo-1523348837708-15d4a09cfac2",
       "sessions": [
-        {
-          "id": 101,
-          "time": "18:00",
-          "duration": 2,
-          "title": "Introduction",
-          "speakerId": "ben",
-          "room": "Room A",
-          "capacity": 120,
-          "description": "Présentation générale du programme.",
-          "questions": [
-            {
-              "id": 1,
-              "content": "Quels sont les objectifs principaux ?",
-              "author": "Jean",
-              "upvotes": 12,
-              "createdAt": "2026-05-15T09:15:00"
-            },
-            {
-              "id": 2,
-              "content": "Peut-on accéder aux slides ?",
-              "author": null,
-              "upvotes": 5,
-              "createdAt": "2026-05-15T09:20:00"
-            }
-          ]
-        },
-        {
-          "id": 102,
-          "time": "17:05",
-          "duration": 2,
-          "title": "Données et IA",
-          "speakerId": "alice",
-          "room": "Room B",
-          "capacity": 80,
-          "description": "Collecte et utilisation des données agricoles.",
-          "questions": []
-        },
-        {
-          "id": 103,
-          "time": "14:00",
-          "duration": 2,
-          "title": "Outils d'aide à la décision",
-          "speakerId": "charlie",
-          "room": "Room A",
-          "capacity": 120,
-          "description": "Outils IA pour agriculteurs.",
-          "questions": []
-        },
-        {
-          "id": 104,
-          "time": "10:30",
-          "duration": 1,
-          "title": "Agriculture Durable",
-          "speakerId": "david",
-          "room": "Room C",
-          "capacity": 60,
-          "description": "Techniques agricoles modernes.",
-          "questions": []
-        }
+
+        { "id": 101, "time": "09:00", "title": "Introduction", "speaker": "Ben" },
+        { "id": 102, "time": "11:00", "title": "Drones et Capteurs", "speaker": "Aina" }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Sommet FinTech Océan Indien",
+      "date": "2026-06-20",
+      "location": "Nosy Be",
+      "category": "Finance",
+      "description": "L'avenir du Mobile Money et de la Blockchain en Afrique.",
+      "image": "https://images.unsplash.com/photo-1551288049-bbbda5366392",
+      "sessions": [
+        { "id": 201, "time": "10:00", "title": "Panel : MVola & Inclusion", "speaker": "Jean" }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Festival Web3 & Créateurs",
+      "date": "2026-08-05",
+      "location": "Antsirabe",
+      "category": "Technologie",
+      "description": "Rencontre des développeurs et artistes sur le Web décentralisé.",
+      "image": "https://images.unsplash.com/photo-1550751827-4bd374c3f58b",
+      "sessions": [
+        { "id": 301, "time": "15:00", "title": "Atelier Next.js 15", "speaker": "Alpha" }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "Workshop Machine Learning Appliqué",
+      "date": "2026-09-12",
+      "location": "Antananarivo",
+      "category": "Intelligence Artificielle",
+      "description": "Apprendre à entraîner des modèles de prédiction pour les entreprises locales.",
+      "image": "https://images.unsplash.com/photo-1515879218367-8466d910aaa4",
+      "sessions": [
+        { "id": 401, "time": "08:30", "title": "Introduction au Deep Learning", "speaker": "Ben" }
+      ]
+    },
+    {
+      "id": 5,
+      "title": "Assises de la Digitalisation Administrative",
+      "date": "2026-10-02",
+      "location": "Toamasina",
+      "category": "Digitalisation",
+      "description": "Moderniser les services publics malgaches grâce aux outils numériques.",
+      "image": "https://images.unsplash.com/photo-1450101499163-c8848c66ca85",
+      "sessions": [
+        { "id": 501, "time": "14:00", "title": "Gouvernance et Cloud", "speaker": "Aina Tsiory" }
+      ]
+    },
+    {
+      "id": 6,
+      "title": "Forum Education 4.0",
+      "date": "2026-11-20",
+      "location": "Mahajanga",
+      "category": "Digitalisation",
+      "description": "Digitalisation des supports pédagogiques dans les universités.",
+      "image": "https://images.unsplash.com/photo-1501504905252-473c47e087f8",
+      "sessions": [
+        { "id": 601, "time": "09:00", "title": "Plateformes E-learning", "speaker": "Nirindra" }
+      ]
+    },
+    {
+      "id": 7,
+      "title": "Salon du Commerce Digital",
+      "date": "2026-12-05",
+      "location": "Antananarivo",
+      "category": "Digitalisation",
+      "description": "Comment les PME peuvent vendre en ligne efficacement.",
+      "image": "https://images.unsplash.com/photo-1556742044-3c52d6e88c62",
+      "sessions": [
+        { "id": 701, "time": "11:00", "title": "Stratégie E-commerce", "speaker": "Fitiavana" }
+      ]
+    },
+    {
+      "id": 8,
+      "title": "Conférence IA & Santé",
+      "date": "2027-01-18",
+      "location": "Fianarantsoa",
+      "category": "Intelligence Artificielle",
+      "description": "Le rôle du Machine Learning dans le diagnostic médical à distance.",
+      "image": "https://images.unsplash.com/photo-1576091160550-2173bdd99625",
+      "sessions": [
+        { "id": 801, "time": "10:00", "title": "Analyse d'images médicales", "speaker": "Dr. Randria" }
       ]
     }
-  ],
-  "speakers": [
-    {
-      "id": "ben",
-      "name": "Ben",
-      "role": "Agriculture Expert",
-      "avatar": "https://i.pravatar.cc/150?img=12",
-      "bio": "Spécialiste des systèmes agricoles modernes.",
-      "links": {
-        "LinkedIn": "https://www.linkedin.com",
-        "Site web": "https://example.com"
-      }
-    },
-    {
-      "id": "alice",
-      "name": "Alice",
-      "role": "Data Scientist",
-      "avatar": "https://i.pravatar.cc/150?img=32",
-      "bio": "Experte en data appliquée à l'agriculture.",
-      "links": {
-        "LinkedIn": "https://www.linkedin.com",
-        "Site web": "https://example.com"
-      }
-    },
-    {
-      "id": "charlie",
-      "name": "Charlie",
-      "role": "AI Engineer",
-      "avatar": "https://i.pravatar.cc/150?img=45",
-      "bio": "Développe des outils IA pour l'agriculture.",
-      "links": {
-        "LinkedIn": "https://www.linkedin.com",
-        "Site web": "https://example.com"
-      }
-    },
-    {
-      "id": "david",
-      "name": "David",
-      "role": "Sustainability Expert",
-      "avatar": "https://i.pravatar.cc/150?img=60",
-      "bio": "Travaille sur l'agriculture durable.",
-      "links": {
-        "LinkedIn": "https://www.linkedin.com",
-        "Site web": "https://example.com"
-      }
-    }
-  ],
-  "favorites": [101, 103]
+  ]
 }
+
