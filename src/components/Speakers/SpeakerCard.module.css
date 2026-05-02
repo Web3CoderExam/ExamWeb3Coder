@@ -1,0 +1,130 @@
+
+/* =======================
+   CARD 
+======================= */
+.card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 110px;
+  padding: 0 22px;
+  border-radius: 20px;
+  background: rgba(15, 23, 42, 0.75);
+  border: 1px solid rgba(124, 58, 237, 0.18);
+  backdrop-filter: blur(6px);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* HOVER */
+.card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(124, 58, 237, 0.45);
+  box-shadow: 0 12px 30px rgba(124, 58, 237, 0.28);
+}
+
+/* glow effect */
+.card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(124, 58, 237, 0.15),
+    transparent
+  );
+
+  opacity: 0;
+  transition: 0.3s;
+}
+
+.card:hover::after {
+  opacity: 1;
+}
+
+/* =======================
+   LEFT SIDE
+======================= */
+.left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  flex: 1;
+  min-width: 0;
+}
+
+/* AVATAR */
+.avatarWrapper {
+  position: relative;
+}
+
+.avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* BADGE */
+.badge {
+  position: absolute;
+  bottom: -4px;
+  right: -4px;
+  background: linear-gradient(135deg, #7c3aed, #6366f1);
+  color: white;
+  font-size: 11px;
+  padding: 4px 7px;
+  border-radius: 999px;
+  border: 2px solid #0b1020;
+}
+
+/* TEXT */
+.info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  min-width: 0;
+}
+
+.name {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #f1f5f9;
+  letter-spacing: 0.2px;
+}
+
+.role {
+  margin-top: 4px;
+  font-size: 13px;
+  color: #a5b4fc;
+}
+
+/* =======================
+   RIGHT SIDE
+======================= */
+.right {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+}
+
+.arrow {
+  font-size: 24px;
+  opacity: 0.45;
+  transition: 0.2s;
+}
+
+.card:hover .arrow {
+  opacity: 0.9;
+  transform: translateX(6px);
+}

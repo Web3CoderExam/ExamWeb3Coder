@@ -1,0 +1,199 @@
+
+/* =======================
+   CONTAINER
+======================= */
+.container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: #0b1020;
+  color: #e5e7eb;
+}
+
+/* =======================
+   HEADER PAGE
+======================= */
+.headerPage {
+  padding: 24px 24px 0;
+}
+
+.headerPage h1 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 600;
+  color: #f1f5f9;
+}
+
+.headerPage p {
+  margin-top: 6px;
+  color: #94a3b8;
+  font-size: 14px;
+}
+
+/* =======================
+   GRID 
+======================= */
+.grid {
+  padding: 16px 24px 24px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =======================
+   OVERLAY
+======================= */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(4px);
+  z-index: 999;
+}
+
+/* =======================
+   PANEL 
+======================= */
+.panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  width: 380px;
+  background: #0f172a;
+  border-left: 1px solid rgba(124,58,237,0.25);
+  z-index: 1000; 
+  transform: translateX(100%);
+  animation: slideIn 0.25s ease forwards;
+  box-shadow: -10px 0 30px rgba(0,0,0,0.5);
+}
+
+@keyframes slideIn {
+  to {
+    transform: translateX(0);
+  }
+}
+
+.panelContent {
+  padding-bottom: 30px;
+}
+
+/* =======================
+   PANEL HEADER
+======================= */
+.header {
+  padding: 20px;
+
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.headerTop {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header img {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  border: 3px solid rgba(255,255,255,0.3);
+}
+
+.close {
+  margin-left: auto;
+  cursor: pointer;
+  font-size: 18px;
+  opacity: 0.8;
+}
+
+/* =======================
+   TEXT PANEL
+======================= */
+.title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.role {
+  margin: 2px 0 0;
+  font-size: 13px;
+  color: #c7d2fe;
+}
+
+/* =======================
+   SECTIONS
+======================= */
+.section {
+  padding: 0 20px;
+  margin-top: 20px;
+}
+
+.section h4 {
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: #818cf8;
+  margin-bottom: 8px;
+}
+
+/* BIO */
+.bio {
+  color: #cbd5f5;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* =======================
+   SOCIAL BUTTONS
+======================= */
+.socials {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.socials button {
+  background: rgba(124,58,237,0.15);
+  border: 1px solid rgba(124,58,237,0.25);
+  color: #e0e7ff;
+
+  padding: 6px 10px;
+  border-radius: 10px;
+  font-size: 12px;
+
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.socials button:hover {
+  background: rgba(124,58,237,0.35);
+}
+
+/* =======================
+   SESSIONS
+======================= */
+.session {
+  margin-top: 10px;
+  padding: 12px;
+
+  border-radius: 10px;
+  background: rgba(124,58,237,0.12);
+  border: 1px solid rgba(124,58,237,0.2);
+}
+
+.session small {
+  display: block;
+  margin-top: 4px;
+  color: #a5b4fc;
+}
