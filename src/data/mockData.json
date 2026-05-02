@@ -5,7 +5,9 @@
       "title": "Conférence AgriTech Madagascar",
       "date": "2026-05-15",
       "location": "Antananarivo",
+      "category": "Agriculture",
       "description": "Utilisation de l'IA pour l'aide à la décision agricole.",
+      "image": "https://images.unsplash.com/photo-1523348837708-15d4a09cfac2",
       "sessions": [
         {
           "id": 101,
@@ -25,6 +27,90 @@
           "room": "Room B",
           "description": "Utilisation des drones pour collecter des données."
         }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Sommet FinTech Océan Indien",
+      "date": "2026-06-20",
+      "location": "Nosy Be",
+      "category": "Finance",
+      "description": "L'avenir du Mobile Money et de la Blockchain en Afrique.",
+      "image": "https://images.unsplash.com/photo-1551288049-bbbda5366392",
+      "sessions": [
+        { "id": 201, "time": "10:00", "title": "Panel : MVola & Inclusion", "speaker": "Jean" }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Festival Web3 & Créateurs",
+      "date": "2026-08-05",
+      "location": "Antsirabe",
+      "category": "Technologie",
+      "description": "Rencontre des développeurs et artistes sur le Web décentralisé.",
+      "image": "https://images.unsplash.com/photo-1550751827-4bd374c3f58b",
+      "sessions": [
+        { "id": 301, "time": "15:00", "title": "Atelier Next.js 15", "speaker": "Alpha" }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "Workshop Machine Learning Appliqué",
+      "date": "2026-09-12",
+      "location": "Antananarivo",
+      "category": "Intelligence Artificielle",
+      "description": "Apprendre à entraîner des modèles de prédiction pour les entreprises locales.",
+      "image": "https://images.unsplash.com/photo-1515879218367-8466d910aaa4",
+      "sessions": [
+        { "id": 401, "time": "08:30", "title": "Introduction au Deep Learning", "speaker": "Ben" }
+      ]
+    },
+    {
+      "id": 5,
+      "title": "Assises de la Digitalisation Administrative",
+      "date": "2026-10-02",
+      "location": "Toamasina",
+      "category": "Digitalisation",
+      "description": "Moderniser les services publics malgaches grâce aux outils numériques.",
+      "image": "https://images.unsplash.com/photo-1450101499163-c8848c66ca85",
+      "sessions": [
+        { "id": 501, "time": "14:00", "title": "Gouvernance et Cloud", "speaker": "Aina Tsiory" }
+      ]
+    },
+    {
+      "id": 6,
+      "title": "Forum Education 4.0",
+      "date": "2026-11-20",
+      "location": "Mahajanga",
+      "category": "Digitalisation",
+      "description": "Digitalisation des supports pédagogiques dans les universités.",
+      "image": "https://images.unsplash.com/photo-1501504905252-473c47e087f8",
+      "sessions": [
+        { "id": 601, "time": "09:00", "title": "Plateformes E-learning", "speaker": "Nirindra" }
+      ]
+    },
+    {
+      "id": 7,
+      "title": "Salon du Commerce Digital",
+      "date": "2026-12-05",
+      "location": "Antananarivo",
+      "category": "Digitalisation",
+      "description": "Comment les PME peuvent vendre en ligne efficacement.",
+      "image": "https://images.unsplash.com/photo-1556742044-3c52d6e88c62",
+      "sessions": [
+        { "id": 701, "time": "11:00", "title": "Stratégie E-commerce", "speaker": "Fitiavana" }
+      ]
+    },
+    {
+      "id": 8,
+      "title": "Conférence IA & Santé",
+      "date": "2027-01-18",
+      "location": "Fianarantsoa",
+      "category": "Intelligence Artificielle",
+      "description": "Le rôle du Machine Learning dans le diagnostic médical à distance.",
+      "image": "https://images.unsplash.com/photo-1576091160550-2173bdd99625",
+      "sessions": [
+        { "id": 801, "time": "10:00", "title": "Analyse d'images médicales", "speaker": "Dr. Randria" }
       ]
     }
   ]
