@@ -19,7 +19,7 @@ export default async function Page({ params }) {
   if (!session) {
     return (
       <div style={{ padding: 20 }}>
-        ❌ Session introuvable (id: {sessionId})
+        Session introuvable (id: {sessionId})
       </div>
     );
   }

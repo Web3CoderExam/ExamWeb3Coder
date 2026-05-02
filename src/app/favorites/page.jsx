@@ -7,7 +7,7 @@ export default function Page({ params }) {
   if (!event) {
     return (
       <div style={{ padding: 40 }}>
-        ❤️ Mes favoris
+          Mes favoris
         <p>Aucun événement sélectionné</p>
       </div>
     );
@@ -15,7 +15,7 @@ export default function Page({ params }) {
 
   return (
     <div style={{ padding: 40 }}>
-      <h1>❤️ Mes favoris</h1>
+      <h1>Mes favoris</h1>
 
       <FavoritesView
         eventId={event.id}

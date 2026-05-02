@@ -61,7 +61,7 @@ export default function SessionView({ session, speakers }) {
     );
   }, [questions, session.id]);
 
-  /* ❤️ FAVORITES */
+  /* FAVORITES */
   useEffect(() => {
     const favs = JSON.parse(localStorage.getItem("favs") || "[]");
     setFavorite(favs.includes(session.id));

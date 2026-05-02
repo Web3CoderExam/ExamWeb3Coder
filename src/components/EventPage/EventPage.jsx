@@ -31,7 +31,7 @@ export default function EventPage({ event, sessions, speakers }) {
             <span>{event.location}</span>
           </div>
 
-          {/* 🔥 CTA PLANNING */}
+          {/* PLANNING */}
           <button
             className={styles.planningBtn}
             onClick={() => router.push(`/planning?event=${event.id}`)}
