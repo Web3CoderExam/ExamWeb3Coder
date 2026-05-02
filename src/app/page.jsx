@@ -1,62 +1,61 @@
+"use client"; // Obligatoire pour utiliser le state
+import { useState } from "react";
 import "./Styles.css";
+import mockData from "@/data/mockData.json";
 
-export default function page() {
-  return (
-      <main>
-        {/* HERO */}
-        <section className="hero">
-          <div className="overlay">
-            <div className="hero-content">
-              <h1>Découvrez les meilleurs événements</h1>
-              <p>
-                Explorez les conférences, workshops et rencontres près de vous.
-              </p>
+export default function Page() {
+    // On commence par afficher 3 éléments
+    const [visibleCount, setVisibleCount] = useState(3);
 
-              <div className="search-bar">
-                <input
-                    type="text"
-                    placeholder="Rechercher un événement..."
-                />
-                <button>🔍</button>
-              </div>
-            </div>
-          </div>
-        </section>
+    // Fonction pour charger 3 éléments de plus
+    const loadMore = () => {
+        setVisibleCount((prevCount) => prevCount + 3);
+    };
 
-        {/* EVENTS */}
-        <section className="events">
-          <h2>Événements à venir</h2>
+    // On coupe le tableau pour n'afficher que le nombre voulu
+    const visibleEvents = mockData.events.slice(0, visibleCount);
 
-          <div className="cards">
-            {/* CARD 1 */}
-            <div className="card">
-              <h3>Dev Conference 2026</h3>
-              <p>12 - 14 Juin 2026</p>
-              <span>📍 Antananarivo, Madagascar</span>
-              <button>Voir détails</button>
-            </div>
+    return (
+        <main>
+            {/* HERO */}
+            <section className="hero">
+                <div className="overlay">
+                    <div className="hero-content">
+                        <h1>Découvrez les meilleurs événements</h1>
+                        <p>Explorez les conférences, workshops et rencontres près de vous.</p>
 
-            {/* CARD 2 */}
-            <div className="card">
-              <h3>AI Summit 2026</h3>
-              <p>20 - 21 Août 2026</p>
-              <span>📍 Paris</span>
-              <button>Voir détails</button>
-            </div>
+                        <div className="search-bar">
+                            <input type="text" placeholder="Rechercher un événement..." />
+                            <button>🔍</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
-            {/* CARD 3 */}
-            <div className="card">
-              <h3>Design Week 2026</h3>
-              <p>05 - 07 Septembre 2026</p>
-              <span>📍 Lyon</span>
-              <button>Voir détails</button>
-            </div>
-          </div>
+            {/* EVENTS */}
+            <section className="events">
+                <h2>Événements à venir</h2>
 
-          <div className="see-all">
-            <button className="outline">Voir tous les événements</button>
-          </div>
-        </section>
-      </main>
-  );
+                <div className="cards">
+                    {visibleEvents.map((event) => (
+                        <div className="card" key={event.id}>
+                            <h3>{event.title}</h3>
+                            <p>{event.date}</p>
+                            <span>📍 {event.location}</span>
+                            <button className="details-btn">Voir détails</button>
+                        </div>
+                    ))}
+                </div>
+
+                {/* On n'affiche le bouton que s'il reste des événements à charger */}
+                {visibleCount < mockData.events.length && (
+                    <div className="see-all">
+                        <button className="outline" onClick={loadMore}>
+                            Voir plus d'événements
+                        </button>
+                    </div>
+                )}
+            </section>
+        </main>
+    );
 }
