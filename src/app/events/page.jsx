@@ -7,6 +7,7 @@ export default function Page() {
       event={data.events[0]}
       sessions={data.events[0].sessions}
       speakers={data.speakers}
+      defaultFavorites={data.favorites}
     />
   );
 }

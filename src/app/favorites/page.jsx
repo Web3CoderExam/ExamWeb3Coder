@@ -1,26 +1,14 @@
 import FavoritesView from "@/components/Favorites/FavoritesView";
+import data from "@/data/mockData.json";
 
-export default function Page({ params }) {
-  const event = null;
-  const sessions = [];
-
-  if (!event) {
-    return (
-      <div style={{ padding: 40 }}>
-          Mes favoris
-        <p>Aucun événement sélectionné</p>
-      </div>
-    );
-  }
+export default function Page() {
+  const event = data.events[0];
 
   return (
-    <div style={{ padding: 40 }}>
-      <h1>Mes favoris</h1>
-
-      <FavoritesView
-        eventId={event.id}
-        sessions={sessions}
-      />
-    </div>
+    <FavoritesView
+      event={event}
+      sessions={event.sessions}
+      defaultFavorites={data.favorites}
+    />
   );
 }

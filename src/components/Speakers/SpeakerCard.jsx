@@ -3,25 +3,24 @@ import styles from "./SpeakerCard.module.css";
 export default function SpeakerCard({ speaker, sessionsCount, onClick }) {
   return (
     <div className={styles.card} onClick={onClick}>
-
-      {/* LEFT */}
       <div className={styles.left}>
         <div className={styles.avatarWrapper}>
-          <img src={speaker.avatar} className={styles.avatar} />
+          <img src={speaker.avatar} className={styles.avatar} alt={speaker.name} />
           <span className={styles.badge}>{sessionsCount}</span>
         </div>
 
         <div className={styles.info}>
           <h3 className={styles.name}>{speaker.name}</h3>
           <p className={styles.role}>{speaker.role}</p>
+          <span className={styles.meta}>
+            {sessionsCount} session{sessionsCount > 1 ? "s" : ""} pr&eacute;vue{sessionsCount > 1 ? "s" : ""}
+          </span>
         </div>
       </div>
 
-      {/* RIGHT */}
       <div className={styles.right}>
-        <span className={styles.arrow}>›</span>
+        <span className={styles.arrow}>&rsaquo;</span>
       </div>
-
     </div>
   );
 }

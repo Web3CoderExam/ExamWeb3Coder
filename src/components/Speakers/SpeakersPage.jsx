@@ -12,13 +12,12 @@ export default function SpeakersPage({ speakers, sessions }) {
 
   return (
     <div className={styles.container}>
+      <div className={styles.headerPage}>
+        <span className={styles.eyebrow}>Speakers</span>
+        <h1>Intervenants</h1>
+        <p>Cliquez sur un intervenant pour voir les d&eacute;tails et ses sessions.</p>
+      </div>
 
-    <div className={styles.headerPage}>
-  <h1>Intervenants</h1>
-  <p>Cliquez sur un intervenant pour voir les détails</p>
-</div>
-
-      {/* GRID */}
       <div className={styles.grid}>
         {speakers.map((speaker) => {
           const speakerSessions = getSessions(speaker.id);
@@ -34,7 +33,6 @@ export default function SpeakersPage({ speakers, sessions }) {
         })}
       </div>
 
-      {/* OVERLAY */}
       {selected && (
         <div
           className={styles.overlay}
@@ -42,58 +40,53 @@ export default function SpeakersPage({ speakers, sessions }) {
         />
       )}
 
-      {/* PANEL */}
       {selected && (
         <div className={styles.panel}>
           <div className={styles.panelContent}>
-
-            {/* HEADER */}
             <div className={styles.header}>
               <div className={styles.headerTop}>
-                <img src={selected.avatar} />
+                <img src={selected.avatar} alt={selected.name} />
 
                 <div>
                   <h2 className={styles.title}>{selected.name}</h2>
                   <p className={styles.role}>{selected.role}</p>
                 </div>
 
-                <span
+                <button
                   className={styles.close}
                   onClick={() => setSelected(null)}
+                  type="button"
+                  aria-label="Fermer"
                 >
-                  ✕
-                </span>
+                  &times;
+                </button>
               </div>
             </div>
 
-            {/* BIO */}
             <div className={styles.section}>
               <h4>BIOGRAPHIE</h4>
               <p className={styles.bio}>{selected.bio}</p>
             </div>
 
-            {/* SOCIAL */}
             <div className={styles.section}>
-              <h4>RÉSEAUX</h4>
+              <h4>RESEAUX</h4>
               <div className={styles.socials}>
-                <button>Twitter</button>
-                <button>LinkedIn</button>
-                <button>Site web</button>
+                <button type="button">Twitter</button>
+                <button type="button">LinkedIn</button>
+                <button type="button">Site web</button>
               </div>
             </div>
 
-            {/* SESSIONS */}
             <div className={styles.section}>
               <h4>SESSIONS</h4>
 
               {getSessions(selected.id).map((s) => (
                 <div key={s.id} className={styles.session}>
                   <strong>{s.title}</strong>
-                  <small>{s.time} • {s.room}</small>
+                  <small>{s.time} &bull; {s.room}</small>
                 </div>
               ))}
             </div>
-
           </div>
         </div>
       )}
