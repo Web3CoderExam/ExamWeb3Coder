@@ -18,7 +18,7 @@ export default function Navbar() {
 
   return (
     <header className={styles.navbar}>
-      
+
       {/* LOGO */}
       <Link href="/" className={styles.logo}>
         EventSync
@@ -39,7 +39,14 @@ export default function Navbar() {
 
       {/* RIGHT */}
       <div className={styles.right}>
+
+        {/* ADMIN (nouveau mais même style) */}
+        <Link href="/admin" className={styles.admin}>
+          Admin
+        </Link>
+
         <User className={styles.icon} />
+
       </div>
 
     </header>
