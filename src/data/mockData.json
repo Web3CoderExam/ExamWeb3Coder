@@ -4,12 +4,14 @@
       "id": 1,
       "title": "Conférence AgriTech Madagascar",
       "date": "2026-05-15",
+      "startDate": "2026-05-15",
+      "endDate": "2026-05-16",
       "location": "Antananarivo",
       "description": "Utilisation de l'IA pour l'aide à la décision agricole.",
       "sessions": [
         {
           "id": 101,
-          "time": "16:00",
+          "time": "18:00",
           "duration": 2,
           "title": "Introduction",
           "speakerId": "ben",

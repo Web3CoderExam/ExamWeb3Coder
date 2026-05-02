@@ -15,10 +15,13 @@ export default function EventPage({
   const { isFavorite, toggleFavorite } = useFavorites(defaultFavorites);
 
   const getSpeaker = (id) => speakers.find((speaker) => speaker.id === id);
+  const startDate = event.startDate || event.date;
+  const endDate = event.endDate || event.date;
+  const dateText = startDate === endDate ? startDate : `${startDate} - ${endDate}`;
 
   const isLive = (session) => {
     const now = new Date();
-    const start = new Date(`${event.date}T${session.time}`);
+    const start = new Date(`${startDate}T${session.time}`);
     const end = new Date(start.getTime() + session.duration * 60 * 60 * 1000);
 
     return now >= start && now <= end;
@@ -33,7 +36,7 @@ export default function EventPage({
           <p>{event.description}</p>
 
           <div className={styles.meta}>
-            <span>{event.date}</span>
+            <span>{dateText}</span>
             <span>{event.location}</span>
             <span>{sessions.length} sessions</span>
           </div>

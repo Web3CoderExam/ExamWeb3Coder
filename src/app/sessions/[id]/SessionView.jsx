@@ -22,6 +22,7 @@ export default function SessionView({ event, session, speakers, defaultFavorites
   const [tab, setTab] = useState("popular");
   const [now, setNow] = useState(0);
   const { isFavorite, toggleFavorite } = useFavorites(defaultFavorites);
+  const startDate = event.startDate || event.date;
 
   const sessionSpeakers = speakers.filter((speaker) => {
     return session.speakerId === speaker.id;
@@ -38,11 +39,11 @@ export default function SessionView({ event, session, speakers, defaultFavorites
     if (!now) return false;
 
     const nowDate = new Date(now);
-    const start = new Date(`${event.date}T${session.time}`);
+    const start = new Date(`${startDate}T${session.time}`);
     const end = new Date(start.getTime() + session.duration * 60 * 60 * 1000);
 
     return nowDate >= start && nowDate <= end;
-  }, [event.date, now, session]);
+  }, [now, session, startDate]);
 
   useEffect(() => {
     const timeout = setTimeout(() => {

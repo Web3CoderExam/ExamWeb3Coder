@@ -12,6 +12,10 @@ export default function PlanningPage({ events = [], defaultFavorites = [] }) {
   const { isFavorite, toggleFavorite } = useFavorites(defaultFavorites);
 
   const event = events[0];
+  const startDate = event?.startDate || event?.date;
+  const endDate = event?.endDate || event?.date;
+  const dateText = startDate === endDate ? startDate : `${startDate} - ${endDate}`;
+
   const sessions = useMemo(() => {
     return event?.sessions || [];
   }, [event]);
@@ -31,7 +35,7 @@ export default function PlanningPage({ events = [], defaultFavorites = [] }) {
 
   const isLive = (session) => {
     const now = new Date();
-    const start = new Date(`${event.date}T${session.time}`);
+    const start = new Date(`${startDate}T${session.time}`);
     const end = new Date(start.getTime() + session.duration * 60 * 60 * 1000);
 
     return now >= start && now <= end;
@@ -70,7 +74,7 @@ export default function PlanningPage({ events = [], defaultFavorites = [] }) {
           <span className={styles.eyebrow}>Planning</span>
           <h2 className={styles.eventTitle}>{event.title}</h2>
         </div>
-        <span className={styles.eventDate}>{event.date}</span>
+        <span className={styles.eventDate}>{dateText}</span>
       </div>
 
       <div className={styles.roomFilters}>
