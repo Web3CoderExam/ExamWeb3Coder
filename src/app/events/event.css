@@ -1,0 +1,99 @@
+.home-container {
+    padding: 24px;
+    font-family: Arial, sans-serif;
+}
+
+/* HERO */
+.hero {
+    background: linear-gradient(135deg, #3b82f6, #9333ea);
+    color: white;
+    padding: 40px;
+    border-radius: 12px;
+}
+
+.hero h1 {
+    font-size: 32px;
+    margin-bottom: 10px;
+    color: black;
+}
+
+.hero-desc {
+    font-size: 16px;
+    opacity: 0.9;
+}
+
+.hero-date {
+    margin-top: 20px;
+    font-size: 14px;
+    opacity: 0.8;
+}
+
+/* HEADER */
+.session-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 30px;
+}
+
+.session-header h2 {
+    font-size: 22px;
+}
+
+.session-header button {
+    background: #3b82f6;
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.session-header button:hover {
+    background: #2563eb;
+}
+
+/* SESSIONS */
+.sessions {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* CARD */
+.session-card {
+    background: white;
+    border: 1px solid #e5e7eb;
+    padding: 20px;
+    border-radius: 12px;
+    transition: 0.3s;
+}
+
+.session-card:hover {
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.session-card h3 {
+    font-size: 18px;
+    margin-bottom: 8px;
+}
+
+.desc {
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.meta {
+    margin-top: 10px;
+    display: flex;
+    gap: 20px;
+    font-size: 13px;
+    color: #374151;
+}
+
+/* LOADING */
+.loading {
+    padding: 20px;
+}
