@@ -16,3 +16,9 @@ export default function Page() {
     />
   );
 }
+  return (
+    <SpeakersPage
+      speakers={data.speakers}
+      sessions={data.events[0].sessions}
+    />
+  );
