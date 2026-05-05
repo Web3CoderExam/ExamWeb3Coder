@@ -35,7 +35,7 @@ export default function Navbar() {
       </nav>
 
       <div className={styles.right}>
-        <Link href="/admin" className={styles.admin}>
+        <Link href="/login" className={styles.admin}>
           Admin
         </Link>
 
