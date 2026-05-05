@@ -23,7 +23,7 @@ export async function middleware(request) {
     await jwtVerify(token, SECRET);
     return NextResponse.next();
   } catch {
-    // Token expiré ou invalide → on supprime le cookie et on redirige
+    
     const response = NextResponse.redirect(new URL("/login", request.url));
     response.cookies.delete(COOKIE_NAME);
     return response;
