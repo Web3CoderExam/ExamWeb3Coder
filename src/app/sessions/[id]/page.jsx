@@ -7,15 +7,23 @@ export default async function Page({ params }) {
   const sessionId = String(id);
 
   let session = null;
+<<<<<<< HEAD
   let selectedEvent = null;
+=======
+  let event = null;
+>>>>>>> 42f4429e0c79a5cd7bb243449f4fcf600ba2d8e4
 
-  for (const event of data.events) {
-    session = event.sessions.find(
+  for (const item of data.events) {
+    session = item.sessions.find(
       (s) => String(s.id) === sessionId
     );
 
     if (session) {
+<<<<<<< HEAD
       selectedEvent = event;
+=======
+      event = item;
+>>>>>>> 42f4429e0c79a5cd7bb243449f4fcf600ba2d8e4
       break;
     }
   }
@@ -30,9 +38,16 @@ export default async function Page({ params }) {
 
   return (
     <SessionView
+<<<<<<< HEAD
       event={selectedEvent}
       session={session}
       speakers={data.speakers || []}
+=======
+      event={event}
+      session={session}
+      speakers={data.speakers}
+      defaultFavorites={data.favorites}
+>>>>>>> 42f4429e0c79a5cd7bb243449f4fcf600ba2d8e4
     />
   );
 }

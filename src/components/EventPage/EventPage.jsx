@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import useFavorites from "@/hooks/useFavorites";
 import styles from "./EventPage.module.css";
@@ -24,6 +25,13 @@ export default function EventPage({ event, sessions = [], speakers = [] }) {
     return now >= start && now <= end;
   };
 
+  // ✅ Correction ici
+  const dateText = new Date(event.date).toLocaleDateString("fr-FR", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+
   return (
     <div className={styles.container}>
       <div className={styles.content}>
@@ -32,8 +40,9 @@ export default function EventPage({ event, sessions = [], speakers = [] }) {
           <p className={styles.subtitle}>{event.description}</p>
 
           <div className={styles.meta}>
-            <span>{event.date}</span>
+            <span>{dateText}</span>
             <span>{event.location}</span>
+            <span>{sessions.length} sessions</span>
           </div>
 
           <button
