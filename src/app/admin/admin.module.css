@@ -82,7 +82,7 @@
 .main {
   flex: 1;
   margin-left: 280px;
-  background: #f5f7fa;
+  background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
   min-height: 100vh;
 }
 
