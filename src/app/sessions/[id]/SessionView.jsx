@@ -162,7 +162,7 @@ export default function SessionView({ event, session, speakers, defaultFavorites
         <div className={styles.card}>
           <h2>Live Q&A ({questions.length})</h2>
 
-          {isLive ? (
+          {isLive() ? (
             <>
               <div className={styles.inputBox}>
                 <input

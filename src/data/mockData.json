@@ -48,8 +48,8 @@
           "id": 102,
           "title": "Drones et Capteurs",
           "description": "Utilisation des drones et des capteurs connectés pour collecter des données agricoles en temps réel.",
-          "date": "2026-05-15",
-          "time": "11:00",
+          "date": "2026-05-05",
+          "time": "16:00",
           "startTime": "11:00",
           "endTime": "12:30",
           "duration": 1.5,
@@ -233,8 +233,8 @@
           "roomId": "room-education",
           "room": "Salle Education",
           "capacity": 100,
-          "speakerId": "nirindra",
-          "speakerIds": ["nirindra"],
+          "speakerId": "narindra",
+          "speakerIds": ["narindra"],
           "questions": []
         }
       ]
@@ -393,7 +393,7 @@
       "id": "alpha",
       "name": "Alpha",
       "role": "Développeur Web3",
-      "avatar": "https://i.pravatar.cc/150?img=45",
+      "avatar": "https://i.pravatar.cc/150?img=56",
       "bio": "Développe des interfaces modernes pour les applications Web3 et les plateformes numériques.",
       "links": {
         "LinkedIn": "https://www.linkedin.com",
@@ -425,8 +425,8 @@
       "sessionIds": [501]
     },
     {
-      "id": "nirindra",
-      "name": "Nirindra",
+      "id": "narindra",
+      "name": "Narindra",
       "role": "Consultant EdTech",
       "avatar": "https://i.pravatar.cc/150?img=30",
       "bio": "Accompagne les universités dans la digitalisation des supports pédagogiques et des plateformes d'apprentissage.",
