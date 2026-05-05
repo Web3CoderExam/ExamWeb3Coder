@@ -15,11 +15,7 @@ export default function FavoritesView({ event, sessions, defaultFavorites }) {
     <div className={styles.container}>
       <section className={styles.hero}>
         <div>
-<<<<<<< HEAD
           <span className={styles.badge}>Itineraire personnel</span>
-=======
-          <span className={styles.badge}>Itinéraire personnel</span>
->>>>>>> 42f4429e0c79a5cd7bb243449f4fcf600ba2d8e4
           <h1>Mes favoris</h1>
           <p>{event.title}</p>
         </div>
@@ -34,13 +30,8 @@ export default function FavoritesView({ event, sessions, defaultFavorites }) {
           <div className={styles.empty}>
             <h2>Aucune session favorite</h2>
             <p>
-<<<<<<< HEAD
               Ajoute des sessions depuis la page detail ou le planning pour
               preparer ton parcours pendant l'evenement.
-=======
-              Ajoute des sessions depuis la page détail ou le planning pour
-              préparer ton parcours pendant cet événement.
->>>>>>> 42f4429e0c79a5cd7bb243449f4fcf600ba2d8e4
             </p>
             <Link href="/planning" className={styles.planningLink}>
               Voir le planning
