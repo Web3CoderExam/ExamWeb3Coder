@@ -1,32 +1,47 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ThumbsUp } from "lucide-react";
 import useFavorites from "@/hooks/useFavorites";
 import styles from "./SessionPage.module.css";
 
-function mergeQuestions(defaultQuestions, savedQuestions) {
-  return [...defaultQuestions, ...savedQuestions].reduce((list, question) => {
-    const alreadyExists = list.find((item) => item.id === question.id);
-    if (!alreadyExists) list.push(question);
-    return list;
-  }, []);
+function mergeQuestions(defaultQuestions = [], savedQuestions = []) {
+  const merged = [];
+  const seen = new Set();
+
+  for (const question of [...defaultQuestions, ...savedQuestions]) {
+    if (!seen.has(question.id)) {
+      seen.add(question.id);
+      merged.push(question);
+    }
+  }
+
+  return merged;
+}
+
+function getSessionSpeakerIds(session) {
+  if (Array.isArray(session.speakerIds) && session.speakerIds.length > 0) {
+    return session.speakerIds;
+  }
+
+  return session.speakerId ? [session.speakerId] : [];
 }
 
 export default function SessionView({ event, session, speakers, defaultFavorites }) {
   const [questions, setQuestions] = useState([]);
-  const [loadedSessionId, setLoadedSessionId] = useState(null);
+  const [isLoaded, setIsLoaded] = useState(false);
   const [input, setInput] = useState("");
   const [name, setName] = useState("");
   const [tab, setTab] = useState("popular");
-  const [now, setNow] = useState(0);
+  const [now, setNow] = useState(Date.now());
   const { isFavorite, toggleFavorite } = useFavorites(defaultFavorites);
-  const startDate = event.startDate || event.date;
+  const sessionDate = session.date || event.startDate || event.date;
+  const questionKey = `questions-${session.id}`;
 
-  const sessionSpeakers = speakers.filter((speaker) => {
-    return session.speakerId === speaker.id;
-  });
+  const sessionSpeakers = speakers.filter((speaker) =>
+    getSessionSpeakerIds(session).includes(speaker.id)
+  );
 
   const favorite = isFavorite(session.id);
 
@@ -35,37 +50,25 @@ export default function SessionView({ event, session, speakers, defaultFavorites
     return () => clearInterval(timer);
   }, []);
 
-  const isLive = useMemo(() => {
-    if (!now) return false;
-
+  const isLive = () => {
     const nowDate = new Date(now);
-    const start = new Date(`${startDate}T${session.time}`);
+    const start = new Date(`${sessionDate}T${session.time}`);
     const end = new Date(start.getTime() + session.duration * 60 * 60 * 1000);
 
     return nowDate >= start && nowDate <= end;
-  }, [now, session, startDate]);
+  };
 
   useEffect(() => {
-    const timeout = setTimeout(() => {
-      const savedQuestions = JSON.parse(
-        localStorage.getItem("questions-" + session.id) || "[]"
-      );
-
-      const defaultQuestions = session.questions || [];
-      const mergedQuestions = mergeQuestions(defaultQuestions, savedQuestions);
-
-      setQuestions(mergedQuestions);
-      setLoadedSessionId(session.id);
-    }, 0);
-
-    return () => clearTimeout(timeout);
-  }, [session]);
+    const savedQuestions = JSON.parse(localStorage.getItem(questionKey) || "[]");
+    setQuestions(mergeQuestions(session.questions || [], savedQuestions));
+    setIsLoaded(true);
+  }, [questionKey, session.questions]);
 
   useEffect(() => {
-    if (loadedSessionId !== session.id) return;
+    if (!isLoaded) return;
 
-    localStorage.setItem("questions-" + session.id, JSON.stringify(questions));
-  }, [loadedSessionId, questions, session.id]);
+    localStorage.setItem(questionKey, JSON.stringify(questions));
+  }, [isLoaded, questions, questionKey]);
 
   const addQuestion = () => {
     if (!input.trim()) return;
@@ -114,7 +117,7 @@ export default function SessionView({ event, session, speakers, defaultFavorites
           </div>
         </div>
 
-        {isLive && (
+        {isLive() && (
           <div className={styles.live}>
             <span className={styles.dot}></span>
             LIVE
@@ -130,7 +133,7 @@ export default function SessionView({ event, session, speakers, defaultFavorites
           </div>
 
           <div className={styles.card}>
-            <h2>Intervenant</h2>
+            <h2>Intervenants</h2>
 
             {sessionSpeakers.map((speaker) => (
               <Link

@@ -2,15 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import styles from "./Navbar.module.css";
 import { User } from "lucide-react";
+import styles from "./Navbar.module.css";
 
 export default function Navbar() {
   const pathname = usePathname();
 
   const links = [
     { href: "/", label: "Accueil" },
-    { href: "/events", label: "Événements" },
     { href: "/speakers", label: "Intervenants" },
     { href: "/planning", label: "Planning" },
     { href: "/favorites", label: "Favoris" },
@@ -18,13 +17,10 @@ export default function Navbar() {
 
   return (
     <header className={styles.navbar}>
-
-      {/* LOGO */}
       <Link href="/" className={styles.logo}>
         EventSync
       </Link>
 
-      {/* NAV */}
       <nav className={styles.nav}>
         {links.map((link) => (
           <Link
@@ -37,18 +33,13 @@ export default function Navbar() {
         ))}
       </nav>
 
-      {/* RIGHT */}
       <div className={styles.right}>
-
-        {/* ADMIN (nouveau mais même style) */}
         <Link href="/admin" className={styles.admin}>
           Admin
         </Link>
 
         <User className={styles.icon} />
-
       </div>
-
     </header>
   );
 }

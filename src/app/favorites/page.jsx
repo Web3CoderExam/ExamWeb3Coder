@@ -2,12 +2,17 @@ import FavoritesView from "@/components/Favorites/FavoritesView";
 import data from "@/data/mockData.json";
 
 export default function Page() {
-  const event = data.events[0];
+  const sessions = data.events.flatMap((event) => {
+    return event.sessions.map((session) => ({
+      ...session,
+      eventId: event.id,
+      eventTitle: event.title,
+    }));
+  });
 
   return (
     <FavoritesView
-      event={event}
-      sessions={event.sessions}
+      sessions={sessions}
       defaultFavorites={data.favorites}
     />
   );

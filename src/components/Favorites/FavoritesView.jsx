@@ -4,7 +4,7 @@ import Link from "next/link";
 import useFavorites from "@/hooks/useFavorites";
 import styles from "./FavoritesView.module.css";
 
-export default function FavoritesView({ event, sessions, defaultFavorites }) {
+export default function FavoritesView({ sessions, defaultFavorites }) {
   const { favorites, toggleFavorite } = useFavorites(defaultFavorites);
 
   const favoriteSessions = sessions
@@ -17,7 +17,7 @@ export default function FavoritesView({ event, sessions, defaultFavorites }) {
         <div>
           <span className={styles.badge}>Itinéraire personnel</span>
           <h1>Mes favoris</h1>
-          <p>{event.title}</p>
+          <p>Votre sélection personnelle de sessions</p>
         </div>
 
         <span className={styles.counter}>
@@ -50,6 +50,7 @@ export default function FavoritesView({ event, sessions, defaultFavorites }) {
                 <p>{session.description}</p>
 
                 <div className={styles.meta}>
+                  <span>{session.eventTitle}</span>
                   <span>{session.duration}h</span>
                   <span>{session.capacity} places</span>
                 </div>

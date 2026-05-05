@@ -108,18 +108,12 @@
 
 .headerGrid {
   display: grid;
-  grid-template-columns: 74px repeat(3, minmax(0, 1fr));
   height: 46px;
   flex: 0 0 46px;
   align-items: center;
   text-align: center;
   background: rgba(30, 41, 59, 0.65);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.singleRoom .headerGrid,
-.singleRoom .row {
-  grid-template-columns: 74px minmax(0, 1fr);
 }
 
 .headerCell {
@@ -137,7 +131,6 @@
 
 .row {
   display: grid;
-  grid-template-columns: 74px repeat(3, minmax(0, 1fr));
   min-height: 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }

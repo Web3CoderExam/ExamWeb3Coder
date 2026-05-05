@@ -1,55 +1,52 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import useFavorites from "@/hooks/useFavorites";
 import styles from "./PlanningPage.module.css";
 
-export default function PlanningPage({ events = [], defaultFavorites = [] }) {
+export default function PlanningPage({
+  events = [],
+  selectedEventId,
+  defaultFavorites = [],
+}) {
   const router = useRouter();
   const [selected, setSelected] = useState(null);
   const [selectedRoom, setSelectedRoom] = useState("Toutes");
   const { isFavorite, toggleFavorite } = useFavorites(defaultFavorites);
 
-  const event = events[0];
+  const event =
+    events.find((item) => String(item.id) === String(selectedEventId)) ||
+    events[0];
   const startDate = event?.startDate || event?.date;
   const endDate = event?.endDate || event?.date;
   const dateText = startDate === endDate ? startDate : `${startDate} - ${endDate}`;
 
-  const sessions = useMemo(() => {
-    return event?.sessions || [];
-  }, [event]);
-  const rooms = useMemo(() => {
-    return [...new Set(sessions.map((session) => session.room))];
-  }, [sessions]);
-
-  const visibleRooms = useMemo(() => {
-    return selectedRoom === "Toutes" ? rooms : [selectedRoom];
-  }, [rooms, selectedRoom]);
-
-  const visibleSessions = useMemo(() => {
-    return sessions.filter((session) => {
-      return selectedRoom === "Toutes" || session.room === selectedRoom;
-    });
-  }, [selectedRoom, sessions]);
+  const sessions = event?.sessions ?? [];
+  const rooms = Array.from(new Set(sessions.map((session) => session.room)));
+  const visibleRooms = selectedRoom === "Toutes" ? rooms : [selectedRoom];
+  const visibleSessions = sessions.filter((session) => {
+    return selectedRoom === "Toutes" || session.room === selectedRoom;
+  });
 
   const isLive = (session) => {
     const now = new Date();
-    const start = new Date(`${startDate}T${session.time}`);
+    const sessionDate = session.date || startDate;
+    const start = new Date(`${sessionDate}T${session.time}`);
     const end = new Date(start.getTime() + session.duration * 60 * 60 * 1000);
 
     return now >= start && now <= end;
   };
 
-  const hours = useMemo(() => {
-    if (!visibleSessions.length) return [];
+  const hours = visibleSessions.length
+    ? (() => {
+        const allHours = visibleSessions.map((s) => parseInt(s.time.split(":")[0], 10));
+        const min = Math.min(...allHours);
+        const max = Math.max(...allHours);
 
-    const allHours = visibleSessions.map((s) => parseInt(s.time.split(":")[0], 10));
-    const min = Math.min(...allHours);
-    const max = Math.max(...allHours);
-
-    return Array.from({ length: max - min + 2 }, (_, i) => min - 1 + i);
-  }, [visibleSessions]);
+        return Array.from({ length: max - min + 2 }, (_, i) => min - 1 + i);
+      })()
+    : [];
 
   const openSession = (session) => {
     setSelected((current) => (current?.id === session.id ? null : session));
@@ -66,6 +63,9 @@ export default function PlanningPage({ events = [], defaultFavorites = [] }) {
     selectedRoom === "Toutes"
       ? styles.schedule
       : `${styles.schedule} ${styles.singleRoom}`;
+  const roomGridStyle = {
+    gridTemplateColumns: `74px repeat(${visibleRooms.length}, minmax(0, 1fr))`,
+  };
 
   return (
     <div className={styles.container}>
@@ -92,7 +92,7 @@ export default function PlanningPage({ events = [], defaultFavorites = [] }) {
 
       <div className={styles.planningShell}>
         <div className={scheduleClassName}>
-          <div className={styles.headerGrid}>
+          <div className={styles.headerGrid} style={roomGridStyle}>
             <div></div>
             {visibleRooms.map((room) => (
               <div key={room} className={styles.headerCell}>
@@ -103,7 +103,7 @@ export default function PlanningPage({ events = [], defaultFavorites = [] }) {
 
           <div className={styles.grid}>
             {hours.map((hour) => (
-              <div key={hour} className={styles.row}>
+              <div key={hour} className={styles.row} style={roomGridStyle}>
                 <div className={styles.timeCell}>{hour}:00</div>
 
                 {visibleRooms.map((room) => {

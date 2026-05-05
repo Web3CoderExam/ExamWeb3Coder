@@ -2,6 +2,14 @@ import Link from "next/link";
 import data from "@/data/mockData.json";
 import styles from "./SpeakerProfile.module.css";
 
+function getSessionSpeakerIds(session) {
+  if (Array.isArray(session.speakerIds) && session.speakerIds.length > 0) {
+    return session.speakerIds;
+  }
+
+  return session.speakerId ? [session.speakerId] : [];
+}
+
 export default async function Page({ params }) {
   const { id } = await params;
   const speaker = data.speakers.find((item) => item.id === id);
@@ -26,7 +34,7 @@ export default async function Page({ params }) {
         eventTitle: event.title,
       }));
     })
-    .filter((session) => session.speakerId === speaker.id);
+    .filter((session) => getSessionSpeakerIds(session).includes(speaker.id));
 
   const links = Object.entries(speaker.links || {});
 

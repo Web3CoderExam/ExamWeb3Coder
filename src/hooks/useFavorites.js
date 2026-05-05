@@ -37,21 +37,17 @@ export default function useFavorites(defaultFavorites = []) {
   const [favorites, setFavorites] = useState([]);
 
   useEffect(() => {
-    const timeout = setTimeout(() => {
-      const savedFavorites = readSavedFavorites();
+    const savedFavorites = readSavedFavorites();
 
-      if (savedFavorites) {
-        const cleanFavorites = normalizeFavorites(savedFavorites);
-        localStorage.setItem("favs", JSON.stringify(cleanFavorites));
-        setFavorites(cleanFavorites);
-        return;
-      }
+    if (savedFavorites) {
+      const cleanFavorites = normalizeFavorites(savedFavorites);
+      localStorage.setItem("favs", JSON.stringify(cleanFavorites));
+      setFavorites(cleanFavorites);
+      return;
+    }
 
-      localStorage.setItem("favs", JSON.stringify(defaultFavorites));
-      setFavorites(defaultFavorites);
-    }, 0);
-
-    return () => clearTimeout(timeout);
+    localStorage.setItem("favs", JSON.stringify(defaultFavorites));
+    setFavorites(defaultFavorites);
   }, [defaultFavorites]);
 
   const saveFavorites = (newFavorites) => {

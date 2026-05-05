@@ -1,8 +1,6 @@
+import data from "@/data/mockData.json";
+import EventsList from "@/components/EventsList/EventsList";
+
 export default function Page() {
-  return (
-    <main>
-      <h1>EventSync</h1>
-      <p>Découvrez et participez aux meilleurs événements</p>
-    </main>
-  );
+  return <EventsList events={data.events} />;
 }
