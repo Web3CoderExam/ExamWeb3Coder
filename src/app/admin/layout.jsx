@@ -8,8 +8,9 @@ import styles from './admin.module.css';
 export default function AdminLayout({ children }) {
   const pathname = usePathname();
   const router = useRouter();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // Ne pas afficher la navbar sur la page de login
+  // Ne pas afficher le layout sur la page de login
   if (pathname === '/admin/login') {
     return <>{children}</>;
   }
@@ -17,6 +18,14 @@ export default function AdminLayout({ children }) {
   const handleLogout = async () => {
     await fetch('/api/admin/logout', { method: 'POST' });
     window.location.href = '/admin/login';
+  };
+
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
+
+  const closeSidebar = () => {
+    setSidebarOpen(false);
   };
 
   const menuItems = [
@@ -30,7 +39,18 @@ export default function AdminLayout({ children }) {
 
   return (
     <div className={styles.layout}>
-      <aside className={styles.sidebar}>
+      {/* Bouton menu hamburger */}
+      <button onClick={toggleSidebar} className={styles.menuButton}>
+        ☰
+      </button>
+
+      {/* Overlay pour fermer le sidebar en cliquant à côté */}
+      {sidebarOpen && (
+        <div className={styles.overlay} onClick={closeSidebar} />
+      )}
+
+      {/* Sidebar */}
+      <aside className={`${styles.sidebar} ${sidebarOpen ? styles.open : ''}`}>
         <div className={styles.logo}>
           <h2>EventSync</h2>
           <p>Administrateur</p>
@@ -40,6 +60,7 @@ export default function AdminLayout({ children }) {
             <Link
               key={item.href}
               href={item.href}
+              onClick={closeSidebar}
               className={`${styles.navItem} ${
                 pathname === item.href ? styles.active : ''
               }`}
@@ -53,6 +74,7 @@ export default function AdminLayout({ children }) {
           <span>🔓</span> Déconnexion
         </button>
       </aside>
+
       <main className={styles.main}>
         <div className={styles.content}>{children}</div>
       </main>
