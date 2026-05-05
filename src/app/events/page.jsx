@@ -1,3 +1,4 @@
+
 import data from "@/data/mockData.json";
 import EventsList from "@/components/EventsList/EventsList";
 
