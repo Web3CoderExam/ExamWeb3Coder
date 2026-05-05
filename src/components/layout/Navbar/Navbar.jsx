@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { User } from "lucide-react";
+import Image from "next/image";
 import styles from "./Navbar.module.css";
 
 export default function Navbar() {
@@ -18,7 +19,7 @@ export default function Navbar() {
   return (
     <header className={styles.navbar}>
       <Link href="/" className={styles.logo}>
-        EventSync
+        <Image src="/logo-eventsync.svg" alt="EventSync" width={160} height={40} priority />
       </Link>
 
       <nav className={styles.nav}>
