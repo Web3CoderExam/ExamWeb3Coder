@@ -103,31 +103,37 @@ export default function EventsManagement() {
         </div>
       )}
 
-      <table className={styles.table}>
-        <thead>
-          <tr>
-            <th>Titre</th>
-            <th>Date</th>
-            <th>Lieu</th>
-            <th>Statut</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {events.map((event) => (
-            <tr key={event.id}>
-              <td>{event.title}</td>
-              <td>{event.date}</td>
-              <td>{event.location}</td>
-              <td><span className={`${styles.status} ${styles[event.status]}`}>{event.status}</span></td>
-              <td>
-                <button className={styles.editBtn}>✏️ Modifier</button>
-                <button onClick={() => handleDelete(event.id)} className={styles.deleteBtn}>🗑️ Supprimer</button>
-              </td>
+      <div className={styles.tableWrapper}>
+        <table className={styles.table}>
+          <thead>
+            <tr>
+              <th>Titre</th>
+              <th>Date</th>
+              <th>Lieu</th>
+              <th>Statut</th>
+              <th>Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {events.map((event) => (
+              <tr key={event.id}>
+                <td className={styles.eventTitle}>{event.title}</td>
+                <td>{event.date}</td>
+                <td>{event.location}</td>
+                <td>
+                  <span className={`${styles.status} ${styles[event.status]}`}>
+                    {event.status === 'actif' ? 'Actif' : 'Brouillon'}
+                  </span>
+                </td>
+                <td>
+                  <button className={styles.editBtn}>✏️ Modifier</button>
+                  <button onClick={() => handleDelete(event.id)} className={styles.deleteBtn}>🗑️ Supprimer</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
