@@ -7,7 +7,6 @@ export async function POST(request) {
   try {
     const { email, password } = await request.json();
 
-    // Validation de base
     if (!email || !password) {
       return NextResponse.json(
         { message: "Email et mot de passe requis." },
@@ -15,25 +14,22 @@ export async function POST(request) {
       );
     }
 
-    // Chercher l'admin en base
     const db = getDb();
     const result = await db.query(
-      "SELECT id, email, password_hash FROM admins WHERE email = $1 LIMIT 1",
+      "SELECT id, email, password FROM users WHERE email = $1 LIMIT 1",
       [email.toLowerCase().trim()]
     );
 
-    const admin = result.rows[0];
+    const user = result.rows[0];
 
-    // Utilisateur introuvable OU mauvais mot de passe → même message (sécurité)
-    if (!admin || !(await bcrypt.compare(password, admin.password_hash))) {
+    if (!user || !(await bcrypt.compare(password, user.password))) {
       return NextResponse.json(
         { message: "Identifiants incorrects." },
         { status: 401 }
       );
     }
 
-    // Créer la session (cookie JWT)
-    await createSession(admin.id, admin.email);
+    await createSession(user.id, user.email);
 
     return NextResponse.json({ ok: true });
   } catch (err) {

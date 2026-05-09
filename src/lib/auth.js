@@ -3,11 +3,10 @@ import { cookies } from "next/headers";
 
 const SECRET = new TextEncoder().encode(process.env.JWT_SECRET);
 const COOKIE_NAME = "eventsync_session";
-const COOKIE_MAX_AGE = 60 * 60 * 8; // 8 heures
+const COOKIE_MAX_AGE = 60 * 60 * 8;
 
-// Crée un JWT signé et le pose en cookie httpOnly
-export async function createSession(adminId, email) {
-  const token = await new SignJWT({ adminId, email })
+export async function createSession(userId, email) {
+  const token = await new SignJWT({ userId, email })
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
     .setExpirationTime("8h")
@@ -23,7 +22,6 @@ export async function createSession(adminId, email) {
   });
 }
 
-// Vérifie le cookie et retourne le payload si valide, sinon null
 export async function getSession() {
   const cookieStore = await cookies();
   const token = cookieStore.get(COOKIE_NAME)?.value;
@@ -31,13 +29,12 @@ export async function getSession() {
 
   try {
     const { payload } = await jwtVerify(token, SECRET);
-    return payload; // { adminId, email, iat, exp }
+    return payload;
   } catch {
     return null;
   }
 }
 
-// Supprime le cookie (déconnexion)
 export async function deleteSession() {
   const cookieStore = await cookies();
   cookieStore.delete(COOKIE_NAME);
