@@ -1,35 +1,46 @@
 "use client";
 
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { User } from "lucide-react";
+import Image from "next/image";
 import styles from "./Navbar.module.css";
-import { Bell, Search, User, Menu } from "lucide-react";
 
-export default function Navbar({ toggleSidebar }) {
+export default function Navbar() {
+  const pathname = usePathname();
+
+  const links = [
+    { href: "/", label: "Accueil" },
+    { href: "/speakers", label: "Intervenants" },
+    { href: "/planning", label: "Planning" },
+    { href: "/favorites", label: "Favoris" },
+  ];
+
   return (
     <header className={styles.navbar}>
+      <Link href="/" className={styles.logo}>
+        <Image src="/logo-eventsync.svg" alt="EventSync" width={160} height={40} priority />
+      </Link>
 
-      {/* Left */}
-      <div className={styles.left}>
-        <Menu className={styles.menuIcon} onClick={toggleSidebar} />
-        <h1 className={styles.logo}>EventSync</h1>
-      </div>
+      <nav className={styles.nav}>
+        {links.map((link) => (
+          <Link
+            key={link.href}
+            href={link.href}
+            className={pathname === link.href ? styles.active : ""}
+          >
+            {link.label}
+          </Link>
+        ))}
+      </nav>
 
-      {/* Search */}
-      <div className={styles.searchWrapper}>
-        <Search className={styles.searchIcon} />
-        <input
-          type="text"
-          placeholder="Search events..."
-          className={styles.search}
-        />
-      </div>
-
-      {/* Right */}
       <div className={styles.right}>
-        <Bell className={styles.icon} />
-        <User className={styles.icon} />
-        <div className={styles.avatar}></div>
-      </div>
+        <Link href="/login" className={styles.admin}>
+          Admin
+        </Link>
 
+        <User className={styles.icon} />
+      </div>
     </header>
   );
 }

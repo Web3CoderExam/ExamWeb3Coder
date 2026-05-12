@@ -4,6 +4,8 @@
       "id": 1,
       "title": "Conférence AgriTech Madagascar",
       "date": "2026-05-15",
+      "startDate": "2026-05-15",
+      "endDate": "2026-05-16",
       "location": "Antananarivo",
       "category": "Agriculture",
       "description": "Utilisation de l'IA pour l'aide à la décision agricole.",
@@ -26,6 +28,87 @@
           "speaker": "Aina",
           "room": "Room B",
           "description": "Utilisation des drones pour collecter des données."
+        },
+        {
+          "id": 101,
+          "title": "Introduction",
+          "description": "Présentation générale du programme et des enjeux de l'AgriTech à Madagascar.",
+          "date": "2026-05-15",
+          "time": "09:00",
+          "startTime": "09:00",
+          "endTime": "10:00",
+          "duration": 1,
+          "roomId": "room-a",
+          "room": "Room A",
+          "capacity": 120,
+          "speakerId": "ben",
+          "speakerIds": ["ben"],
+          "questions": [
+            {
+              "id": 1,
+              "sessionId": 101,
+              "content": "Quels sont les objectifs principaux de cette conférence ?",
+              "author": "Jean",
+              "upvotes": 12,
+              "createdAt": "2026-05-15T09:15:00"
+            },
+            {
+              "id": 2,
+              "sessionId": 101,
+              "content": "Peut-on accéder aux supports après la session ?",
+              "author": null,
+              "upvotes": 5,
+              "createdAt": "2026-05-15T09:20:00"
+            }
+          ]
+        },
+        {
+          "id": 102,
+          "title": "Drones et Capteurs",
+          "description": "Utilisation des drones et des capteurs connectés pour collecter des données agricoles en temps réel.",
+          "date": "2026-05-05",
+          "time": "16:00",
+          "startTime": "11:00",
+          "endTime": "12:30",
+          "duration": 1.5,
+          "roomId": "room-b",
+          "room": "Room B",
+          "capacity": 80,
+          "speakerId": "aina",
+          "speakerIds": ["aina"],
+          "questions": []
+        },
+        {
+          "id": 103,
+          "title": "Agriculture Durable",
+          "description": "Techniques agricoles modernes et pratiques durables adaptées aux producteurs locaux.",
+          "date": "2026-05-15",
+          "time": "14:00",
+          "startTime": "14:00",
+          "endTime": "15:00",
+          "duration": 1,
+          "roomId": "room-c",
+          "room": "Room C",
+          "capacity": 60,
+          "speakerId": "david",
+          "speakerIds": ["david"],
+          "questions": []
+        },
+        {
+          "id": 104,
+          "title": "IA et aide à la décision",
+          "description": "Présentation d'outils d'intelligence artificielle pour aider les agriculteurs à prendre de meilleures décisions.",
+          "date": "2026-05-16",
+          "time": "10:00",
+          "startTime": "10:00",
+          "endTime": "11:30",
+          "duration": 1.5,
+          "roomId": "room-a",
+          "room": "Room A",
+          "capacity": 120,
+          "speakerId": "fitiavana",
+          "speakerIds": ["fitiavana", "alpha"],
+          "questions": []
         }
       ]
     },

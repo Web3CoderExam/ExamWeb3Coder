@@ -18,6 +18,7 @@ export function getDb() {
     });
   }
   return pool;
+
 }
 
 export async function getAllEvents() {
