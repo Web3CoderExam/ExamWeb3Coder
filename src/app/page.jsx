@@ -1,9 +1,14 @@
+"use client";
 
-export default function Page() {
-  return (
-    <main>
-      <h1>EventSync</h1>
-      <p>Découvrez et participez aux meilleurs événements</p>
-    </main>
-  );
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+
+export default function HomePage() {
+  const router = useRouter();
+
+  useEffect(() => {
+    router.replace("/accueil");
+  }, [router]);
+
+  return null;
 }

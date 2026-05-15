@@ -1,14 +1,7 @@
 
 import data from "@/data/mockData.json";
-import EventPage from "@/components/EventPage/EventPage";
+import EventsList from "@/components/EventsList/EventsList";
 
 export default function Page() {
-  return (
-    <EventPage
-      event={data.events[0]}
-      sessions={data.events[0].sessions}
-      speakers={data.speakers}
-      defaultFavorites={data.favorites}
-    />
-  );
+  return <EventsList events={data.events} />;
 }

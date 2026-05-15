@@ -4,7 +4,7 @@ import Link from "next/link";
 import useFavorites from "@/hooks/useFavorites";
 import styles from "./FavoritesView.module.css";
 
-export default function FavoritesView({ event, sessions, defaultFavorites }) {
+export default function FavoritesView({ sessions, defaultFavorites }) {
   const { favorites, toggleFavorite } = useFavorites(defaultFavorites);
 
   const favoriteSessions = sessions
@@ -15,9 +15,9 @@ export default function FavoritesView({ event, sessions, defaultFavorites }) {
     <div className={styles.container}>
       <section className={styles.hero}>
         <div>
-          <span className={styles.badge}>Itineraire personnel</span>
+          <span className={styles.badge}>Itinéraire personnel</span>
           <h1>Mes favoris</h1>
-          <p>{event.title}</p>
+          <p>Votre sélection personnelle de sessions</p>
         </div>
 
         <span className={styles.counter}>
@@ -30,8 +30,8 @@ export default function FavoritesView({ event, sessions, defaultFavorites }) {
           <div className={styles.empty}>
             <h2>Aucune session favorite</h2>
             <p>
-              Ajoute des sessions depuis la page detail ou le planning pour
-              preparer ton parcours pendant l'evenement.
+              Ajoute des sessions depuis la page détail ou le planning pour
+              préparer ton parcours pendant cet événement.
             </p>
             <Link href="/planning" className={styles.planningLink}>
               Voir le planning
@@ -50,6 +50,7 @@ export default function FavoritesView({ event, sessions, defaultFavorites }) {
                 <p>{session.description}</p>
 
                 <div className={styles.meta}>
+                  <span>{session.eventTitle}</span>
                   <span>{session.duration}h</span>
                   <span>{session.capacity} places</span>
                 </div>

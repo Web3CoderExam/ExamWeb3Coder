@@ -183,6 +183,8 @@
   align-items: center;
   gap: 10px;
   margin-top: 16px;
+  text-decoration: none;
+  outline: none;
 }
 
 .speaker img {

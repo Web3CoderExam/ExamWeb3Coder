@@ -1,24 +1,48 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
+import Link from "next/link";
 import { ThumbsUp } from "lucide-react";
 import useFavorites from "@/hooks/useFavorites";
 import styles from "./SessionPage.module.css";
 
-export default function SessionView({ event, session, speakers = [] }) {
+function mergeQuestions(defaultQuestions = [], savedQuestions = []) {
+  const merged = [];
+  const seen = new Set();
+
+  for (const question of [...defaultQuestions, ...savedQuestions]) {
+    if (!seen.has(question.id)) {
+      seen.add(question.id);
+      merged.push(question);
+    }
+  }
+
+  return merged;
+}
+
+function getSessionSpeakerIds(session) {
+  if (Array.isArray(session.speakerIds) && session.speakerIds.length > 0) {
+    return session.speakerIds;
+  }
+
+  return session.speakerId ? [session.speakerId] : [];
+}
+
+export default function SessionView({ event, session, speakers, defaultFavorites }) {
   const [questions, setQuestions] = useState([]);
-  const [loadedSessionId, setLoadedSessionId] = useState(null);
+  const [isLoaded, setIsLoaded] = useState(false);
   const [input, setInput] = useState("");
   const [name, setName] = useState("");
   const [tab, setTab] = useState("popular");
   const [now, setNow] = useState(Date.now());
-  const { isFavorite, toggleFavorite } = useFavorites(event.id);
+  const { isFavorite, toggleFavorite } = useFavorites(defaultFavorites);
+  const sessionDate = session.date || event.startDate || event.date;
+  const questionKey = `questions-${session.id}`;
 
-  const speaker = speakers.find((item) => item.id === session.speakerId);
-  const speakerName = speaker?.name || session.speaker || "Intervenant";
-  const room = session.room || "Salle principale";
-  const capacity = session.capacity || "Non precisee";
-  const duration = session.duration || 1;
+  const sessionSpeakers = speakers.filter((speaker) =>
+    getSessionSpeakerIds(session).includes(speaker.id)
+  );
+
   const favorite = isFavorite(session.id);
 
   useEffect(() => {
@@ -26,27 +50,25 @@ export default function SessionView({ event, session, speakers = [] }) {
     return () => clearInterval(timer);
   }, []);
 
-  const isLive = useMemo(() => {
-    if (!now) return false;
-
+  const isLive = () => {
     const nowDate = new Date(now);
-    const start = new Date(`${event.date}T${session.time}`);
-    const end = new Date(start.getTime() + duration * 60 * 60 * 1000);
+    const start = new Date(`${sessionDate}T${session.time}`);
+    const end = new Date(start.getTime() + session.duration * 60 * 60 * 1000);
 
     return nowDate >= start && nowDate <= end;
-  }, [duration, event.date, now, session.time]);
+  };
 
   useEffect(() => {
-    const savedQuestions = JSON.parse(
-      localStorage.getItem("questions-" + session.id) || "[]"
-    );
-
-    setQuestions([...(session.questions || []), ...savedQuestions]);
-  }, [session]);
+    const savedQuestions = JSON.parse(localStorage.getItem(questionKey) || "[]");
+    setQuestions(mergeQuestions(session.questions || [], savedQuestions));
+    setIsLoaded(true);
+  }, [questionKey, session.questions]);
 
   useEffect(() => {
-    localStorage.setItem("questions-" + session.id, JSON.stringify(questions));
-  }, [questions, session.id]);
+    if (!isLoaded) return;
+
+    localStorage.setItem(questionKey, JSON.stringify(questions));
+  }, [isLoaded, questions, questionKey]);
 
   const addQuestion = () => {
     if (!input.trim()) return;
@@ -59,14 +81,14 @@ export default function SessionView({ event, session, speakers = [] }) {
       createdAt: new Date().toISOString(),
     };
 
-    setQuestions((currentQuestions) => [newQuestion, ...currentQuestions]);
+    setQuestions((previousQuestions) => [newQuestion, ...previousQuestions]);
     setInput("");
     setName("");
   };
 
   const upvote = (id) => {
-    setQuestions((currentQuestions) => {
-      return currentQuestions.map((question) => {
+    setQuestions((previousQuestions) => {
+      return previousQuestions.map((question) => {
         if (question.id === id) {
           return { ...question, upvotes: question.upvotes + 1 };
         }
@@ -90,14 +112,12 @@ export default function SessionView({ event, session, speakers = [] }) {
 
           <div className={styles.meta}>
             <span>{session.time}</span>
-            <span>-</span>
-            <span>{room}</span>
-            <span>-</span>
-            <span>{capacity} places</span>
+            <span>{session.room}</span>
+            <span>{session.capacity} places</span>
           </div>
         </div>
 
-        {isLive && (
+        {isLive() && (
           <div className={styles.live}>
             <span className={styles.dot}></span>
             LIVE
@@ -106,27 +126,33 @@ export default function SessionView({ event, session, speakers = [] }) {
       </div>
 
       <div className={styles.grid}>
-        <div>
+        <div className={styles.leftColumn}>
           <div className={styles.card}>
-            <p className={styles.description}>
-              {session.description || event.description}
-            </p>
+            <h2>Description</h2>
+            <p className={styles.description}>{session.description}</p>
           </div>
 
           <div className={styles.card}>
-            <h3>Intervenant</h3>
-            <div className={styles.speaker}>
-              {speaker?.avatar && <img src={speaker.avatar} alt={speakerName} />}
-              <div>
-                <strong>{speakerName}</strong>
-                <span>{speaker?.role || "Intervenant"}</span>
-              </div>
-            </div>
+            <h2>Intervenants</h2>
+
+            {sessionSpeakers.map((speaker) => (
+              <Link
+                key={speaker.id}
+                href={`/speakers/${speaker.id}`}
+                className={styles.speaker}
+              >
+                <img src={speaker.avatar} alt={speaker.name} />
+                <div>
+                  <strong>{speaker.name}</strong>
+                  <span>{speaker.role}</span>
+                </div>
+              </Link>
+            ))}
           </div>
 
           <button
             type="button"
-            className={styles.favorite}
+            className={favorite ? styles.favoriteActive : styles.favorite}
             onClick={() => toggleFavorite(session.id)}
           >
             {favorite ? "Retirer des favoris" : "Ajouter aux favoris"}
@@ -134,33 +160,32 @@ export default function SessionView({ event, session, speakers = [] }) {
         </div>
 
         <div className={styles.card}>
-          <h3 style={{ marginBottom: 16 }}>Live Q&A ({questions.length})</h3>
+          <h2>Live Q&A ({questions.length})</h2>
 
-          {isLive ? (
+          {isLive() ? (
             <>
               <div className={styles.inputBox}>
                 <input
                   className={styles.input}
                   placeholder="Pose ta question..."
                   value={input}
-                  onChange={(event) => setInput(event.target.value)}
+                  onChange={(e) => setInput(e.target.value)}
                 />
 
                 <input
                   className={styles.input}
                   placeholder="Nom (optionnel)"
                   value={name}
-                  onChange={(event) => setName(event.target.value)}
+                  onChange={(e) => setName(e.target.value)}
                 />
 
-                <button type="button" className={styles.button} onClick={addQuestion}>
+                <button className={styles.button} onClick={addQuestion}>
                   Envoyer
                 </button>
               </div>
 
               <div className={styles.tabs}>
                 <button
-                  type="button"
                   className={tab === "popular" ? styles.active : ""}
                   onClick={() => setTab("popular")}
                 >
@@ -168,11 +193,10 @@ export default function SessionView({ event, session, speakers = [] }) {
                 </button>
 
                 <button
-                  type="button"
                   className={tab === "recent" ? styles.active : ""}
                   onClick={() => setTab("recent")}
                 >
-                  Recentes
+                  Récentes
                 </button>
               </div>
 
@@ -189,7 +213,6 @@ export default function SessionView({ event, session, speakers = [] }) {
                     </div>
 
                     <button
-                      type="button"
                       className={styles.vote}
                       onClick={() => upvote(question.id)}
                     >
@@ -202,7 +225,7 @@ export default function SessionView({ event, session, speakers = [] }) {
             </>
           ) : (
             <p className={styles.offline}>
-              Les questions seront disponibles pendant le live
+              Les questions seront disponibles pendant le live.
             </p>
           )}
         </div>
