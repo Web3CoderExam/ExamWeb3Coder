@@ -152,6 +152,9 @@ export default function PlanningPage({
                 <div>
                   <span className={styles.detailsLabel}>Session</span>
                   <h3>{selected.title}</h3>
+                  {isLive(selected) && (
+                    <div className={styles.liveText}>Live maintenant</div>
+                  )}
                 </div>
                 <button
                   type="button"
@@ -163,28 +166,26 @@ export default function PlanningPage({
                 </button>
               </div>
 
-              <div className={styles.detailList}>
-                <div>
-                  <span>Horaire</span>
-                  <strong>{selected.time}</strong>
+              <div className={styles.detailsContent}>
+                <div className={styles.detailList}>
+                  <div>
+                    <span>Horaire</span>
+                    <strong>{selected.time}</strong>
+                  </div>
+                  <div>
+                    <span>Salle</span>
+                    <strong>{selected.room}</strong>
+                  </div>
+                  <div>
+                    <span>Dur&eacute;e</span>
+                    <strong>{selected.duration}h</strong>
+                  </div>
                 </div>
-                <div>
-                  <span>Salle</span>
-                  <strong>{selected.room}</strong>
-                </div>
-                <div>
-                  <span>Dur&eacute;e</span>
-                  <strong>{selected.duration}h</strong>
-                </div>
+
+                {selected.description && (
+                  <p className={styles.description}>{selected.description}</p>
+                )}
               </div>
-
-              {selected.description && (
-                <p className={styles.description}>{selected.description}</p>
-              )}
-
-              {isLive(selected) && (
-                <div className={styles.liveText}>Live maintenant</div>
-              )}
 
               <button
                 type="button"

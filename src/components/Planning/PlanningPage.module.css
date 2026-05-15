@@ -167,7 +167,7 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 4px;
   padding: 6px 8px;
   border-radius: 8px;
@@ -180,6 +180,7 @@
   transition: background 0.18s ease, border-color 0.18s ease;
   overflow: hidden;
   box-sizing: border-box;
+  position: relative;
 }
 
 .event:hover,
@@ -194,7 +195,11 @@
   line-height: 1.25;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
+  white-space: normal;
+  word-break: break-word;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
 }
 
 .event small {
@@ -204,6 +209,9 @@
 }
 
 .liveBadge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
   width: fit-content;
   padding: 2px 6px;
   border-radius: 4px;
@@ -215,6 +223,9 @@
 }
 
 .favoriteBadge {
+  position: absolute;
+  top: 4px;
+  right: 44px;
   width: fit-content;
   padding: 2px 6px;
   border-radius: 4px;
@@ -230,6 +241,9 @@
   border-radius: 12px;
   box-sizing: border-box;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .detailsHeader {
@@ -237,6 +251,14 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 14px;
+  flex: 0 0 auto;
+}
+
+.detailsContent {
+  flex: 0 1 auto;
+  min-height: 0;
+  padding-right: 4px;
+  margin-top: 12px;
 }
 
 .detailsHeader h3,
@@ -263,7 +285,7 @@
 .detailList {
   display: grid;
   gap: 8px;
-  margin-top: 14px;
+  margin: 0 0 8px 0;
 }
 
 .detailList div {
@@ -296,20 +318,21 @@
 }
 
 .liveText {
-  margin-top: 16px;
-  padding: 10px 12px;
-  border-radius: 12px;
+  margin-top: 8px;
+  padding: 6px 10px;
+  border-radius: 8px;
   background: rgba(239, 68, 68, 0.12);
   border: 1px solid rgba(248, 113, 113, 0.28);
   color: #fecaca;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
 }
 
 .favoritePanelBtn,
 .favoritePanelActive {
+  flex: 0 0 auto;
   width: 100%;
-  margin-top: 14px;
+  margin-top: 12px;
   padding: 10px;
   border-radius: 8px;
   border: 1px solid rgba(239, 68, 68, 0.42);
@@ -333,8 +356,9 @@
 }
 
 .joinBtn {
+  flex: 0 0 auto;
   width: 100%;
-  margin-top: 14px;
+  margin-top: 8px;
   padding: 10px;
   border-radius: 8px;
   border: 0;

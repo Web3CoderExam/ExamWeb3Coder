@@ -10,7 +10,7 @@ export default function Navbar() {
   const pathname = usePathname();
 
   const links = [
-    { href: "/", label: "Accueil" },
+    { href: "/accueil", label: "Accueil" },
     { href: "/speakers", label: "Intervenants" },
     { href: "/planning", label: "Planning" },
     { href: "/favorites", label: "Favoris" },
@@ -18,7 +18,7 @@ export default function Navbar() {
 
   return (
     <header className={styles.navbar}>
-      <Link href="/" className={styles.logo}>
+      <Link href="/accueil" className={styles.logo}>
         <Image src="/logo-eventsync.svg" alt="EventSync" width={160} height={40} priority />
       </Link>
 
