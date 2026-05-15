@@ -13,6 +13,24 @@
       "sessions": [
         {
           "id": 101,
+          "time": "09:00",
+          "duration": 2,
+          "title": "Introduction",
+          "speaker": "Ben",
+          "room": "Room A",
+          "description": "Présentation générale du programme."
+        },
+        {
+          "id": 102,
+          "time": "11:00",
+          "duration": 1,
+          "title": "Drones et Capteurs",
+          "speaker": "Aina",
+          "room": "Room B",
+          "description": "Utilisation des drones pour collecter des données."
+        },
+        {
+          "id": 101,
           "title": "Introduction",
           "description": "Présentation générale du programme et des enjeux de l'AgriTech à Madagascar.",
           "date": "2026-05-15",
@@ -98,356 +116,85 @@
       "id": 2,
       "title": "Sommet FinTech Océan Indien",
       "date": "2026-06-20",
-      "startDate": "2026-06-20",
-      "endDate": "2026-06-20",
       "location": "Nosy Be",
       "category": "Finance",
       "description": "L'avenir du Mobile Money et de la Blockchain en Afrique.",
       "image": "https://images.unsplash.com/photo-1551288049-bbbda5366392",
       "sessions": [
-        {
-          "id": 201,
-          "title": "Panel : MVola & Inclusion",
-          "description": "Discussion autour du mobile money, de l'inclusion financière et des usages numériques dans l'Océan Indien.",
-          "date": "2026-06-20",
-          "time": "10:00",
-          "startTime": "10:00",
-          "endTime": "11:30",
-          "duration": 1.5,
-          "roomId": "room-main",
-          "room": "Salle Principale",
-          "capacity": 150,
-          "speakerId": "jean",
-          "speakerIds": ["jean"],
-          "questions": []
-        }
+        { "id": 201, "time": "10:00", "title": "Panel : MVola & Inclusion", "speaker": "Jean" }
       ]
     },
     {
       "id": 3,
       "title": "Festival Web3 & Créateurs",
       "date": "2026-08-05",
-      "startDate": "2026-08-05",
-      "endDate": "2026-08-05",
       "location": "Antsirabe",
       "category": "Technologie",
       "description": "Rencontre des développeurs et artistes sur le Web décentralisé.",
-      "image": "https://images.unsplash.com/photo-1551288049-bbbda5366392",
+      "image": "https://images.unsplash.com/photo-1550751827-4bd374c3f58b",
       "sessions": [
-        {
-          "id": 301,
-          "title": "Atelier Next.js 15",
-          "description": "Atelier pratique pour construire une interface moderne connectée à des services Web3.",
-          "date": "2026-08-05",
-          "time": "15:00",
-          "startTime": "15:00",
-          "endTime": "17:00",
-          "duration": 2,
-          "roomId": "room-workshop",
-          "room": "Atelier",
-          "capacity": 60,
-          "speakerId": "alpha",
-          "speakerIds": ["alpha"],
-          "questions": []
-        }
+        { "id": 301, "time": "15:00", "title": "Atelier Next.js 15", "speaker": "Alpha" }
       ]
     },
     {
       "id": 4,
       "title": "Workshop Machine Learning Appliqué",
       "date": "2026-09-12",
-      "startDate": "2026-09-12",
-      "endDate": "2026-09-12",
       "location": "Antananarivo",
       "category": "Intelligence Artificielle",
       "description": "Apprendre à entraîner des modèles de prédiction pour les entreprises locales.",
       "image": "https://images.unsplash.com/photo-1515879218367-8466d910aaa4",
       "sessions": [
-        {
-          "id": 401,
-          "title": "Introduction au Deep Learning",
-          "description": "Découverte des concepts fondamentaux du deep learning et de leurs cas d'usage en entreprise.",
-          "date": "2026-09-12",
-          "time": "08:30",
-          "startTime": "08:30",
-          "endTime": "10:00",
-          "duration": 1.5,
-          "roomId": "room-ai",
-          "room": "Salle IA",
-          "capacity": 90,
-          "speakerId": "ben",
-          "speakerIds": ["ben"],
-          "questions": []
-        }
+        { "id": 401, "time": "08:30", "title": "Introduction au Deep Learning", "speaker": "Ben" }
       ]
     },
     {
       "id": 5,
       "title": "Assises de la Digitalisation Administrative",
       "date": "2026-10-02",
-      "startDate": "2026-10-02",
-      "endDate": "2026-10-02",
       "location": "Toamasina",
       "category": "Digitalisation",
       "description": "Moderniser les services publics malgaches grâce aux outils numériques.",
       "image": "https://images.unsplash.com/photo-1450101499163-c8848c66ca85",
       "sessions": [
-        {
-          "id": 501,
-          "title": "Gouvernance et Cloud",
-          "description": "Présentation des bonnes pratiques pour héberger et sécuriser les services administratifs numériques.",
-          "date": "2026-10-02",
-          "time": "14:00",
-          "startTime": "14:00",
-          "endTime": "15:30",
-          "duration": 1.5,
-          "roomId": "room-cloud",
-          "room": "Salle Cloud",
-          "capacity": 110,
-          "speakerId": "aina-tsiory",
-          "speakerIds": ["aina-tsiory"],
-          "questions": []
-        }
+        { "id": 501, "time": "14:00", "title": "Gouvernance et Cloud", "speaker": "Aina Tsiory" }
       ]
     },
     {
       "id": 6,
       "title": "Forum Education 4.0",
       "date": "2026-11-20",
-      "startDate": "2026-11-20",
-      "endDate": "2026-11-20",
       "location": "Mahajanga",
       "category": "Digitalisation",
       "description": "Digitalisation des supports pédagogiques dans les universités.",
       "image": "https://images.unsplash.com/photo-1501504905252-473c47e087f8",
       "sessions": [
-        {
-          "id": 601,
-          "title": "Plateformes E-learning",
-          "description": "Présentation des plateformes numériques pour les cours, les évaluations et le suivi pédagogique.",
-          "date": "2026-11-20",
-          "time": "09:00",
-          "startTime": "09:00",
-          "endTime": "10:30",
-          "duration": 1.5,
-          "roomId": "room-education",
-          "room": "Salle Education",
-          "capacity": 100,
-          "speakerId": "narindra",
-          "speakerIds": ["narindra"],
-          "questions": []
-        }
+        { "id": 601, "time": "09:00", "title": "Plateformes E-learning", "speaker": "Nirindra" }
       ]
     },
     {
       "id": 7,
       "title": "Salon du Commerce Digital",
       "date": "2026-12-05",
-      "startDate": "2026-12-05",
-      "endDate": "2026-12-05",
       "location": "Antananarivo",
       "category": "Digitalisation",
       "description": "Comment les PME peuvent vendre en ligne efficacement.",
       "image": "https://images.unsplash.com/photo-1556742044-3c52d6e88c62",
       "sessions": [
-        {
-          "id": 701,
-          "title": "Stratégie E-commerce",
-          "description": "Méthodes pratiques pour lancer une boutique en ligne, organiser les paiements et fidéliser les clients.",
-          "date": "2026-12-05",
-          "time": "11:00",
-          "startTime": "11:00",
-          "endTime": "12:30",
-          "duration": 1.5,
-          "roomId": "room-commerce",
-          "room": "Salle Commerce",
-          "capacity": 130,
-          "speakerId": "fitiavana",
-          "speakerIds": ["fitiavana"],
-          "questions": []
-        }
+        { "id": 701, "time": "11:00", "title": "Stratégie E-commerce", "speaker": "Fitiavana" }
       ]
     },
     {
       "id": 8,
       "title": "Conférence IA & Santé",
       "date": "2027-01-18",
-      "startDate": "2027-01-18",
-      "endDate": "2027-01-18",
       "location": "Fianarantsoa",
       "category": "Intelligence Artificielle",
       "description": "Le rôle du Machine Learning dans le diagnostic médical à distance.",
       "image": "https://images.unsplash.com/photo-1576091160550-2173bdd99625",
       "sessions": [
-        {
-          "id": 801,
-          "title": "Analyse d'images médicales",
-          "description": "Utilisation du machine learning pour assister l'analyse d'images médicales et le diagnostic à distance.",
-          "date": "2027-01-18",
-          "time": "10:00",
-          "startTime": "10:00",
-          "endTime": "11:30",
-          "duration": 1.5,
-          "roomId": "room-health",
-          "room": "Salle Santé",
-          "capacity": 100,
-          "speakerId": "dr-randria",
-          "speakerIds": ["dr-randria"],
-          "questions": []
-        }
+        { "id": 801, "time": "10:00", "title": "Analyse d'images médicales", "speaker": "Dr. Randria" }
       ]
     }
-  ],
-  "rooms": [
-    {
-      "id": "room-a",
-      "name": "Room A"
-    },
-    {
-      "id": "room-b",
-      "name": "Room B"
-    },
-    {
-      "id": "room-c",
-      "name": "Room C"
-    },
-    {
-      "id": "room-main",
-      "name": "Salle Principale"
-    },
-    {
-      "id": "room-workshop",
-      "name": "Atelier"
-    },
-    {
-      "id": "room-ai",
-      "name": "Salle IA"
-    },
-    {
-      "id": "room-cloud",
-      "name": "Salle Cloud"
-    },
-    {
-      "id": "room-education",
-      "name": "Salle Education"
-    },
-    {
-      "id": "room-commerce",
-      "name": "Salle Commerce"
-    },
-    {
-      "id": "room-health",
-      "name": "Salle Santé"
-    }
-  ],
-  "speakers": [
-    {
-      "id": "ben",
-      "name": "Ben",
-      "role": "Expert Agriculture et IA",
-      "avatar": "https://i.pravatar.cc/150?img=12",
-      "bio": "Spécialiste des systèmes agricoles modernes et de l'utilisation de l'intelligence artificielle pour l'aide à la décision.",
-      "links": {
-        "LinkedIn": "https://www.linkedin.com",
-        "Site web": "https://example.com"
-      },
-      "sessionIds": [101, 401]
-    },
-    {
-      "id": "aina",
-      "name": "Aina",
-      "role": "Ingénieure IoT",
-      "avatar": "https://i.pravatar.cc/150?img=20",
-      "bio": "Travaille sur les capteurs connectés, les drones et la collecte de données terrain.",
-      "links": {
-        "LinkedIn": "https://www.linkedin.com",
-        "Site web": "https://example.com"
-      },
-      "sessionIds": [102]
-    },
-    {
-      "id": "david",
-      "name": "David",
-      "role": "Expert Agriculture Durable",
-      "avatar": "https://i.pravatar.cc/150?img=60",
-      "bio": "Travaille sur l'agriculture durable, les pratiques responsables et l'adaptation des exploitations agricoles.",
-      "links": {
-        "LinkedIn": "https://www.linkedin.com",
-        "Site web": "https://example.com"
-      },
-      "sessionIds": [103]
-    },
-    {
-      "id": "fitiavana",
-      "name": "Fitiavana",
-      "role": "Data Scientist",
-      "avatar": "https://i.pravatar.cc/150?img=32",
-      "bio": "Experte en analyse de données appliquée à l'agriculture, au commerce digital et à la prise de décision.",
-      "links": {
-        "LinkedIn": "https://www.linkedin.com",
-        "Site web": "https://example.com"
-      },
-      "sessionIds": [104, 701]
-    },
-    {
-      "id": "alpha",
-      "name": "Alpha",
-      "role": "Développeur Web3",
-      "avatar": "https://i.pravatar.cc/150?img=56",
-      "bio": "Développe des interfaces modernes pour les applications Web3 et les plateformes numériques.",
-      "links": {
-        "LinkedIn": "https://www.linkedin.com",
-        "GitHub": "https://github.com"
-      },
-      "sessionIds": [104, 301]
-    },
-    {
-      "id": "jean",
-      "name": "Jean",
-      "role": "Consultant FinTech",
-      "avatar": "https://i.pravatar.cc/150?img=8",
-      "bio": "Accompagne les entreprises dans la mise en place de solutions de paiement mobile et d'inclusion financière.",
-      "links": {
-        "LinkedIn": "https://www.linkedin.com"
-      },
-      "sessionIds": [201]
-    },
-    {
-      "id": "aina-tsiory",
-      "name": "Aina Tsiory",
-      "role": "Architecte Cloud",
-      "avatar": "https://i.pravatar.cc/150?img=28",
-      "bio": "Spécialiste de la gouvernance numérique, du cloud et de la transformation des services publics.",
-      "links": {
-        "LinkedIn": "https://www.linkedin.com",
-        "Site web": "https://example.com"
-      },
-      "sessionIds": [501]
-    },
-    {
-      "id": "narindra",
-      "name": "Narindra",
-      "role": "Consultant EdTech",
-      "avatar": "https://i.pravatar.cc/150?img=30",
-      "bio": "Accompagne les universités dans la digitalisation des supports pédagogiques et des plateformes d'apprentissage.",
-      "links": {
-        "LinkedIn": "https://www.linkedin.com",
-        "Site web": "https://example.com"
-      },
-      "sessionIds": [601]
-    },
-    {
-      "id": "dr-randria",
-      "name": "Dr. Randria",
-      "role": "Médecin et chercheur IA",
-      "avatar": "https://i.pravatar.cc/150?img=59",
-      "bio": "Travaille sur l'utilisation du machine learning pour l'aide au diagnostic médical à distance.",
-      "links": {
-        "LinkedIn": "https://www.linkedin.com",
-        "Site web": "https://example.com"
-      },
-      "sessionIds": [801]
-    }
-  ],
-  "favorites": [101, 103, 301, 601]
+  ]
 }
