@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import useFavorites from "@/hooks/useFavorites";
 import styles from "./PlanningPage.module.css";
 
+const DEFAULT_ROOMS = ["Room A", "Room B", "Room C"];
+
 export default function PlanningPage({
   events = [],
   selectedEventId,
@@ -23,7 +25,12 @@ export default function PlanningPage({
   const dateText = startDate === endDate ? startDate : `${startDate} - ${endDate}`;
 
   const sessions = event?.sessions ?? [];
-  const rooms = Array.from(new Set(sessions.map((session) => session.room)));
+  const rooms = [
+    ...DEFAULT_ROOMS,
+    ...Array.from(new Set(sessions.map((session) => session.room))).filter(
+      (room) => !DEFAULT_ROOMS.includes(room)
+    ),
+  ];
   const visibleRooms = selectedRoom === "Toutes" ? rooms : [selectedRoom];
   const visibleSessions = sessions.filter((session) => {
     return selectedRoom === "Toutes" || session.room === selectedRoom;
