@@ -1,26 +1,18 @@
 import SessionView from "./SessionView";
-import data from "@/data/mockData.json";
+import { getDefaultFavorites, getSessionById, getSpeakers } from "@/lib/public-data";
+
+export const dynamic = "force-dynamic";
 
 export default async function Page({ params }) {
   const { id } = await params;
-
   const sessionId = String(id);
+  const [sessionData, speakers, defaultFavorites] = await Promise.all([
+    getSessionById(sessionId),
+    getSpeakers(),
+    getDefaultFavorites(),
+  ]);
 
-  let session = null;
-  let event = null;
-
-  for (const item of data.events) {
-    session = item.sessions.find(
-      (s) => String(s.id) === sessionId
-    );
-
-    if (session) {
-      event = item;
-      break;
-    }
-  }
-
-  if (!session) {
+  if (!sessionData) {
     return (
       <div style={{ padding: 20 }}>
         Session introuvable (id: {sessionId})
@@ -30,10 +22,10 @@ export default async function Page({ params }) {
 
   return (
     <SessionView
-      event={event}
-      session={session}
-      speakers={data.speakers}
-      defaultFavorites={data.favorites}
+      event={sessionData.event}
+      session={sessionData.session}
+      speakers={speakers}
+      defaultFavorites={defaultFavorites}
     />
   );
 }

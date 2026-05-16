@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import styles from "./SpeakerCard.module.css";
 
 export default function SpeakerCard({ speaker, sessionsCount, href }) {
@@ -6,7 +7,13 @@ export default function SpeakerCard({ speaker, sessionsCount, href }) {
     <Link href={href} className={styles.card}>
       <div className={styles.left}>
         <div className={styles.avatarWrapper}>
-          <img src={speaker.avatar} className={styles.avatar} alt={speaker.name} />
+          <Image
+            src={speaker.avatar}
+            className={styles.avatar}
+            alt={speaker.name}
+            width={64}
+            height={64}
+          />
           <span className={styles.badge}>{sessionsCount}</span>
         </div>
 

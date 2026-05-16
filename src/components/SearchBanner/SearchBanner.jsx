@@ -11,7 +11,7 @@ export default function SearchBanner() {
     const handleSearch = (e) => {
         e.preventDefault();
         if (searchQuery.trim()) {
-            router.push(`/?search=${encodeURIComponent(searchQuery.trim())}`);
+            router.push(`/accueil?search=${encodeURIComponent(searchQuery.trim())}`);
         }
     };
 

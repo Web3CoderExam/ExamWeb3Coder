@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { ThumbsUp } from "lucide-react";
 import useFavorites from "@/hooks/useFavorites";
 import styles from "./SessionPage.module.css";
@@ -34,7 +35,7 @@ export default function SessionView({ event, session, speakers, defaultFavorites
   const [input, setInput] = useState("");
   const [name, setName] = useState("");
   const [tab, setTab] = useState("popular");
-  const [now, setNow] = useState(Date.now());
+  const [now, setNow] = useState(0);
   const { isFavorite, toggleFavorite } = useFavorites(defaultFavorites);
   const sessionDate = session.date || event.startDate || event.date;
   const questionKey = `questions-${session.id}`;
@@ -46,8 +47,12 @@ export default function SessionView({ event, session, speakers, defaultFavorites
   const favorite = isFavorite(session.id);
 
   useEffect(() => {
+    const initialTimer = setTimeout(() => setNow(Date.now()), 0);
     const timer = setInterval(() => setNow(Date.now()), 1000);
-    return () => clearInterval(timer);
+    return () => {
+      clearTimeout(initialTimer);
+      clearInterval(timer);
+    };
   }, []);
 
   const isLive = () => {
@@ -59,9 +64,13 @@ export default function SessionView({ event, session, speakers, defaultFavorites
   };
 
   useEffect(() => {
-    const savedQuestions = JSON.parse(localStorage.getItem(questionKey) || "[]");
-    setQuestions(mergeQuestions(session.questions || [], savedQuestions));
-    setIsLoaded(true);
+    const timer = setTimeout(() => {
+      const savedQuestions = JSON.parse(localStorage.getItem(questionKey) || "[]");
+      setQuestions(mergeQuestions(session.questions || [], savedQuestions));
+      setIsLoaded(true);
+    }, 0);
+
+    return () => clearTimeout(timer);
   }, [questionKey, session.questions]);
 
   useEffect(() => {
@@ -141,7 +150,12 @@ export default function SessionView({ event, session, speakers, defaultFavorites
                 href={`/speakers/${speaker.id}`}
                 className={styles.speaker}
               >
-                <img src={speaker.avatar} alt={speaker.name} />
+                <Image
+                  src={speaker.avatar}
+                  alt={speaker.name}
+                  width={48}
+                  height={48}
+                />
                 <div>
                   <strong>{speaker.name}</strong>
                   <span>{speaker.role}</span>

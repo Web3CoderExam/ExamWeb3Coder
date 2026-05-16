@@ -1,6 +1,9 @@
 import Link from "next/link";
-import data from "@/data/mockData.json";
+import Image from "next/image";
 import styles from "./SpeakerProfile.module.css";
+import { getSessions, getSpeakerById } from "@/lib/public-data";
+
+export const dynamic = "force-dynamic";
 
 function getSessionSpeakerIds(session) {
   if (Array.isArray(session.speakerIds) && session.speakerIds.length > 0) {
@@ -12,7 +15,7 @@ function getSessionSpeakerIds(session) {
 
 export default async function Page({ params }) {
   const { id } = await params;
-  const speaker = data.speakers.find((item) => item.id === id);
+  const speaker = await getSpeakerById(id);
 
   if (!speaker) {
     return (
@@ -27,14 +30,9 @@ export default async function Page({ params }) {
     );
   }
 
-  const sessions = data.events
-    .flatMap((event) => {
-      return event.sessions.map((session) => ({
-        ...session,
-        eventTitle: event.title,
-      }));
-    })
-    .filter((session) => getSessionSpeakerIds(session).includes(speaker.id));
+  const sessions = (await getSessions()).filter((session) =>
+    getSessionSpeakerIds(session).includes(speaker.id)
+  );
 
   const links = Object.entries(speaker.links || {});
 
@@ -46,7 +44,13 @@ export default async function Page({ params }) {
         </Link>
 
         <section className={styles.hero}>
-          <img src={speaker.avatar} alt={speaker.name} className={styles.avatar} />
+          <Image
+            src={speaker.avatar}
+            alt={speaker.name}
+            className={styles.avatar}
+            width={140}
+            height={140}
+          />
 
           <div className={styles.heroText}>
             <span className={styles.badge}>Intervenant</span>

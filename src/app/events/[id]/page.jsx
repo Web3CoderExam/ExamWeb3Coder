@@ -1,10 +1,16 @@
 import Link from "next/link";
-import data from "@/data/mockData.json";
 import EventPage from "@/components/EventPage/EventPage";
+import { getDefaultFavorites, getEventById, getSpeakers } from "@/lib/public-data";
+
+export const dynamic = "force-dynamic";
 
 export default async function Page({ params }) {
   const { id } = await params;
-  const event = data.events.find((item) => String(item.id) === String(id));
+  const [event, speakers, defaultFavorites] = await Promise.all([
+    getEventById(id),
+    getSpeakers(),
+    getDefaultFavorites(),
+  ]);
 
   if (!event) {
     return (
@@ -19,8 +25,8 @@ export default async function Page({ params }) {
     <EventPage
       event={event}
       sessions={event.sessions}
-      speakers={data.speakers}
-      defaultFavorites={data.favorites}
+      speakers={speakers}
+      defaultFavorites={defaultFavorites}
     />
   );
 }

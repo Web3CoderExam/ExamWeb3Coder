@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import useFavorites from "@/hooks/useFavorites";
 import styles from "./EventPage.module.css";
@@ -105,7 +106,12 @@ export default function EventPage({
                         href={`/speakers/${speaker.id}`}
                         className={styles.speaker}
                       >
-                        <img src={speaker.avatar} alt={speaker.name} />
+                        <Image
+                          src={speaker.avatar}
+                          alt={speaker.name}
+                          width={48}
+                          height={48}
+                        />
                         <div>
                           <strong>{speaker.name}</strong>
                           <span>{speaker.role}</span>
