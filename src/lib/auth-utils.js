@@ -1,13 +1,16 @@
-export async function verifyUser(email, password) {
-    // Pour l'instant, on utilise tes données de test
-    // Plus tard, on utilisera getDb() pour chercher dans PostgreSQL
-    const mockUsers = [
-        { id: 1, email: "ben@hei.mg", password: "password123", name: "Ben", role: "admin" }
-    ];
+import { getDb } from './db';
+import bcrypt from 'bcryptjs';
 
-    const user = mockUsers.find(u => u.email === email && u.password === password);
+export async function verifyUser(email, password) {
+    const db = await getDb();
+
+    const result = await db.query('SELECT * FROM users WHERE email = $1', [email]);
+    const user = result.rows[0];
 
     if (!user) return null;
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) return null;
 
     const { password: _, ...userWithoutPassword } = user;
     return userWithoutPassword;
