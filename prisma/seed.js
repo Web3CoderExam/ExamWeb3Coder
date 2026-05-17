@@ -1,5 +1,6 @@
 const { existsSync, readFileSync } = require("node:fs");
 const { resolve } = require("node:path");
+const bcrypt = require("bcryptjs");
 const { PrismaClient } = require("@prisma/client");
 const { PrismaPg } = require("@prisma/adapter-pg");
 
@@ -24,11 +25,37 @@ const data = JSON.parse(
   readFileSync(resolve(process.cwd(), "src/data/mockData.json"), "utf8")
 );
 
+function computeEndTime(startTime, duration) {
+  if (!startTime || duration == null) return null;
+
+  const [hours, minutes] = startTime.split(":").map(Number);
+  if (Number.isNaN(hours) || Number.isNaN(minutes)) return null;
+
+  const date = new Date();
+  date.setHours(hours, minutes, 0, 0);
+  date.setMinutes(date.getMinutes() + Math.round(duration * 60));
+
+  return date.toTimeString().slice(0, 5);
+}
+
 async function main() {
   await prisma.question.deleteMany();
   await prisma.session.deleteMany();
   await prisma.event.deleteMany();
   await prisma.speaker.deleteMany();
+  await prisma.user.deleteMany();
+
+  const defaultPassword = process.env.SEED_ADMIN_PASSWORD || "Password123";
+  const hashedPassword = await bcrypt.hash(defaultPassword, 10);
+
+  await prisma.user.create({
+    data: {
+      email: process.env.SEED_ADMIN_EMAIL || "admin@example.com",
+      password: hashedPassword,
+      name: "Admin EventSync",
+      role: "organizer",
+    },
+  });
 
   for (const speaker of data.speakers) {
     await prisma.speaker.create({
@@ -61,15 +88,19 @@ async function main() {
           create: (event.sessions || []).map((session) => {
             const speakerIds = session.speakerIds || [session.speakerId].filter(Boolean);
 
+            const startTime = session.startTime || session.time;
+            const duration = session.duration || 1;
+            const endTime = session.endTime || computeEndTime(startTime, duration);
+
             return {
               id: session.id,
               title: session.title,
               description: session.description,
               date: new Date(session.date || event.date),
               time: session.time || session.startTime,
-              startTime: session.startTime || session.time,
-              endTime: session.endTime,
-              duration: session.duration || 1,
+              startTime,
+              endTime,
+              duration,
               roomId: session.roomId,
               room: session.room || "Room A",
               capacity: session.capacity,

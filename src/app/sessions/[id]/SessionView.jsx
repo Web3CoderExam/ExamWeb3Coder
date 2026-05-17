@@ -29,6 +29,25 @@ function getSessionSpeakerIds(session) {
   return session.speakerId ? [session.speakerId] : [];
 }
 
+function computeEndTime(startTime, duration) {
+  if (!startTime || duration == null) return null;
+
+  const [hours, minutes] = startTime.split(":").map(Number);
+  if (Number.isNaN(hours) || Number.isNaN(minutes)) return null;
+
+  const date = new Date();
+  date.setHours(hours, minutes, 0, 0);
+  date.setMinutes(date.getMinutes() + Math.round(duration * 60));
+
+  return date.toTimeString().slice(0, 5);
+}
+
+function getSessionTimeRange(session) {
+  const startTime = session.startTime || session.time;
+  const endTime = session.endTime || computeEndTime(startTime, session.duration);
+  return endTime ? `${startTime} - ${endTime}` : startTime;
+}
+
 export default function SessionView({ event, session, speakers, defaultFavorites }) {
   const [questions, setQuestions] = useState([]);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -57,8 +76,12 @@ export default function SessionView({ event, session, speakers, defaultFavorites
 
   const isLive = () => {
     const nowDate = new Date(now);
-    const start = new Date(`${sessionDate}T${session.time}`);
-    const end = new Date(start.getTime() + session.duration * 60 * 60 * 1000);
+    const startTime = session.startTime || session.time;
+    const endTime = session.endTime || computeEndTime(startTime, session.duration);
+    const start = new Date(`${sessionDate}T${startTime}`);
+    const end = endTime
+      ? new Date(`${sessionDate}T${endTime}`)
+      : new Date(start.getTime() + session.duration * 60 * 60 * 1000);
 
     return nowDate >= start && nowDate <= end;
   };
@@ -120,7 +143,7 @@ export default function SessionView({ event, session, speakers, defaultFavorites
           <h1>{session.title}</h1>
 
           <div className={styles.meta}>
-            <span>{session.time}</span>
+            <span>{getSessionTimeRange(session)}</span>
             <span>{session.room}</span>
             <span>{session.capacity} places</span>
           </div>

@@ -14,6 +14,25 @@ function getSessionSpeakerIds(session) {
   return session.speakerId ? [session.speakerId] : [];
 }
 
+function computeEndTime(startTime, duration) {
+  if (!startTime || duration == null) return null;
+
+  const [hours, minutes] = startTime.split(":").map(Number);
+  if (Number.isNaN(hours) || Number.isNaN(minutes)) return null;
+
+  const date = new Date();
+  date.setHours(hours, minutes, 0, 0);
+  date.setMinutes(date.getMinutes() + Math.round(duration * 60));
+
+  return date.toTimeString().slice(0, 5);
+}
+
+function getSessionTimeRange(session) {
+  const startTime = session.startTime || session.time;
+  const endTime = session.endTime || computeEndTime(startTime, session.duration);
+  return endTime ? `${startTime} - ${endTime}` : startTime;
+}
+
 export default function EventPage({
   event,
   sessions,
@@ -35,8 +54,12 @@ export default function EventPage({
   const isLive = (session) => {
     const now = new Date();
     const sessionDate = session.date || event.startDate || event.date;
-    const start = new Date(`${sessionDate}T${session.time}`);
-    const end = new Date(start.getTime() + session.duration * 60 * 60 * 1000);
+    const startTime = session.startTime || session.time;
+    const endTime = session.endTime || computeEndTime(startTime, session.duration);
+    const start = new Date(`${sessionDate}T${startTime}`);
+    const end = endTime
+      ? new Date(`${sessionDate}T${endTime}`)
+      : new Date(start.getTime() + session.duration * 60 * 60 * 1000);
 
     return now >= start && now <= end;
   };
@@ -85,7 +108,7 @@ export default function EventPage({
                 className={styles.card}
               >
                 <div className={styles.cardTop}>
-                  <span className={styles.time}>{session.time}</span>
+                  <span className={styles.time}>{getSessionTimeRange(session)}</span>
                   {live && <span className={styles.live}>LIVE</span>}
                 </div>
 

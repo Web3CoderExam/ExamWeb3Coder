@@ -7,6 +7,25 @@ import styles from "./PlanningPage.module.css";
 
 const DEFAULT_ROOMS = ["Room A", "Room B", "Room C"];
 
+function computeEndTime(startTime, duration) {
+  if (!startTime || duration == null) return null;
+
+  const [hours, minutes] = startTime.split(":").map(Number);
+  if (Number.isNaN(hours) || Number.isNaN(minutes)) return null;
+
+  const date = new Date();
+  date.setHours(hours, minutes, 0, 0);
+  date.setMinutes(date.getMinutes() + Math.round(duration * 60));
+
+  return date.toTimeString().slice(0, 5);
+}
+
+function getSessionTimeRange(session) {
+  const startTime = session.startTime || session.time;
+  const endTime = session.endTime || computeEndTime(startTime, session.duration);
+  return endTime ? `${startTime} - ${endTime}` : startTime;
+}
+
 export default function PlanningPage({
   events = [],
   selectedEventId,
@@ -39,8 +58,12 @@ export default function PlanningPage({
   const isLive = (session) => {
     const now = new Date();
     const sessionDate = session.date || startDate;
-    const start = new Date(`${sessionDate}T${session.time}`);
-    const end = new Date(start.getTime() + session.duration * 60 * 60 * 1000);
+    const startTime = session.startTime || session.time;
+    const endTime = session.endTime || computeEndTime(startTime, session.duration);
+    const start = new Date(`${sessionDate}T${startTime}`);
+    const end = endTime
+      ? new Date(`${sessionDate}T${endTime}`)
+      : new Date(start.getTime() + session.duration * 60 * 60 * 1000);
 
     return now >= start && now <= end;
   };
@@ -133,7 +156,7 @@ export default function PlanningPage({
                           onClick={() => openSession(session)}
                         >
                           <strong>{session.title}</strong>
-                          <small>{session.time} &bull; {session.room}</small>
+                          <small>{getSessionTimeRange(session)} • {session.room}</small>
 
                           {isLive(session) && (
                             <span className={styles.liveBadge}>LIVE</span>
@@ -177,7 +200,7 @@ export default function PlanningPage({
                 <div className={styles.detailList}>
                   <div>
                     <span>Horaire</span>
-                    <strong>{selected.time}</strong>
+                    <strong>{getSessionTimeRange(selected)}</strong>
                   </div>
                   <div>
                     <span>Salle</span>

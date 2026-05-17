@@ -4,6 +4,25 @@ import Link from "next/link";
 import useFavorites from "@/hooks/useFavorites";
 import styles from "./FavoritesView.module.css";
 
+function computeEndTime(startTime, duration) {
+  if (!startTime || duration == null) return null;
+
+  const [hours, minutes] = startTime.split(":").map(Number);
+  if (Number.isNaN(hours) || Number.isNaN(minutes)) return null;
+
+  const date = new Date();
+  date.setHours(hours, minutes, 0, 0);
+  date.setMinutes(date.getMinutes() + Math.round(duration * 60));
+
+  return date.toTimeString().slice(0, 5);
+}
+
+function getSessionTimeRange(session) {
+  const startTime = session.startTime || session.time;
+  const endTime = session.endTime || computeEndTime(startTime, session.duration);
+  return endTime ? `${startTime} - ${endTime}` : startTime;
+}
+
 export default function FavoritesView({ sessions, defaultFavorites }) {
   const { favorites, toggleFavorite } = useFavorites(defaultFavorites);
 
@@ -42,7 +61,7 @@ export default function FavoritesView({ sessions, defaultFavorites }) {
             {favoriteSessions.map((session) => (
               <article key={session.id} className={styles.card}>
                 <div className={styles.cardTop}>
-                  <span className={styles.time}>{session.time}</span>
+                  <span className={styles.time}>{getSessionTimeRange(session)}</span>
                   <span className={styles.room}>{session.room}</span>
                 </div>
 

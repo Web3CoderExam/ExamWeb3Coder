@@ -20,6 +20,25 @@ function mapQuestion(question) {
   };
 }
 
+function computeEndTime(startTime, duration) {
+  if (!startTime || duration == null) return null;
+
+  const [hours, minutes] = startTime.split(":").map(Number);
+  if (Number.isNaN(hours) || Number.isNaN(minutes)) return null;
+
+  const date = new Date();
+  date.setHours(hours, minutes, 0, 0);
+  date.setMinutes(date.getMinutes() + Math.round(duration * 60));
+
+  return date.toTimeString().slice(0, 5);
+}
+
+function getSessionTimeRange({ startTime, endTime, duration }) {
+  const effectiveStart = startTime || null;
+  const effectiveEnd = endTime || computeEndTime(effectiveStart, duration);
+  return effectiveEnd ? `${effectiveStart} - ${effectiveEnd}` : effectiveStart;
+}
+
 export function mapSpeaker(speaker) {
   const avatar = speaker.avatar || speaker.image || FALLBACK_AVATAR;
 
@@ -38,6 +57,8 @@ export function mapSpeaker(speaker) {
 function mapSession(session, event) {
   const speakers = session.speakers || [];
   const speakerIds = speakers.map((speaker) => speaker.id);
+  const startTime = session.startTime || session.time;
+  const endTime = session.endTime || computeEndTime(startTime, session.duration);
 
   return {
     id: session.id,
@@ -45,8 +66,9 @@ function mapSession(session, event) {
     description: session.description || "",
     date: toDateString(session.date || event?.date),
     time: session.time,
-    startTime: session.startTime || session.time,
-    endTime: session.endTime,
+    startTime,
+    endTime,
+    timeRange: getSessionTimeRange({ startTime, endTime, duration: session.duration }),
     duration: session.duration,
     roomId: session.roomId,
     room: session.room,

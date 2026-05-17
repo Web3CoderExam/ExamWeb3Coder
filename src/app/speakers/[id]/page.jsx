@@ -106,7 +106,7 @@ export default async function Page({ params }) {
                 </div>
 
                 <div className={styles.sessionMeta}>
-                  <span>{session.time}</span>
+                  <span>{session.timeRange || session.time}</span>
                   <span>{session.room}</span>
                   <span>{session.duration}h</span>
                 </div>
