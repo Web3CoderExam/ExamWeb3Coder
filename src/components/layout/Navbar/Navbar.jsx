@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { User } from "lucide-react";
 import Image from "next/image";
 import styles from "./Navbar.module.css";
 
@@ -33,14 +32,6 @@ export default function Navbar() {
           </Link>
         ))}
       </nav>
-
-      <div className={styles.right}>
-        <Link href="/login" className={styles.admin}>
-          Admin
-        </Link>
-
-        <User className={styles.icon} />
-      </div>
     </header>
   );
 }

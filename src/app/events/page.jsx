@@ -1,7 +1,11 @@
 
-import data from "@/data/mockData.json";
 import EventsList from "@/components/EventsList/EventsList";
+import { getEvents } from "@/lib/public-data";
 
-export default function Page() {
-  return <EventsList events={data.events} />;
+export const dynamic = "force-dynamic";
+
+export default async function Page() {
+  const events = await getEvents();
+
+  return <EventsList events={events} />;
 }

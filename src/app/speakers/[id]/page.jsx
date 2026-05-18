@@ -1,6 +1,9 @@
 import Link from "next/link";
-import data from "@/data/mockData.json";
+import Image from "next/image";
 import styles from "./SpeakerProfile.module.css";
+import { getSessions, getSpeakerById } from "@/lib/public-data";
+
+export const dynamic = "force-dynamic";
 
 function getSessionSpeakerIds(session) {
   if (Array.isArray(session.speakerIds) && session.speakerIds.length > 0) {
@@ -12,7 +15,7 @@ function getSessionSpeakerIds(session) {
 
 export default async function Page({ params }) {
   const { id } = await params;
-  const speaker = data.speakers.find((item) => item.id === id);
+  const speaker = await getSpeakerById(id);
 
   if (!speaker) {
     return (
@@ -27,16 +30,19 @@ export default async function Page({ params }) {
     );
   }
 
-  const sessions = data.events
-    .flatMap((event) => {
-      return event.sessions.map((session) => ({
-        ...session,
-        eventTitle: event.title,
-      }));
-    })
-    .filter((session) => getSessionSpeakerIds(session).includes(speaker.id));
+  const sessions = (await getSessions()).filter((session) =>
+    getSessionSpeakerIds(session).includes(speaker.id)
+  );
 
   const links = Object.entries(speaker.links || {});
+  const questions = sessions
+    .flatMap((session) =>
+      (session.questions || []).map((question) => ({
+        ...question,
+        sessionTitle: session.title,
+      }))
+    )
+    .sort((a, b) => b.upvotes - a.upvotes || new Date(b.createdAt) - new Date(a.createdAt));
 
   return (
     <main className={styles.container}>
@@ -46,7 +52,13 @@ export default async function Page({ params }) {
         </Link>
 
         <section className={styles.hero}>
-          <img src={speaker.avatar} alt={speaker.name} className={styles.avatar} />
+          <Image
+            src={speaker.avatar}
+            alt={speaker.name}
+            className={styles.avatar}
+            width={140}
+            height={140}
+          />
 
           <div className={styles.heroText}>
             <span className={styles.badge}>Intervenant</span>
@@ -102,13 +114,38 @@ export default async function Page({ params }) {
                 </div>
 
                 <div className={styles.sessionMeta}>
-                  <span>{session.time}</span>
+                  <span>{session.timeRange || session.time}</span>
                   <span>{session.room}</span>
                   <span>{session.duration}h</span>
                 </div>
               </Link>
             ))}
           </div>
+        </section>
+
+        <section className={styles.sessions}>
+          <div className={styles.sectionTitle}>
+            <span className={styles.badge}>Questions</span>
+            <h2>Questions associées</h2>
+          </div>
+
+          {questions.length > 0 ? (
+            <div className={styles.questionList}>
+              {questions.map((question) => (
+                <article key={question.id} className={styles.questionCard}>
+                  <div>
+                    <strong>{question.content}</strong>
+                    <p>
+                      {question.sessionTitle} - {question.author || "Anonyme"}
+                    </p>
+                  </div>
+                  <span>{question.upvotes} vote{question.upvotes > 1 ? "s" : ""}</span>
+                </article>
+              ))}
+            </div>
+          ) : (
+            <p className={styles.empty}>Aucune question pour le moment.</p>
+          )}
         </section>
       </div>
     </main>

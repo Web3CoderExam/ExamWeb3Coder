@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import styles from "./EventsList.module.css";
 
 export default function EventsList({ events }) {
@@ -23,7 +24,13 @@ export default function EventsList({ events }) {
 
                         return (
                             <article key={event.id} className={styles.card}>
-                                <img src={event.image} alt={event.title} className={styles.image} />
+                                <Image
+                                    src={event.image}
+                                    alt={event.title}
+                                    className={styles.image}
+                                    width={640}
+                                    height={360}
+                                />
 
                                 <div className={styles.content}>
                                     <div className={styles.topline}>

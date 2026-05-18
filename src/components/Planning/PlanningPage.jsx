@@ -5,8 +5,32 @@ import { useRouter } from "next/navigation";
 import useFavorites from "@/hooks/useFavorites";
 import styles from "./PlanningPage.module.css";
 
+const DEFAULT_ROOMS = ["Room A", "Room B", "Room C"];
+const START_HOUR = 9;
+const END_HOUR = 16;
+
+function computeEndTime(startTime, duration) {
+  if (!startTime || duration == null) return null;
+
+  const [hours, minutes] = startTime.split(":").map(Number);
+  if (Number.isNaN(hours) || Number.isNaN(minutes)) return null;
+
+  const date = new Date();
+  date.setHours(hours, minutes, 0, 0);
+  date.setMinutes(date.getMinutes() + Math.round(duration * 60));
+
+  return date.toTimeString().slice(0, 5);
+}
+
+function getSessionTimeRange(session) {
+  const startTime = session.startTime || session.time;
+  const endTime = session.endTime || computeEndTime(startTime, session.duration);
+  return endTime ? `${startTime} - ${endTime}` : startTime;
+}
+
 export default function PlanningPage({
   events = [],
+  speakers = [],
   selectedEventId,
   defaultFavorites = [],
 }) {
@@ -23,30 +47,42 @@ export default function PlanningPage({
   const dateText = startDate === endDate ? startDate : `${startDate} - ${endDate}`;
 
   const sessions = event?.sessions ?? [];
-  const rooms = Array.from(new Set(sessions.map((session) => session.room)));
+  const rooms = [
+    ...DEFAULT_ROOMS,
+    ...Array.from(new Set(sessions.map((session) => session.room))).filter(
+      (room) => !DEFAULT_ROOMS.includes(room)
+    ),
+  ];
   const visibleRooms = selectedRoom === "Toutes" ? rooms : [selectedRoom];
   const visibleSessions = sessions.filter((session) => {
     return selectedRoom === "Toutes" || session.room === selectedRoom;
   });
 
+  const getSessionSpeakers = (session) => {
+    const speakerIds = Array.isArray(session.speakerIds)
+      ? session.speakerIds
+      : [session.speakerId].filter(Boolean);
+
+    return speakers.filter((speaker) => speakerIds.includes(speaker.id));
+  };
+
   const isLive = (session) => {
     const now = new Date();
     const sessionDate = session.date || startDate;
-    const start = new Date(`${sessionDate}T${session.time}`);
-    const end = new Date(start.getTime() + session.duration * 60 * 60 * 1000);
+    const startTime = session.startTime || session.time;
+    const endTime = session.endTime || computeEndTime(startTime, session.duration);
+    const start = new Date(`${sessionDate}T${startTime}`);
+    const end = endTime
+      ? new Date(`${sessionDate}T${endTime}`)
+      : new Date(start.getTime() + session.duration * 60 * 60 * 1000);
 
     return now >= start && now <= end;
   };
 
-  const hours = visibleSessions.length
-    ? (() => {
-        const allHours = visibleSessions.map((s) => parseInt(s.time.split(":")[0], 10));
-        const min = Math.min(...allHours);
-        const max = Math.max(...allHours);
-
-        return Array.from({ length: max - min + 2 }, (_, i) => min - 1 + i);
-      })()
-    : [];
+  const hours = Array.from(
+    { length: END_HOUR - START_HOUR + 1 },
+    (_, i) => START_HOUR + i
+  );
 
   const openSession = (session) => {
     setSelected((current) => (current?.id === session.id ? null : session));
@@ -111,6 +147,7 @@ export default function PlanningPage({
                     const sessionHour = parseInt(s.time.split(":")[0], 10);
                     return s.room === room && sessionHour === hour;
                   });
+                  const sessionSpeakers = session ? getSessionSpeakers(session) : [];
 
                   const isSelected = selected?.id === session?.id;
                   const eventClassName = isSelected
@@ -126,7 +163,12 @@ export default function PlanningPage({
                           onClick={() => openSession(session)}
                         >
                           <strong>{session.title}</strong>
-                          <small>{session.time} &bull; {session.room}</small>
+
+                          {sessionSpeakers.length > 0 && (
+                            <small>
+                              {sessionSpeakers.map((speaker) => speaker.name).join(", ")}
+                            </small>
+                          )}
 
                           {isLive(session) && (
                             <span className={styles.liveBadge}>LIVE</span>
@@ -170,7 +212,7 @@ export default function PlanningPage({
                 <div className={styles.detailList}>
                   <div>
                     <span>Horaire</span>
-                    <strong>{selected.time}</strong>
+                    <strong>{getSessionTimeRange(selected)}</strong>
                   </div>
                   <div>
                     <span>Salle</span>
@@ -181,6 +223,15 @@ export default function PlanningPage({
                     <strong>{selected.duration}h</strong>
                   </div>
                 </div>
+
+                {getSessionSpeakers(selected).length > 0 && (
+                  <p className={styles.description}>
+                    Intervenant{getSessionSpeakers(selected).length > 1 ? "s" : ""} :{" "}
+                    {getSessionSpeakers(selected)
+                      .map((speaker) => speaker.name)
+                      .join(", ")}
+                  </p>
+                )}
 
                 {selected.description && (
                   <p className={styles.description}>{selected.description}</p>

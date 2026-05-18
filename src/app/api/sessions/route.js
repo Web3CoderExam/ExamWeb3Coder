@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getAllEvents, getEventById } from "@/lib/db";
+import { getAllSessions, getSessionById } from "@/lib/db";
 
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
@@ -7,17 +7,17 @@ export async function GET(request) {
 
   try {
     if (id) {
-      const event = await getEventById(id);
-      if (!event)
+      const session = await getSessionById(id);
+      if (!session)
         return NextResponse.json(
-          { success: false, error: "Événement non trouvé" },
+          { success: false, error: "Session non trouvée" },
           { status: 404 }
         );
-      return NextResponse.json({ success: true, data: event }, { status: 200 });
+      return NextResponse.json({ success: true, data: session }, { status: 200 });
     }
 
-    const events = await getAllEvents();
-    return NextResponse.json({ success: true, data: events }, { status: 200 });
+    const sessions = await getAllSessions();
+    return NextResponse.json({ success: true, data: sessions }, { status: 200 });
   } catch (error) {
     return NextResponse.json(
       { success: false, error: "Erreur serveur" },
