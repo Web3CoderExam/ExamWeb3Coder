@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./page.module.css";
 
@@ -9,6 +9,25 @@ export default function LoginPage() {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [checking, setChecking] = useState(true);
+
+  // Redirige vers /admin si déjà connecté
+  useEffect(() => {
+    async function checkSession() {
+      try {
+        const res = await fetch("/api/auth/session");
+        const data = await res.json();
+        if (data.authenticated) {
+          router.replace("/admin");
+        }
+      } catch {
+        // Pas de session, on reste sur /login
+      } finally {
+        setChecking(false);
+      }
+    }
+    checkSession();
+  }, [router]);
 
   const handleChange = (e) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -41,6 +60,19 @@ export default function LoginPage() {
       setLoading(false);
     }
   };
+
+  // Pendant la vérification de session → écran vide avec spinner
+  if (checking) {
+    return (
+      <div className={styles.loginRoot}>
+        <div className={styles.loginBg} aria-hidden="true">
+          <div className={styles.loginBgGrid} />
+          <div className={styles.loginBgAccent} />
+        </div>
+        <span className={styles.loginSpinner} aria-label="Chargement…" />
+      </div>
+    );
+  }
 
   return (
     <div className={styles.loginRoot}>
