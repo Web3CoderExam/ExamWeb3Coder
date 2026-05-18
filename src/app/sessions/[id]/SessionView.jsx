@@ -3,23 +3,10 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { ThumbsUp } from "lucide-react";
 import useFavorites from "@/hooks/useFavorites";
 import styles from "./SessionPage.module.css";
-
-function mergeQuestions(defaultQuestions = [], savedQuestions = []) {
-  const merged = [];
-  const seen = new Set();
-
-  for (const question of [...defaultQuestions, ...savedQuestions]) {
-    if (!seen.has(question.id)) {
-      seen.add(question.id);
-      merged.push(question);
-    }
-  }
-
-  return merged;
-}
 
 function getSessionSpeakerIds(session) {
   if (Array.isArray(session.speakerIds) && session.speakerIds.length > 0) {
@@ -49,15 +36,14 @@ function getSessionTimeRange(session) {
 }
 
 export default function SessionView({ event, session, speakers, defaultFavorites }) {
-  const [questions, setQuestions] = useState([]);
-  const [isLoaded, setIsLoaded] = useState(false);
+  const router = useRouter();
+  const [questions, setQuestions] = useState(session.questions || []);
   const [input, setInput] = useState("");
   const [name, setName] = useState("");
   const [tab, setTab] = useState("popular");
   const [now, setNow] = useState(0);
   const { isFavorite, toggleFavorite } = useFavorites(defaultFavorites);
   const sessionDate = session.date || event.startDate || event.date;
-  const questionKey = `questions-${session.id}`;
 
   const sessionSpeakers = speakers.filter((speaker) =>
     getSessionSpeakerIds(session).includes(speaker.id)
@@ -86,48 +72,46 @@ export default function SessionView({ event, session, speakers, defaultFavorites
     return nowDate >= start && nowDate <= end;
   };
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      const savedQuestions = JSON.parse(localStorage.getItem(questionKey) || "[]");
-      setQuestions(mergeQuestions(session.questions || [], savedQuestions));
-      setIsLoaded(true);
-    }, 0);
-
-    return () => clearTimeout(timer);
-  }, [questionKey, session.questions]);
-
-  useEffect(() => {
-    if (!isLoaded) return;
-
-    localStorage.setItem(questionKey, JSON.stringify(questions));
-  }, [isLoaded, questions, questionKey]);
-
-  const addQuestion = () => {
+  const addQuestion = async () => {
     if (!input.trim()) return;
 
-    const newQuestion = {
-      id: Date.now(),
-      content: input,
-      author: name || "Anonyme",
-      upvotes: 0,
-      createdAt: new Date().toISOString(),
-    };
+    const response = await fetch("/api/questions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        sessionId: session.id,
+        content: input,
+        author: name,
+      }),
+    });
 
-    setQuestions((previousQuestions) => [newQuestion, ...previousQuestions]);
-    setInput("");
-    setName("");
+    const result = await response.json();
+
+    if (result.success) {
+      setQuestions((previousQuestions) => [result.data, ...previousQuestions]);
+      setInput("");
+      setName("");
+      router.refresh();
+    }
   };
 
-  const upvote = (id) => {
-    setQuestions((previousQuestions) => {
-      return previousQuestions.map((question) => {
-        if (question.id === id) {
-          return { ...question, upvotes: question.upvotes + 1 };
-        }
-
-        return question;
-      });
+  const upvote = async (id) => {
+    const response = await fetch(`/api/questions/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "upvote" }),
     });
+
+    const result = await response.json();
+
+    if (result.success) {
+      setQuestions((previousQuestions) =>
+        previousQuestions.map((question) =>
+          question.id === id ? result.data : question
+        )
+      );
+      router.refresh();
+    }
   };
 
   const sortedQuestions = [...questions].sort((a, b) => {

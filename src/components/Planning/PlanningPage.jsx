@@ -6,6 +6,8 @@ import useFavorites from "@/hooks/useFavorites";
 import styles from "./PlanningPage.module.css";
 
 const DEFAULT_ROOMS = ["Room A", "Room B", "Room C"];
+const START_HOUR = 9;
+const END_HOUR = 16;
 
 function computeEndTime(startTime, duration) {
   if (!startTime || duration == null) return null;
@@ -28,6 +30,7 @@ function getSessionTimeRange(session) {
 
 export default function PlanningPage({
   events = [],
+  speakers = [],
   selectedEventId,
   defaultFavorites = [],
 }) {
@@ -55,6 +58,14 @@ export default function PlanningPage({
     return selectedRoom === "Toutes" || session.room === selectedRoom;
   });
 
+  const getSessionSpeakers = (session) => {
+    const speakerIds = Array.isArray(session.speakerIds)
+      ? session.speakerIds
+      : [session.speakerId].filter(Boolean);
+
+    return speakers.filter((speaker) => speakerIds.includes(speaker.id));
+  };
+
   const isLive = (session) => {
     const now = new Date();
     const sessionDate = session.date || startDate;
@@ -68,15 +79,10 @@ export default function PlanningPage({
     return now >= start && now <= end;
   };
 
-  const hours = visibleSessions.length
-    ? (() => {
-        const allHours = visibleSessions.map((s) => parseInt(s.time.split(":")[0], 10));
-        const min = Math.min(...allHours);
-        const max = Math.max(...allHours);
-
-        return Array.from({ length: max - min + 2 }, (_, i) => min - 1 + i);
-      })()
-    : [];
+  const hours = Array.from(
+    { length: END_HOUR - START_HOUR + 1 },
+    (_, i) => START_HOUR + i
+  );
 
   const openSession = (session) => {
     setSelected((current) => (current?.id === session.id ? null : session));
@@ -141,6 +147,7 @@ export default function PlanningPage({
                     const sessionHour = parseInt(s.time.split(":")[0], 10);
                     return s.room === room && sessionHour === hour;
                   });
+                  const sessionSpeakers = session ? getSessionSpeakers(session) : [];
 
                   const isSelected = selected?.id === session?.id;
                   const eventClassName = isSelected
@@ -156,7 +163,12 @@ export default function PlanningPage({
                           onClick={() => openSession(session)}
                         >
                           <strong>{session.title}</strong>
-                          <small>{getSessionTimeRange(session)} • {session.room}</small>
+
+                          {sessionSpeakers.length > 0 && (
+                            <small>
+                              {sessionSpeakers.map((speaker) => speaker.name).join(", ")}
+                            </small>
+                          )}
 
                           {isLive(session) && (
                             <span className={styles.liveBadge}>LIVE</span>
@@ -211,6 +223,15 @@ export default function PlanningPage({
                     <strong>{selected.duration}h</strong>
                   </div>
                 </div>
+
+                {getSessionSpeakers(selected).length > 0 && (
+                  <p className={styles.description}>
+                    Intervenant{getSessionSpeakers(selected).length > 1 ? "s" : ""} :{" "}
+                    {getSessionSpeakers(selected)
+                      .map((speaker) => speaker.name)
+                      .join(", ")}
+                  </p>
+                )}
 
                 {selected.description && (
                   <p className={styles.description}>{selected.description}</p>

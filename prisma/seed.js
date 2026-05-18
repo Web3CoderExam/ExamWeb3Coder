@@ -1,6 +1,6 @@
 const { existsSync, readFileSync } = require("node:fs");
 const { resolve } = require("node:path");
-const bcrypt = require("bcryptjs");
+const { createHash } = require("node:crypto");
 const { PrismaClient } = require("@prisma/client");
 const { PrismaPg } = require("@prisma/adapter-pg");
 
@@ -46,7 +46,7 @@ async function main() {
   await prisma.user.deleteMany();
 
   const defaultPassword = process.env.SEED_ADMIN_PASSWORD || "Password123";
-  const hashedPassword = await bcrypt.hash(defaultPassword, 10);
+  const hashedPassword = createHash("sha256").update(defaultPassword).digest("hex");
 
   await prisma.user.create({
     data: {

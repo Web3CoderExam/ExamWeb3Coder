@@ -35,6 +35,14 @@ export default async function Page({ params }) {
   );
 
   const links = Object.entries(speaker.links || {});
+  const questions = sessions
+    .flatMap((session) =>
+      (session.questions || []).map((question) => ({
+        ...question,
+        sessionTitle: session.title,
+      }))
+    )
+    .sort((a, b) => b.upvotes - a.upvotes || new Date(b.createdAt) - new Date(a.createdAt));
 
   return (
     <main className={styles.container}>
@@ -113,6 +121,31 @@ export default async function Page({ params }) {
               </Link>
             ))}
           </div>
+        </section>
+
+        <section className={styles.sessions}>
+          <div className={styles.sectionTitle}>
+            <span className={styles.badge}>Questions</span>
+            <h2>Questions associées</h2>
+          </div>
+
+          {questions.length > 0 ? (
+            <div className={styles.questionList}>
+              {questions.map((question) => (
+                <article key={question.id} className={styles.questionCard}>
+                  <div>
+                    <strong>{question.content}</strong>
+                    <p>
+                      {question.sessionTitle} - {question.author || "Anonyme"}
+                    </p>
+                  </div>
+                  <span>{question.upvotes} vote{question.upvotes > 1 ? "s" : ""}</span>
+                </article>
+              ))}
+            </div>
+          ) : (
+            <p className={styles.empty}>Aucune question pour le moment.</p>
+          )}
         </section>
       </div>
     </main>
