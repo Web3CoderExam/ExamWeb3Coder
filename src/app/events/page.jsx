@@ -1,13 +1,11 @@
-import data from "@/data/mockData.json";
-import EventPage from "@/components/EventPage/EventPage";
 
-export default function Page() {
-  return (
-    <EventPage
-      event={data.events[0]}
-      sessions={data.events[0].sessions}
-      speakers={data.speakers}
-      defaultFavorites={data.favorites}
-    />
-  );
+import EventsList from "@/components/EventsList/EventsList";
+import { getEvents } from "@/lib/public-data";
+
+export const dynamic = "force-dynamic";
+
+export default async function Page() {
+  const events = await getEvents();
+
+  return <EventsList events={events} />;
 }

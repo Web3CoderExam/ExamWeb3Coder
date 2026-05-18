@@ -1,71 +1,106 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { ThumbsUp } from "lucide-react";
 import useFavorites from "@/hooks/useFavorites";
 import styles from "./SessionPage.module.css";
 
-function mergeQuestions(defaultQuestions, savedQuestions) {
-  return [...defaultQuestions, ...savedQuestions].reduce((list, question) => {
-    const alreadyExists = list.find((item) => item.id === question.id);
-    if (!alreadyExists) list.push(question);
-    return list;
-  }, []);
+function mergeQuestions(defaultQuestions = [], savedQuestions = []) {
+  const merged = [];
+  const seen = new Set();
+
+  for (const question of [...defaultQuestions, ...savedQuestions]) {
+    if (!seen.has(question.id)) {
+      seen.add(question.id);
+      merged.push(question);
+    }
+  }
+
+  return merged;
+}
+
+function getSessionSpeakerIds(session) {
+  if (Array.isArray(session.speakerIds) && session.speakerIds.length > 0) {
+    return session.speakerIds;
+  }
+
+  return session.speakerId ? [session.speakerId] : [];
+}
+
+function computeEndTime(startTime, duration) {
+  if (!startTime || duration == null) return null;
+
+  const [hours, minutes] = startTime.split(":").map(Number);
+  if (Number.isNaN(hours) || Number.isNaN(minutes)) return null;
+
+  const date = new Date();
+  date.setHours(hours, minutes, 0, 0);
+  date.setMinutes(date.getMinutes() + Math.round(duration * 60));
+
+  return date.toTimeString().slice(0, 5);
+}
+
+function getSessionTimeRange(session) {
+  const startTime = session.startTime || session.time;
+  const endTime = session.endTime || computeEndTime(startTime, session.duration);
+  return endTime ? `${startTime} - ${endTime}` : startTime;
 }
 
 export default function SessionView({ event, session, speakers, defaultFavorites }) {
   const [questions, setQuestions] = useState([]);
-  const [loadedSessionId, setLoadedSessionId] = useState(null);
+  const [isLoaded, setIsLoaded] = useState(false);
   const [input, setInput] = useState("");
   const [name, setName] = useState("");
   const [tab, setTab] = useState("popular");
   const [now, setNow] = useState(0);
   const { isFavorite, toggleFavorite } = useFavorites(defaultFavorites);
-  const startDate = event.startDate || event.date;
+  const sessionDate = session.date || event.startDate || event.date;
+  const questionKey = `questions-${session.id}`;
 
-  const sessionSpeakers = speakers.filter((speaker) => {
-    return session.speakerId === speaker.id;
-  });
+  const sessionSpeakers = speakers.filter((speaker) =>
+    getSessionSpeakerIds(session).includes(speaker.id)
+  );
 
   const favorite = isFavorite(session.id);
 
   useEffect(() => {
+    const initialTimer = setTimeout(() => setNow(Date.now()), 0);
     const timer = setInterval(() => setNow(Date.now()), 1000);
-    return () => clearInterval(timer);
+    return () => {
+      clearTimeout(initialTimer);
+      clearInterval(timer);
+    };
   }, []);
 
-  const isLive = useMemo(() => {
-    if (!now) return false;
-
+  const isLive = () => {
     const nowDate = new Date(now);
-    const start = new Date(`${startDate}T${session.time}`);
-    const end = new Date(start.getTime() + session.duration * 60 * 60 * 1000);
+    const startTime = session.startTime || session.time;
+    const endTime = session.endTime || computeEndTime(startTime, session.duration);
+    const start = new Date(`${sessionDate}T${startTime}`);
+    const end = endTime
+      ? new Date(`${sessionDate}T${endTime}`)
+      : new Date(start.getTime() + session.duration * 60 * 60 * 1000);
 
     return nowDate >= start && nowDate <= end;
-  }, [now, session, startDate]);
+  };
 
   useEffect(() => {
-    const timeout = setTimeout(() => {
-      const savedQuestions = JSON.parse(
-        localStorage.getItem("questions-" + session.id) || "[]"
-      );
-
-      const defaultQuestions = session.questions || [];
-      const mergedQuestions = mergeQuestions(defaultQuestions, savedQuestions);
-
-      setQuestions(mergedQuestions);
-      setLoadedSessionId(session.id);
+    const timer = setTimeout(() => {
+      const savedQuestions = JSON.parse(localStorage.getItem(questionKey) || "[]");
+      setQuestions(mergeQuestions(session.questions || [], savedQuestions));
+      setIsLoaded(true);
     }, 0);
 
-    return () => clearTimeout(timeout);
-  }, [session]);
+    return () => clearTimeout(timer);
+  }, [questionKey, session.questions]);
 
   useEffect(() => {
-    if (loadedSessionId !== session.id) return;
+    if (!isLoaded) return;
 
-    localStorage.setItem("questions-" + session.id, JSON.stringify(questions));
-  }, [loadedSessionId, questions, session.id]);
+    localStorage.setItem(questionKey, JSON.stringify(questions));
+  }, [isLoaded, questions, questionKey]);
 
   const addQuestion = () => {
     if (!input.trim()) return;
@@ -108,13 +143,13 @@ export default function SessionView({ event, session, speakers, defaultFavorites
           <h1>{session.title}</h1>
 
           <div className={styles.meta}>
-            <span>{session.time}</span>
+            <span>{getSessionTimeRange(session)}</span>
             <span>{session.room}</span>
             <span>{session.capacity} places</span>
           </div>
         </div>
 
-        {isLive && (
+        {isLive() && (
           <div className={styles.live}>
             <span className={styles.dot}></span>
             LIVE
@@ -130,7 +165,7 @@ export default function SessionView({ event, session, speakers, defaultFavorites
           </div>
 
           <div className={styles.card}>
-            <h2>Intervenant</h2>
+            <h2>Intervenants</h2>
 
             {sessionSpeakers.map((speaker) => (
               <Link
@@ -138,7 +173,12 @@ export default function SessionView({ event, session, speakers, defaultFavorites
                 href={`/speakers/${speaker.id}`}
                 className={styles.speaker}
               >
-                <img src={speaker.avatar} alt={speaker.name} />
+                <Image
+                  src={speaker.avatar}
+                  alt={speaker.name}
+                  width={48}
+                  height={48}
+                />
                 <div>
                   <strong>{speaker.name}</strong>
                   <span>{speaker.role}</span>
@@ -159,7 +199,7 @@ export default function SessionView({ event, session, speakers, defaultFavorites
         <div className={styles.card}>
           <h2>Live Q&A ({questions.length})</h2>
 
-          {isLive ? (
+          {isLive() ? (
             <>
               <div className={styles.inputBox}>
                 <input

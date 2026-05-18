@@ -4,7 +4,26 @@ import Link from "next/link";
 import useFavorites from "@/hooks/useFavorites";
 import styles from "./FavoritesView.module.css";
 
-export default function FavoritesView({ event, sessions, defaultFavorites }) {
+function computeEndTime(startTime, duration) {
+  if (!startTime || duration == null) return null;
+
+  const [hours, minutes] = startTime.split(":").map(Number);
+  if (Number.isNaN(hours) || Number.isNaN(minutes)) return null;
+
+  const date = new Date();
+  date.setHours(hours, minutes, 0, 0);
+  date.setMinutes(date.getMinutes() + Math.round(duration * 60));
+
+  return date.toTimeString().slice(0, 5);
+}
+
+function getSessionTimeRange(session) {
+  const startTime = session.startTime || session.time;
+  const endTime = session.endTime || computeEndTime(startTime, session.duration);
+  return endTime ? `${startTime} - ${endTime}` : startTime;
+}
+
+export default function FavoritesView({ sessions, defaultFavorites }) {
   const { favorites, toggleFavorite } = useFavorites(defaultFavorites);
 
   const favoriteSessions = sessions
@@ -17,7 +36,7 @@ export default function FavoritesView({ event, sessions, defaultFavorites }) {
         <div>
           <span className={styles.badge}>Itinéraire personnel</span>
           <h1>Mes favoris</h1>
-          <p>{event.title}</p>
+          <p>Votre sélection personnelle de sessions</p>
         </div>
 
         <span className={styles.counter}>
@@ -42,7 +61,7 @@ export default function FavoritesView({ event, sessions, defaultFavorites }) {
             {favoriteSessions.map((session) => (
               <article key={session.id} className={styles.card}>
                 <div className={styles.cardTop}>
-                  <span className={styles.time}>{session.time}</span>
+                  <span className={styles.time}>{getSessionTimeRange(session)}</span>
                   <span className={styles.room}>{session.room}</span>
                 </div>
 
@@ -50,6 +69,7 @@ export default function FavoritesView({ event, sessions, defaultFavorites }) {
                 <p>{session.description}</p>
 
                 <div className={styles.meta}>
+                  <span>{session.eventTitle}</span>
                   <span>{session.duration}h</span>
                   <span>{session.capacity} places</span>
                 </div>

@@ -37,7 +37,7 @@ export default function useFavorites(defaultFavorites = []) {
   const [favorites, setFavorites] = useState([]);
 
   useEffect(() => {
-    const timeout = setTimeout(() => {
+    const timer = setTimeout(() => {
       const savedFavorites = readSavedFavorites();
 
       if (savedFavorites) {
@@ -51,7 +51,7 @@ export default function useFavorites(defaultFavorites = []) {
       setFavorites(defaultFavorites);
     }, 0);
 
-    return () => clearTimeout(timeout);
+    return () => clearTimeout(timer);
   }, [defaultFavorites]);
 
   const saveFavorites = (newFavorites) => {

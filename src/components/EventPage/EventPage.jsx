@@ -1,9 +1,37 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import useFavorites from "@/hooks/useFavorites";
 import styles from "./EventPage.module.css";
+
+function getSessionSpeakerIds(session) {
+  if (Array.isArray(session.speakerIds)) {
+    return session.speakerIds;
+  }
+
+  return session.speakerId ? [session.speakerId] : [];
+}
+
+function computeEndTime(startTime, duration) {
+  if (!startTime || duration == null) return null;
+
+  const [hours, minutes] = startTime.split(":").map(Number);
+  if (Number.isNaN(hours) || Number.isNaN(minutes)) return null;
+
+  const date = new Date();
+  date.setHours(hours, minutes, 0, 0);
+  date.setMinutes(date.getMinutes() + Math.round(duration * 60));
+
+  return date.toTimeString().slice(0, 5);
+}
+
+function getSessionTimeRange(session) {
+  const startTime = session.startTime || session.time;
+  const endTime = session.endTime || computeEndTime(startTime, session.duration);
+  return endTime ? `${startTime} - ${endTime}` : startTime;
+}
 
 export default function EventPage({
   event,
@@ -14,15 +42,24 @@ export default function EventPage({
   const router = useRouter();
   const { isFavorite, toggleFavorite } = useFavorites(defaultFavorites);
 
-  const getSpeaker = (id) => speakers.find((speaker) => speaker.id === id);
   const startDate = event.startDate || event.date;
   const endDate = event.endDate || event.date;
   const dateText = startDate === endDate ? startDate : `${startDate} - ${endDate}`;
 
+  const getSessionSpeakers = (session) => {
+    const speakerIds = getSessionSpeakerIds(session);
+    return speakers.filter((speaker) => speakerIds.includes(speaker.id));
+  };
+
   const isLive = (session) => {
     const now = new Date();
-    const start = new Date(`${startDate}T${session.time}`);
-    const end = new Date(start.getTime() + session.duration * 60 * 60 * 1000);
+    const sessionDate = session.date || event.startDate || event.date;
+    const startTime = session.startTime || session.time;
+    const endTime = session.endTime || computeEndTime(startTime, session.duration);
+    const start = new Date(`${sessionDate}T${startTime}`);
+    const end = endTime
+      ? new Date(`${sessionDate}T${endTime}`)
+      : new Date(start.getTime() + session.duration * 60 * 60 * 1000);
 
     return now >= start && now <= end;
   };
@@ -61,7 +98,7 @@ export default function EventPage({
 
         <div className={styles.grid}>
           {sessions.map((session) => {
-            const speaker = getSpeaker(session.speakerId);
+            const sessionSpeakers = getSessionSpeakers(session);
             const live = isLive(session);
             const favorite = isFavorite(session.id);
 
@@ -71,7 +108,7 @@ export default function EventPage({
                 className={styles.card}
               >
                 <div className={styles.cardTop}>
-                  <span className={styles.time}>{session.time}</span>
+                  <span className={styles.time}>{getSessionTimeRange(session)}</span>
                   {live && <span className={styles.live}>LIVE</span>}
                 </div>
 
@@ -84,13 +121,26 @@ export default function EventPage({
                   <span>{session.capacity} places</span>
                 </div>
 
-                {speaker && (
-                  <div className={styles.speaker}>
-                    <img src={speaker.avatar} alt={speaker.name} />
-                    <div>
-                      <strong>{speaker.name}</strong>
-                      <span>{speaker.role}</span>
-                    </div>
+                {sessionSpeakers.length > 0 && (
+                  <div className={styles.speakers}>
+                    {sessionSpeakers.map((speaker) => (
+                      <Link
+                        key={speaker.id}
+                        href={`/speakers/${speaker.id}`}
+                        className={styles.speaker}
+                      >
+                        <Image
+                          src={speaker.avatar}
+                          alt={speaker.name}
+                          width={48}
+                          height={48}
+                        />
+                        <div>
+                          <strong>{speaker.name}</strong>
+                          <span>{speaker.role}</span>
+                        </div>
+                      </Link>
+                    ))}
                   </div>
                 )}
 

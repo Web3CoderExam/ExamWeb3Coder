@@ -1,14 +1,18 @@
 import FavoritesView from "@/components/Favorites/FavoritesView";
-import data from "@/data/mockData.json";
+import { getDefaultFavorites, getSessions } from "@/lib/public-data";
 
-export default function Page() {
-  const event = data.events[0];
+export const dynamic = "force-dynamic";
+
+export default async function Page() {
+  const [sessions, defaultFavorites] = await Promise.all([
+    getSessions(),
+    getDefaultFavorites(),
+  ]);
 
   return (
     <FavoritesView
-      event={event}
-      sessions={event.sessions}
-      defaultFavorites={data.favorites}
+      sessions={sessions}
+      defaultFavorites={defaultFavorites}
     />
   );
 }

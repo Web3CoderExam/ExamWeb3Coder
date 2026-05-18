@@ -1,93 +1,112 @@
-import { promises as fs } from 'fs';
-import path from 'path';
-import { Pool } from "pg";
+import { promises as fs } from "fs";
+import path from "path";
+import { prisma } from "@/lib/prisma";
 
-const DATA_PATH = path.join(process.cwd(), 'src/data/mockData.json');
+const DATA_PATH = path.join(process.cwd(), "src/data/mockData.json");
 
-let pool;
+const eventInclude = {
+  sessions: {
+    include: {
+      speakers: true,
+      questions: {
+        orderBy: [{ upvotes: "desc" }, { createdAt: "desc" }],
+      },
+    },
+    orderBy: [{ date: "asc" }, { time: "asc" }],
+  },
+};
+
+const sessionInclude = {
+  event: true,
+  speakers: true,
+  questions: {
+    orderBy: [{ upvotes: "desc" }, { createdAt: "desc" }],
+  },
+};
 
 export function getDb() {
-  if (!pool) {
-    pool = new Pool({
-      connectionString: process.env.DATABASE_URL,
-      ssl:
-        process.env.NODE_ENV === "production"
-          ? { rejectUnauthorized: false }
-          : false,
-    });
-  }
-  return pool;
+  return prisma;
 }
 
 export async function getAllEvents() {
-    let dbEvents = [];
-    let mockEvents = [];
+  if (process.env.DATABASE_URL) {
+    return prisma.event.findMany({
+      include: eventInclude,
+      orderBy: [{ date: "asc" }, { id: "asc" }],
+    });
+  }
 
-    if (process.env.DATABASE_URL) {
-        try {
-            const client = getDb();
-            const res = await client.query('SELECT * FROM events ORDER BY date ASC');
-            dbEvents = res.rows;
-        } catch (error) {
-            console.error("⚠️ Erreur BDD (getAllEvents):", error.message);
-        }
-    }
-
-    try {
-        const fileContent = await fs.readFile(DATA_PATH, 'utf-8');
-        const data = JSON.parse(fileContent);
-        mockEvents = data.events || data;
-    } catch (error) {
-        console.error("⚠️ Erreur Lecture JSON:", error.message);
-    }
-
-    return [...dbEvents, ...mockEvents];
+  const fileContent = await fs.readFile(DATA_PATH, "utf-8");
+  const data = JSON.parse(fileContent);
+  return data.events;
 }
 
 export async function getEventById(id) {
-    if (process.env.DATABASE_URL) {
-        try {
-            const client = getDb();
-            const res = await client.query('SELECT * FROM events WHERE id = $1', [id]);
-            if (res.rows.length > 0) return res.rows[0];
-        } catch (error) {
-            console.error("⚠️ Erreur BDD (getEventById):", error.message);
-        }
-    }
+  const eventId = Number(id);
+  if (process.env.DATABASE_URL) {
+    return prisma.event.findUnique({
+      where: { id: eventId },
+      include: eventInclude,
+    });
+  }
 
-    const allEvents = await getAllEvents();
-    return allEvents.find(event => String(event.id) === String(id)) || null;
+  const events = await getAllEvents();
+  return events.find((event) => event.id === eventId) || null;
 }
 
-export async function getUserRegistrations(userId) {
-  try {
-    const client = getDb();
-    const result = await client.query(
-      `SELECT r.id as registration_id, r.registration_date, e.*
-       FROM registrations r
-       JOIN events e ON r.event_id = e.id
-       WHERE r.user_id = $1`,
-      [userId]
-    );
-    return result.rows;
-  } catch (error) {
-    console.error("⚠️ Erreur BDD (getUserRegistrations):", error.message);
-    return [];
+export async function getAllSpeakers() {
+  if (process.env.DATABASE_URL) {
+    return prisma.speaker.findMany({
+      orderBy: [{ name: "asc" }],
+    });
   }
+
+  const fileContent = await fs.readFile(DATA_PATH, "utf-8");
+  const data = JSON.parse(fileContent);
+  return data.speakers;
 }
 
-export async function registerForEvent(userId, eventId) {
-  try {
-    const client = getDb();
-    const result = await client.query(
-      `INSERT INTO registrations (user_id, event_id)
-       VALUES ($1, $2)
-       RETURNING *`,
-      [userId, eventId]
-    );
-    return { success: true, data: result.rows[0] };
-  } catch (error) {
-    console.error("⚠️ Erreur BDD (registerForEvent):", error.message);
-    return { success: false, error: error.message };
+export async function getSpeakerById(id) {
+  if (process.env.DATABASE_URL) {
+    return prisma.speaker.findUnique({
+      where: { id },
+      include: {
+        sessions: true,
+      },
+    });
   }
+
+  const speakers = await getAllSpeakers();
+  return speakers.find((speaker) => speaker.id === id) || null;
+}
+
+export async function getAllSessions() {
+  if (process.env.DATABASE_URL) {
+    return prisma.session.findMany({
+      include: sessionInclude,
+      orderBy: [{ date: "asc" }, { time: "asc" }],
+    });
+  }
+
+  const events = await getAllEvents();
+  return events.flatMap((event) =>
+    (event.sessions || []).map((session) => ({
+      ...session,
+      eventId: event.id,
+      eventTitle: event.title,
+    }))
+  );
+}
+
+export async function getSessionById(id) {
+  const sessionId = Number(id);
+  if (process.env.DATABASE_URL) {
+    return prisma.session.findUnique({
+      where: { id: sessionId },
+      include: sessionInclude,
+    });
+  }
+
+  const sessions = await getAllSessions();
+  return sessions.find((session) => session.id === sessionId) || null;
 }

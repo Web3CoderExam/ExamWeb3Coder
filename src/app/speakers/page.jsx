@@ -1,11 +1,18 @@
-import data from "@/data/mockData.json";
 import SpeakersPage from "@/components/Speakers/SpeakersPage";
+import { getSessions, getSpeakers } from "@/lib/public-data";
 
-export default function Page() {
+export const dynamic = "force-dynamic";
+
+export default async function Page() {
+  const [speakers, sessions] = await Promise.all([
+    getSpeakers(),
+    getSessions(),
+  ]);
+
   return (
     <SpeakersPage
-      speakers={data.speakers}
-      sessions={data.events[0].sessions}
+      speakers={speakers}
+      sessions={sessions}
     />
   );
 }

@@ -1,11 +1,21 @@
-import data from "@/data/mockData.json";
 import PlanningPage from "@/components/Planning/PlanningPage";
+import { getDefaultFavorites, getEvents } from "@/lib/public-data";
 
-export default function Page() {
+export const dynamic = "force-dynamic";
+
+export default async function Page({ searchParams }) {
+  const params = await searchParams;
+  const selectedEventId = params?.event;
+  const [events, defaultFavorites] = await Promise.all([
+    getEvents(),
+    getDefaultFavorites(),
+  ]);
+
   return (
     <PlanningPage
-      events={data.events}
-      defaultFavorites={data.favorites}
+      events={events}
+      selectedEventId={selectedEventId}
+      defaultFavorites={defaultFavorites}
     />
   );
 }
