@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import useFavorites from "@/hooks/useFavorites";
 import styles from "./PlanningPage.module.css";
@@ -9,23 +9,55 @@ const DEFAULT_ROOMS = ["Room A", "Room B", "Room C"];
 const START_HOUR = 9;
 const END_HOUR = 16;
 
-function computeEndTime(startTime, duration) {
-  if (!startTime || duration == null) return null;
-
-  const [hours, minutes] = startTime.split(":").map(Number);
-  if (Number.isNaN(hours) || Number.isNaN(minutes)) return null;
-
-  const date = new Date();
-  date.setHours(hours, minutes, 0, 0);
-  date.setMinutes(date.getMinutes() + Math.round(duration * 60));
-
-  return date.toTimeString().slice(0, 5);
+function safeString(value, fallback = "") {
+  if (value == null) return fallback;
+  if (typeof value === "string") return value;
+  if (typeof value === "number") return String(value);
+  if (typeof value === "object") {
+    if (value.name && typeof value.name === "string") return value.name;
+    console.error("Objet non affichable :", value);
+    return fallback;
+  }
+  return fallback;
 }
 
 function getSessionTimeRange(session) {
-  const startTime = session.startTime || session.time;
-  const endTime = session.endTime || computeEndTime(startTime, session.duration);
-  return endTime ? `${startTime} - ${endTime}` : startTime;
+  const start = session.startTime
+    ? new Date(session.startTime).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+    : "";
+  const end = session.endTime
+    ? new Date(session.endTime).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+    : "";
+  return end ? `${start} - ${end}` : start;
+}
+
+function getDuration(startTime, endTime) {
+  if (!startTime || !endTime) return "—";
+  const start = new Date(startTime);
+  const end = new Date(endTime);
+  const diffMinutes = Math.round((end - start) / (1000 * 60));
+  const hours = Math.floor(diffMinutes / 60);
+  const minutes = diffMinutes % 60;
+  if (hours === 0) return `${minutes} min`;
+  if (minutes === 0) return `${hours} h`;
+  return `${hours} h ${minutes} min`;
+}
+
+function formatDate(value) {
+  if (!value) return "";
+  return new Date(value).toLocaleDateString("fr-FR", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+}
+
+function getRoomName(room) {
+  if (!room) return "Salle inconnue";
+  if (typeof room === "string") return room;
+  if (typeof room === "object" && room.name && typeof room.name === "string") return room.name;
+  console.error("Room non reconnue :", room);
+  return "Salle inconnue";
 }
 
 export default function PlanningPage({
@@ -38,67 +70,62 @@ export default function PlanningPage({
   const [selected, setSelected] = useState(null);
   const [selectedRoom, setSelectedRoom] = useState("Toutes");
   const { isFavorite, toggleFavorite } = useFavorites(defaultFavorites);
+  const [isClient, setIsClient] = useState(false);
+  const [currentTime, setCurrentTime] = useState(null);
 
-  const event =
-    events.find((item) => String(item.id) === String(selectedEventId)) ||
-    events[0];
+  useEffect(() => {
+    setIsClient(true);
+    setCurrentTime(new Date());
+    const interval = setInterval(() => setCurrentTime(new Date()), 60000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const event = events.find((item) => String(item.id) === String(selectedEventId)) || events[0];
+  if (!event) return <p>Aucun événement</p>;
+
   const startDate = event?.startDate || event?.date;
   const endDate = event?.endDate || event?.date;
-  const dateText = startDate === endDate ? startDate : `${startDate} - ${endDate}`;
+  const formattedStart = formatDate(startDate);
+  const formattedEnd = formatDate(endDate);
+  const dateText = formattedStart === formattedEnd ? formattedStart : `${formattedStart} - ${formattedEnd}`;
 
   const sessions = event?.sessions ?? [];
-  const rooms = [
-    ...DEFAULT_ROOMS,
-    ...Array.from(new Set(sessions.map((session) => session.room))).filter(
-      (room) => !DEFAULT_ROOMS.includes(room)
-    ),
-  ];
+
+  const roomsSet = new Set(DEFAULT_ROOMS);
+  sessions.forEach((s) => {
+    const roomName = getRoomName(s.room);
+    if (roomName !== "Salle inconnue") roomsSet.add(roomName);
+  });
+  const rooms = Array.from(roomsSet);
+
   const visibleRooms = selectedRoom === "Toutes" ? rooms : [selectedRoom];
-  const visibleSessions = sessions.filter((session) => {
-    return selectedRoom === "Toutes" || session.room === selectedRoom;
+  const visibleSessions = sessions.filter((s) => {
+    const sRoom = getRoomName(s.room);
+    return selectedRoom === "Toutes" || sRoom === selectedRoom;
   });
 
   const getSessionSpeakers = (session) => {
-    const speakerIds = Array.isArray(session.speakerIds)
-      ? session.speakerIds
-      : [session.speakerId].filter(Boolean);
-
+    const speakerIds = session.speakers?.map((s) => s.speaker?.id || s.speakerId) || [];
     return speakers.filter((speaker) => speakerIds.includes(speaker.id));
   };
 
   const isLive = (session) => {
-    const now = new Date();
-    const sessionDate = session.date || startDate;
-    const startTime = session.startTime || session.time;
-    const endTime = session.endTime || computeEndTime(startTime, session.duration);
-    const start = new Date(`${sessionDate}T${startTime}`);
-    const end = endTime
-      ? new Date(`${sessionDate}T${endTime}`)
-      : new Date(start.getTime() + session.duration * 60 * 60 * 1000);
-
-    return now >= start && now <= end;
+    if (!isClient || !currentTime) return false;
+    if (!session.startTime || !session.endTime) return false;
+    const start = new Date(session.startTime);
+    const end = new Date(session.endTime);
+    return currentTime >= start && currentTime <= end;
   };
 
-  const hours = Array.from(
-    { length: END_HOUR - START_HOUR + 1 },
-    (_, i) => START_HOUR + i
-  );
-
-  const openSession = (session) => {
-    setSelected((current) => (current?.id === session.id ? null : session));
-  };
-
+  const hours = Array.from({ length: END_HOUR - START_HOUR + 1 }, (_, i) => START_HOUR + i);
+  const openSession = (session) => setSelected((prev) => (prev?.id === session.id ? null : session));
   const selectRoom = (room) => {
     setSelectedRoom(room);
     setSelected(null);
   };
 
-  if (!event) return <p>Aucun &eacute;v&eacute;nement</p>;
-
   const scheduleClassName =
-    selectedRoom === "Toutes"
-      ? styles.schedule
-      : `${styles.schedule} ${styles.singleRoom}`;
+    selectedRoom === "Toutes" ? styles.schedule : `${styles.schedule} ${styles.singleRoom}`;
   const roomGridStyle = {
     gridTemplateColumns: `74px repeat(${visibleRooms.length}, minmax(0, 1fr))`,
   };
@@ -108,7 +135,7 @@ export default function PlanningPage({
       <div className={styles.eventHeader}>
         <div>
           <span className={styles.eyebrow}>Planning</span>
-          <h2 className={styles.eventTitle}>{event.title}</h2>
+          <h2 className={styles.eventTitle}>{safeString(event.title)}</h2>
         </div>
         <span className={styles.eventDate}>{dateText}</span>
       </div>
@@ -141,19 +168,18 @@ export default function PlanningPage({
             {hours.map((hour) => (
               <div key={hour} className={styles.row} style={roomGridStyle}>
                 <div className={styles.timeCell}>{hour}:00</div>
-
                 {visibleRooms.map((room) => {
                   const session = visibleSessions.find((s) => {
-                    const sessionHour = parseInt(s.time.split(":")[0], 10);
-                    return s.room === room && sessionHour === hour;
+                    if (!s.startTime) return false;
+                    const sessionHour = new Date(s.startTime).getHours();
+                    const sRoom = getRoomName(s.room);
+                    return sRoom === room && sessionHour === hour;
                   });
                   const sessionSpeakers = session ? getSessionSpeakers(session) : [];
-
                   const isSelected = selected?.id === session?.id;
                   const eventClassName = isSelected
                     ? `${styles.event} ${styles.eventSelected}`
                     : styles.event;
-
                   return (
                     <div key={`${room}-${hour}`} className={styles.cell}>
                       {session && (
@@ -162,18 +188,13 @@ export default function PlanningPage({
                           className={eventClassName}
                           onClick={() => openSession(session)}
                         >
-                          <strong>{session.title}</strong>
-
+                          <strong>{safeString(session.title)}</strong>
                           {sessionSpeakers.length > 0 && (
                             <small>
-                              {sessionSpeakers.map((speaker) => speaker.name).join(", ")}
+                              {sessionSpeakers.map((speaker) => safeString(speaker.name)).join(", ")}
                             </small>
                           )}
-
-                          {isLive(session) && (
-                            <span className={styles.liveBadge}>LIVE</span>
-                          )}
-
+                          {isLive(session) && <span className={styles.liveBadge}>LIVE</span>}
                           {isFavorite(session.id) && (
                             <span className={styles.favoriteBadge}>Favori</span>
                           )}
@@ -193,65 +214,55 @@ export default function PlanningPage({
               <div className={styles.detailsHeader}>
                 <div>
                   <span className={styles.detailsLabel}>Session</span>
-                  <h3>{selected.title}</h3>
-                  {isLive(selected) && (
-                    <div className={styles.liveText}>Live maintenant</div>
-                  )}
+                  <h3>{safeString(selected.title)}</h3>
+                  {isLive(selected) && <div className={styles.liveText}>Live maintenant</div>}
                 </div>
                 <button
                   type="button"
                   className={styles.closeBtn}
                   onClick={() => setSelected(null)}
-                  aria-label="Fermer les details"
                 >
                   &times;
                 </button>
               </div>
-
               <div className={styles.detailsContent}>
                 <div className={styles.detailList}>
+                  <div>
+                    <span>Date</span>
+                    <strong>{new Date(selected.startTime).toLocaleDateString('fr-FR')}</strong>
+                  </div>
                   <div>
                     <span>Horaire</span>
                     <strong>{getSessionTimeRange(selected)}</strong>
                   </div>
                   <div>
                     <span>Salle</span>
-                    <strong>{selected.room}</strong>
+                    <strong>{getRoomName(selected.room)}</strong>
                   </div>
                   <div>
-                    <span>Dur&eacute;e</span>
-                    <strong>{selected.duration}h</strong>
+                    <span>Durée</span>
+                    <strong>{getDuration(selected.startTime, selected.endTime)}</strong>
                   </div>
                 </div>
-
                 {getSessionSpeakers(selected).length > 0 && (
                   <p className={styles.description}>
                     Intervenant{getSessionSpeakers(selected).length > 1 ? "s" : ""} :{" "}
                     {getSessionSpeakers(selected)
-                      .map((speaker) => speaker.name)
+                      .map((s) => safeString(s.name))
                       .join(", ")}
                   </p>
                 )}
-
                 {selected.description && (
-                  <p className={styles.description}>{selected.description}</p>
+                  <p className={styles.description}>{safeString(selected.description)}</p>
                 )}
               </div>
-
               <button
                 type="button"
-                className={
-                  isFavorite(selected.id)
-                    ? styles.favoritePanelActive
-                    : styles.favoritePanelBtn
-                }
+                className={isFavorite(selected.id) ? styles.favoritePanelActive : styles.favoritePanelBtn}
                 onClick={() => toggleFavorite(selected.id)}
               >
-                {isFavorite(selected.id)
-                  ? "Retirer des favoris"
-                  : "Ajouter aux favoris"}
+                {isFavorite(selected.id) ? "Retirer des favoris" : "Ajouter aux favoris"}
               </button>
-
               <button
                 type="button"
                 className={styles.joinBtn}
@@ -262,8 +273,8 @@ export default function PlanningPage({
             </>
           ) : (
             <div className={styles.emptyPanel}>
-              <span className={styles.detailsLabel}>D&eacute;tails</span>
-              <h3>S&eacute;lectionnez une carte</h3>
+              <span className={styles.detailsLabel}>Détails</span>
+              <h3>Sélectionnez une carte</h3>
               <p>Les informations de la session apparaissent ici sans cacher le planning.</p>
             </div>
           )}

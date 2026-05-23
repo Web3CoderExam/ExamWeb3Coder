@@ -4,23 +4,10 @@ import Link from "next/link";
 import useFavorites from "@/hooks/useFavorites";
 import styles from "./FavoritesView.module.css";
 
-function computeEndTime(startTime, duration) {
-  if (!startTime || duration == null) return null;
-
-  const [hours, minutes] = startTime.split(":").map(Number);
-  if (Number.isNaN(hours) || Number.isNaN(minutes)) return null;
-
-  const date = new Date();
-  date.setHours(hours, minutes, 0, 0);
-  date.setMinutes(date.getMinutes() + Math.round(duration * 60));
-
-  return date.toTimeString().slice(0, 5);
-}
-
 function getSessionTimeRange(session) {
-  const startTime = session.startTime || session.time;
-  const endTime = session.endTime || computeEndTime(startTime, session.duration);
-  return endTime ? `${startTime} - ${endTime}` : startTime;
+  const start = session.startTime ? new Date(session.startTime).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "";
+  const end = session.endTime ? new Date(session.endTime).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "";
+  return end ? `${start} - ${end}` : start;
 }
 
 export default function FavoritesView({ sessions, defaultFavorites }) {
@@ -28,7 +15,7 @@ export default function FavoritesView({ sessions, defaultFavorites }) {
 
   const favoriteSessions = sessions
     .filter((session) => favorites.includes(session.id))
-    .sort((a, b) => a.time.localeCompare(b.time));
+    .sort((a, b) => new Date(a.startTime) - new Date(b.startTime));
 
   return (
     <div className={styles.container}>
@@ -38,7 +25,6 @@ export default function FavoritesView({ sessions, defaultFavorites }) {
           <h1>Mes favoris</h1>
           <p>Votre sélection personnelle de sessions</p>
         </div>
-
         <span className={styles.counter}>
           {favoriteSessions.length} session{favoriteSessions.length > 1 ? "s" : ""}
         </span>
@@ -62,26 +48,19 @@ export default function FavoritesView({ sessions, defaultFavorites }) {
               <article key={session.id} className={styles.card}>
                 <div className={styles.cardTop}>
                   <span className={styles.time}>{getSessionTimeRange(session)}</span>
-                  <span className={styles.room}>{session.room}</span>
+                  <span className={styles.room}>{session.room?.name || session.room}</span>
                 </div>
-
                 <h2>{session.title}</h2>
                 <p>{session.description}</p>
-
                 <div className={styles.meta}>
                   <span>{session.eventTitle}</span>
-                  <span>{session.duration}h</span>
+                  <span>{session.duration ? `${session.duration}h` : "—"}</span>
                   <span>{session.capacity} places</span>
                 </div>
-
                 <div className={styles.actions}>
-                  <Link
-                    href={`/sessions/${session.id}`}
-                    className={styles.detailsLink}
-                  >
+                  <Link href={`/sessions/${session.id}`} className={styles.detailsLink}>
                     Voir la session
                   </Link>
-
                   <button
                     type="button"
                     className={styles.removeButton}
