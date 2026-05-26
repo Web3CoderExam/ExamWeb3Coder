@@ -19,7 +19,7 @@ export default function Navbar() {
     { href: "/speakers", label: "Intervenants" },
     { href: "/planning", label: "Planning" },
     { href: "/favorites", label: "Favoris" },
-    { href: "http://localhost:3000/admin/login", label: "Admin", admin: true },
+    { href: "http://localhost:3001/admin/login", label: "Admin", admin: true },
   ];
 
   return (
