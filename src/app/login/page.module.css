@@ -1,0 +1,224 @@
+.loginRoot {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Geist', 'Inter', system-ui, sans-serif;
+  position: relative;
+  overflow: hidden;
+  background: #0a0a0f;
+}
+
+/* Background */
+.loginBg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.loginBgGrid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.loginBgAccent {
+  position: absolute;
+  top: -200px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(99,102,241,0.12) 0%, transparent 70%);
+}
+
+/* Main layout */
+.loginMain {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 400px;
+  padding: 2rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+/* Brand */
+.loginBrand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.loginBrandName {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #fff;
+  letter-spacing: -0.02em;
+}
+
+/* Card */
+.loginCard {
+  width: 100%;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px;
+  padding: 2rem;
+  backdrop-filter: blur(12px);
+}
+
+.loginCardHeader {
+  margin-bottom: 1.75rem;
+}
+
+.loginTitle {
+  font-size: 1.375rem;
+  font-weight: 600;
+  color: #fff;
+  letter-spacing: -0.02em;
+  margin: 0 0 6px;
+}
+
+.loginSubtitle {
+  font-size: 0.875rem;
+  color: rgba(255,255,255,0.45);
+  margin: 0;
+}
+
+/* Form */
+.loginForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1.125rem;
+}
+
+.loginField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.loginLabel {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: rgba(255,255,255,0.6);
+}
+
+.loginInput {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  padding: 0 12px;
+  height: 42px;
+  font-size: 0.9375rem;
+  color: #fff;
+  width: 100%;
+  box-sizing: border-box;
+  transition: border-color 0.15s, background 0.15s;
+  outline: none;
+  font-family: inherit;
+}
+
+.loginInput::placeholder {
+  color: rgba(255,255,255,0.2);
+}
+
+.loginInput:focus {
+  border-color: rgba(99,102,241,0.6);
+  background: rgba(99,102,241,0.06);
+}
+
+.loginInput:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Error */
+.loginError {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8125rem;
+  color: #f87171;
+  background: rgba(248,113,113,0.08);
+  border: 1px solid rgba(248,113,113,0.2);
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
+/* Submit */
+.loginSubmit {
+  margin-top: 4px;
+  height: 44px;
+  background: #6366f1;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  cursor: pointer;
+  width: 100%;
+  font-family: inherit;
+  letter-spacing: -0.01em;
+  transition: background 0.15s, transform 0.1s, opacity 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loginSubmit:hover:not(:disabled) {
+  background: #4f46e5;
+}
+
+.loginSubmit:active:not(:disabled) {
+  transform: scale(0.99);
+}
+
+.loginSubmit:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* Spinner */
+.loginSpinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Footer */
+.loginFooter {
+  font-size: 0.8125rem;
+  color: rgba(255,255,255,0.3);
+  text-align: center;
+  margin: 0;
+}
+
+.loginFooterLink {
+  color: rgba(99,102,241,0.8);
+  text-decoration: none;
+}
+
+.loginFooterLink:hover {
+  color: #6366f1;
+}
+
+@media (max-width: 480px) {
+  .loginCard {
+    padding: 1.5rem;
+  }
+}

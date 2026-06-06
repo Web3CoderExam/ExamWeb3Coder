@@ -19,7 +19,7 @@ export default function Navbar() {
     { href: "/speakers", label: "Intervenants" },
     { href: "/planning", label: "Planning" },
     { href: "/favorites", label: "Favoris" },
-    { href: "http://localhost:3001/admin/login", label: "Admin", admin: true },
+    { href: "http://localhost:5173", label: "Admin", admin: true },
   ];
 
   return (
@@ -37,6 +37,13 @@ export default function Navbar() {
             className = `${styles.navLink} ${styles.active}`;
           } else {
             className = styles.navLink;
+          }
+          if (link.admin) {
+            return (
+              <a key={link.href} href={link.href} className={className}>
+                {link.label}
+              </a>
+            );
           }
           return (
             <Link key={link.href} href={link.href} className={className}>

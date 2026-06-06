@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { randomUUID } from "crypto";
 
 const CORS = {
   "Access-Control-Allow-Origin": "http://localhost:5173",
@@ -24,26 +23,21 @@ export async function GET(req) {
 
     const parsedFilter = filter ? JSON.parse(filter) : {};
     const where = parsedFilter.name
-      ? {
-          OR: [
-            { name: { contains: parsedFilter.name, mode: 'insensitive' } },
-            { bio: { contains: parsedFilter.name, mode: 'insensitive' } },
-          ]
-        }
+      ? { name: { contains: parsedFilter.name, mode: 'insensitive' } }
       : {};
 
-    const [speakers, total] = await Promise.all([
-      prisma.speaker.findMany({
+    const [rooms, total] = await Promise.all([
+      prisma.room.findMany({
         skip: rangeStart,
         take: perPage,
         where,
-        include: { sessions: { include: { session: true } } },
+        include: { sessions: true },
       }),
-      prisma.speaker.count({ where }),
+      prisma.room.count({ where }),
     ]);
 
-    return NextResponse.json(speakers, {
-      headers: { ...CORS, "Content-Range": `speakers ${rangeStart}-${rangeEnd}/${total}` },
+    return NextResponse.json(rooms, {
+      headers: { ...CORS, "Content-Range": `rooms ${rangeStart}-${rangeEnd}/${total}` },
     });
   } catch (error) {
     return NextResponse.json({ error: "Erreur serveur" }, { status: 500, headers: CORS });
@@ -53,16 +47,15 @@ export async function GET(req) {
 export async function POST(req) {
   try {
     const body = await req.json();
-    const speaker = await prisma.speaker.create({
+    if (!body.name) return NextResponse.json({ error: "Nom requis" }, { status: 400, headers: CORS });
+    const room = await prisma.room.create({
       data: {
-        id: randomUUID(),
         name: body.name,
-        bio: body.bio || null,
-        photo: body.photo || null,
-        expertise: body.expertise || [],
-      },
+        capacity: body.capacity ?? null,
+        description: body.description ?? null,
+      }
     });
-    return NextResponse.json(speaker, { status: 201, headers: CORS });
+    return NextResponse.json(room, { status: 201, headers: CORS });
   } catch (error) {
     return NextResponse.json({ error: "Erreur serveur" }, { status: 500, headers: CORS });
   }

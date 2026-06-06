@@ -41,14 +41,16 @@ model Session {
 }
 
 model Room {
-  id       Int @id @default(autoincrement())
-  name     String
+  id          Int      @id @default(autoincrement())
+  name        String
+  capacity    Int?
+  description String?
 
-  sessions Session[]
+  sessions    Session[]
 }
 
 model Speaker {
-  id         String   @id
+  id         String   @id @default(uuid())
   name       String
   bio        String?
   photo      String?

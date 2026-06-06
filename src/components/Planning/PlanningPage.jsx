@@ -15,7 +15,6 @@ function safeString(value, fallback = "") {
   if (typeof value === "number") return String(value);
   if (typeof value === "object") {
     if (value.name && typeof value.name === "string") return value.name;
-    console.error("Objet non affichable :", value);
     return fallback;
   }
   return fallback;
@@ -56,7 +55,6 @@ function getRoomName(room) {
   if (!room) return "Salle inconnue";
   if (typeof room === "string") return room;
   if (typeof room === "object" && room.name && typeof room.name === "string") return room.name;
-  console.error("Room non reconnue :", room);
   return "Salle inconnue";
 }
 
@@ -130,6 +128,112 @@ export default function PlanningPage({
     gridTemplateColumns: `74px repeat(${visibleRooms.length}, minmax(0, 1fr))`,
   };
 
+  // Vue liste chronologique pour une salle spécifique
+  const roomListView = selectedRoom !== "Toutes" && (
+    <div style={{
+      borderRadius: '12px',
+      border: '1px solid rgba(255,255,255,0.1)',
+      background: 'rgba(15, 23, 42, 0.85)',
+      overflow: 'hidden',
+    }}>
+      <div style={{
+        padding: '12px 16px',
+        borderBottom: '1px solid rgba(255,255,255,0.08)',
+        background: 'rgba(30, 41, 59, 0.65)',
+        color: '#cbd5e1',
+        fontWeight: 700,
+        fontSize: '13px',
+      }}>
+        {selectedRoom} — Sessions chronologiques
+      </div>
+      {visibleSessions
+        .sort((a, b) => new Date(a.startTime) - new Date(b.startTime))
+        .map((session) => {
+          const sessionSpeakers = getSessionSpeakers(session);
+          const live = isLive(session);
+          return (
+            <div
+              key={session.id}
+              onClick={() => openSession(session)}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '16px',
+                padding: '12px 16px',
+                borderBottom: '1px solid rgba(255,255,255,0.05)',
+                cursor: 'pointer',
+                background: selected?.id === session.id ? 'rgba(109, 40, 217, 0.3)' : 'transparent',
+                transition: 'background 0.18s',
+              }}
+            >
+              {/* Heure */}
+              <div style={{
+                minWidth: '80px',
+                color: '#94a3b8',
+                fontSize: '13px',
+                fontWeight: 600,
+              }}>
+                {getSessionTimeRange(session)}
+              </div>
+
+              {/* Titre + Intervenants */}
+              <div style={{ flex: 1 }}>
+                <div style={{
+                  color: '#f1f5f9',
+                  fontWeight: 700,
+                  fontSize: '14px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                }}>
+                  {safeString(session.title)}
+                  {live && (
+                    <span style={{
+                      padding: '2px 6px',
+                      borderRadius: '4px',
+                      background: '#ef4444',
+                      color: 'white',
+                      fontSize: '10px',
+                      fontWeight: 800,
+                    }}>
+                      LIVE
+                    </span>
+                  )}
+                  {isFavorite(session.id) && (
+                    <span style={{
+                      padding: '2px 6px',
+                      borderRadius: '4px',
+                      background: 'rgba(245, 158, 11, 0.2)',
+                      color: '#fbbf24',
+                      fontSize: '10px',
+                      fontWeight: 700,
+                    }}>
+                      ★ Favori
+                    </span>
+                  )}
+                </div>
+                {sessionSpeakers.length > 0 && (
+                  <div style={{ color: '#94a3b8', fontSize: '12px', marginTop: '2px' }}>
+                    {sessionSpeakers.map((s) => safeString(s.name)).join(', ')}
+                  </div>
+                )}
+              </div>
+
+              {/* Durée */}
+              <div style={{ color: '#64748b', fontSize: '12px', minWidth: '60px', textAlign: 'right' }}>
+                {getDuration(session.startTime, session.endTime)}
+              </div>
+            </div>
+          );
+        })}
+      {visibleSessions.length === 0 && (
+        <div style={{ padding: '24px', color: '#64748b', textAlign: 'center' }}>
+          Aucune session pour cette salle
+        </div>
+      )}
+    </div>
+  );
+
   return (
     <div className={styles.container}>
       <div className={styles.eventHeader}>
@@ -153,133 +257,194 @@ export default function PlanningPage({
         ))}
       </div>
 
-      <div className={styles.planningShell}>
-        <div className={scheduleClassName}>
-          <div className={styles.headerGrid} style={roomGridStyle}>
-            <div></div>
-            {visibleRooms.map((room) => (
-              <div key={room} className={styles.headerCell}>
-                {room}
-              </div>
-            ))}
-          </div>
-
-          <div className={styles.grid}>
-            {hours.map((hour) => (
-              <div key={hour} className={styles.row} style={roomGridStyle}>
-                <div className={styles.timeCell}>{hour}:00</div>
-                {visibleRooms.map((room) => {
-                  const session = visibleSessions.find((s) => {
-                    if (!s.startTime) return false;
-                    const sessionHour = new Date(s.startTime).getHours();
-                    const sRoom = getRoomName(s.room);
-                    return sRoom === room && sessionHour === hour;
-                  });
-                  const sessionSpeakers = session ? getSessionSpeakers(session) : [];
-                  const isSelected = selected?.id === session?.id;
-                  const eventClassName = isSelected
-                    ? `${styles.event} ${styles.eventSelected}`
-                    : styles.event;
-                  return (
-                    <div key={`${room}-${hour}`} className={styles.cell}>
-                      {session && (
-                        <button
-                          type="button"
-                          className={eventClassName}
-                          onClick={() => openSession(session)}
-                        >
-                          <strong>{safeString(session.title)}</strong>
-                          {sessionSpeakers.length > 0 && (
-                            <small>
-                              {sessionSpeakers.map((speaker) => safeString(speaker.name)).join(", ")}
-                            </small>
-                          )}
-                          {isLive(session) && <span className={styles.liveBadge}>LIVE</span>}
-                          {isFavorite(session.id) && (
-                            <span className={styles.favoriteBadge}>Favori</span>
-                          )}
-                        </button>
-                      )}
+      {selectedRoom !== "Toutes" ? (
+        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) 300px', gap: '14px', flex: 1 }}>
+          {roomListView}
+          <aside className={styles.detailsPanel}>
+            {selected ? (
+              <>
+                <div className={styles.detailsHeader}>
+                  <div>
+                    <span className={styles.detailsLabel}>Session</span>
+                    <h3>{safeString(selected.title)}</h3>
+                    {isLive(selected) && <div className={styles.liveText}>Live maintenant</div>}
+                  </div>
+                  <button type="button" className={styles.closeBtn} onClick={() => setSelected(null)}>
+                    &times;
+                  </button>
+                </div>
+                <div className={styles.detailsContent}>
+                  <div className={styles.detailList}>
+                    <div>
+                      <span>Date</span>
+                      <strong>{new Date(selected.startTime).toLocaleDateString('fr-FR')}</strong>
                     </div>
-                  );
-                })}
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <aside className={styles.detailsPanel}>
-          {selected ? (
-            <>
-              <div className={styles.detailsHeader}>
-                <div>
-                  <span className={styles.detailsLabel}>Session</span>
-                  <h3>{safeString(selected.title)}</h3>
-                  {isLive(selected) && <div className={styles.liveText}>Live maintenant</div>}
+                    <div>
+                      <span>Horaire</span>
+                      <strong>{getSessionTimeRange(selected)}</strong>
+                    </div>
+                    <div>
+                      <span>Salle</span>
+                      <strong>{getRoomName(selected.room)}</strong>
+                    </div>
+                    <div>
+                      <span>Durée</span>
+                      <strong>{getDuration(selected.startTime, selected.endTime)}</strong>
+                    </div>
+                  </div>
+                  {getSessionSpeakers(selected).length > 0 && (
+                    <p className={styles.description}>
+                      Intervenant{getSessionSpeakers(selected).length > 1 ? "s" : ""} :{" "}
+                      {getSessionSpeakers(selected).map((s) => safeString(s.name)).join(", ")}
+                    </p>
+                  )}
+                  {selected.description && (
+                    <p className={styles.description}>{safeString(selected.description)}</p>
+                  )}
                 </div>
                 <button
                   type="button"
-                  className={styles.closeBtn}
-                  onClick={() => setSelected(null)}
+                  className={isFavorite(selected.id) ? styles.favoritePanelActive : styles.favoritePanelBtn}
+                  onClick={() => toggleFavorite(selected.id)}
                 >
-                  &times;
+                  {isFavorite(selected.id) ? "Retirer des favoris" : "Ajouter aux favoris"}
                 </button>
+                <button
+                  type="button"
+                  className={styles.joinBtn}
+                  onClick={() => router.push(`/sessions/${selected.id}`)}
+                >
+                  Rejoindre la session
+                </button>
+              </>
+            ) : (
+              <div className={styles.emptyPanel}>
+                <span className={styles.detailsLabel}>Détails</span>
+                <h3>Sélectionnez une session</h3>
+                <p>Les informations de la session apparaissent ici.</p>
               </div>
-              <div className={styles.detailsContent}>
-                <div className={styles.detailList}>
-                  <div>
-                    <span>Date</span>
-                    <strong>{new Date(selected.startTime).toLocaleDateString('fr-FR')}</strong>
-                  </div>
-                  <div>
-                    <span>Horaire</span>
-                    <strong>{getSessionTimeRange(selected)}</strong>
-                  </div>
-                  <div>
-                    <span>Salle</span>
-                    <strong>{getRoomName(selected.room)}</strong>
-                  </div>
-                  <div>
-                    <span>Durée</span>
-                    <strong>{getDuration(selected.startTime, selected.endTime)}</strong>
-                  </div>
-                </div>
-                {getSessionSpeakers(selected).length > 0 && (
-                  <p className={styles.description}>
-                    Intervenant{getSessionSpeakers(selected).length > 1 ? "s" : ""} :{" "}
-                    {getSessionSpeakers(selected)
-                      .map((s) => safeString(s.name))
-                      .join(", ")}
-                  </p>
-                )}
-                {selected.description && (
-                  <p className={styles.description}>{safeString(selected.description)}</p>
-                )}
-              </div>
-              <button
-                type="button"
-                className={isFavorite(selected.id) ? styles.favoritePanelActive : styles.favoritePanelBtn}
-                onClick={() => toggleFavorite(selected.id)}
-              >
-                {isFavorite(selected.id) ? "Retirer des favoris" : "Ajouter aux favoris"}
-              </button>
-              <button
-                type="button"
-                className={styles.joinBtn}
-                onClick={() => router.push(`/sessions/${selected.id}`)}
-              >
-                Rejoindre la session
-              </button>
-            </>
-          ) : (
-            <div className={styles.emptyPanel}>
-              <span className={styles.detailsLabel}>Détails</span>
-              <h3>Sélectionnez une carte</h3>
-              <p>Les informations de la session apparaissent ici sans cacher le planning.</p>
+            )}
+          </aside>
+        </div>
+      ) : (
+        <div className={styles.planningShell}>
+          <div className={scheduleClassName}>
+            <div className={styles.headerGrid} style={roomGridStyle}>
+              <div></div>
+              {visibleRooms.map((room) => (
+                <div key={room} className={styles.headerCell}>{room}</div>
+              ))}
             </div>
-          )}
-        </aside>
-      </div>
+            <div className={styles.grid}>
+              {hours.map((hour) => (
+                <div key={hour} className={styles.row} style={roomGridStyle}>
+                  <div className={styles.timeCell}>{hour}:00</div>
+                  {visibleRooms.map((room) => {
+                    const session = visibleSessions.find((s) => {
+                      if (!s.startTime) return false;
+                      const sessionHour = new Date(s.startTime).getHours();
+                      const sRoom = getRoomName(s.room);
+                      return sRoom === room && sessionHour === hour;
+                    });
+                    const sessionSpeakers = session ? getSessionSpeakers(session) : [];
+                    const isSelected = selected?.id === session?.id;
+                    const eventClassName = isSelected
+                      ? `${styles.event} ${styles.eventSelected}`
+                      : styles.event;
+                    return (
+                      <div key={`${room}-${hour}`} className={styles.cell}>
+                        {session && (
+                          <button
+                            type="button"
+                            className={eventClassName}
+                            onClick={() => openSession(session)}
+                          >
+                            <strong>{safeString(session.title)}</strong>
+                            {sessionSpeakers.length > 0 && (
+                              <small>
+                                {sessionSpeakers.map((speaker) => safeString(speaker.name)).join(", ")}
+                              </small>
+                            )}
+                            {isLive(session) && <span className={styles.liveBadge}>LIVE</span>}
+                            {isFavorite(session.id) && (
+                              <span className={styles.favoriteBadge}>Favori</span>
+                            )}
+                          </button>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              ))}
+            </div>
+          </div>
+          <aside className={styles.detailsPanel}>
+            {selected ? (
+              <>
+                <div className={styles.detailsHeader}>
+                  <div>
+                    <span className={styles.detailsLabel}>Session</span>
+                    <h3>{safeString(selected.title)}</h3>
+                    {isLive(selected) && <div className={styles.liveText}>Live maintenant</div>}
+                  </div>
+                  <button type="button" className={styles.closeBtn} onClick={() => setSelected(null)}>
+                    &times;
+                  </button>
+                </div>
+                <div className={styles.detailsContent}>
+                  <div className={styles.detailList}>
+                    <div>
+                      <span>Date</span>
+                      <strong>{new Date(selected.startTime).toLocaleDateString('fr-FR')}</strong>
+                    </div>
+                    <div>
+                      <span>Horaire</span>
+                      <strong>{getSessionTimeRange(selected)}</strong>
+                    </div>
+                    <div>
+                      <span>Salle</span>
+                      <strong>{getRoomName(selected.room)}</strong>
+                    </div>
+                    <div>
+                      <span>Durée</span>
+                      <strong>{getDuration(selected.startTime, selected.endTime)}</strong>
+                    </div>
+                  </div>
+                  {getSessionSpeakers(selected).length > 0 && (
+                    <p className={styles.description}>
+                      Intervenant{getSessionSpeakers(selected).length > 1 ? "s" : ""} :{" "}
+                      {getSessionSpeakers(selected).map((s) => safeString(s.name)).join(", ")}
+                    </p>
+                  )}
+                  {selected.description && (
+                    <p className={styles.description}>{safeString(selected.description)}</p>
+                  )}
+                </div>
+                <button
+                  type="button"
+                  className={isFavorite(selected.id) ? styles.favoritePanelActive : styles.favoritePanelBtn}
+                  onClick={() => toggleFavorite(selected.id)}
+                >
+                  {isFavorite(selected.id) ? "Retirer des favoris" : "Ajouter aux favoris"}
+                </button>
+                <button
+                  type="button"
+                  className={styles.joinBtn}
+                  onClick={() => router.push(`/sessions/${selected.id}`)}
+                >
+                  Rejoindre la session
+                </button>
+              </>
+            ) : (
+              <div className={styles.emptyPanel}>
+                <span className={styles.detailsLabel}>Détails</span>
+                <h3>Sélectionnez une carte</h3>
+                <p>Les informations de la session apparaissent ici sans cacher le planning.</p>
+              </div>
+            )}
+          </aside>
+        </div>
+      )}
     </div>
   );
 }

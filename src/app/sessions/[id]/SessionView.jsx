@@ -163,11 +163,23 @@ export default function SessionView({ event, session, defaultFavorites }) {
                 </button>
               </div>
               <div className={styles.list}>
-                {sortedQuestions.length === 0 && <p className={styles.empty}>Aucune question pour le moment</p>}
+                {sortedQuestions.length === 0 && (
+                  <p className={styles.empty}>Aucune question pour le moment</p>
+                )}
                 {sortedQuestions.map((question) => (
                   <div key={question.id} className={styles.question}>
                     <div>
-                      <strong>{question.author || "Anonyme"}</strong>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <strong>{question.author || "Anonyme"}</strong>
+                        <span style={{ fontSize: '11px', color: '#64748b' }}>
+                          {new Date(question.createdAt).toLocaleString([], {
+                            day: '2-digit',
+                            month: '2-digit',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          })}
+                        </span>
+                      </div>
                       <p>{question.content}</p>
                     </div>
                     <button className={styles.vote} onClick={() => upvote(question.id)}>
