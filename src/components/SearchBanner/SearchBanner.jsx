@@ -1,18 +1,28 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import styles from "./SearchBanner.module.css";
 
 export default function SearchBanner() {
-    const [searchQuery, setSearchQuery] = useState("");
+    const searchParams = useSearchParams();
+    const [searchQuery, setSearchQuery] = useState(searchParams.get("search") || "");
     const router = useRouter();
+
+    useEffect(() => {
+        const delay = setTimeout(() => {
+            if (searchQuery.trim()) {
+                router.push(`/accueil?search=${encodeURIComponent(searchQuery.trim())}`);
+            } else {
+                router.push("/accueil");
+            }
+        }, 300); 
+
+        return () => clearTimeout(delay);
+    }, [searchQuery, router]);
 
     const handleSearch = (e) => {
         e.preventDefault();
-        if (searchQuery.trim()) {
-            router.push(`/accueil?search=${encodeURIComponent(searchQuery.trim())}`);
-        }
     };
 
     return (
