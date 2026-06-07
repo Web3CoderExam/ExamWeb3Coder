@@ -9,8 +9,26 @@ function getSessionSpeakerIds(session) {
   if (Array.isArray(session.speakerIds) && session.speakerIds.length > 0) {
     return session.speakerIds;
   }
-
   return session.speakerId ? [session.speakerId] : [];
+}
+
+function getDuration(startTime, endTime) {
+  if (!startTime || !endTime) return "—";
+  const start = new Date(startTime);
+  const end = new Date(endTime);
+  const diffMinutes = Math.round((end - start) / (1000 * 60));
+  const hours = Math.floor(diffMinutes / 60);
+  const minutes = diffMinutes % 60;
+  if (hours === 0) return `${minutes} min`;
+  if (minutes === 0) return `${hours} h`;
+  return `${hours} h ${minutes} min`;
+}
+
+function getRoomName(room) {
+  if (!room) return "Salle inconnue";
+  if (typeof room === "string") return room;
+  if (typeof room === "object" && room.name && typeof room.name === "string") return room.name;
+  return "Salle inconnue";
 }
 
 export default async function Page({ params }) {
@@ -59,13 +77,11 @@ export default async function Page({ params }) {
             width={140}
             height={140}
           />
-
           <div className={styles.heroText}>
             <span className={styles.badge}>Intervenant</span>
             <h1>{speaker.name}</h1>
             <p>{speaker.role}</p>
           </div>
-
           <div className={styles.stat}>
             <strong>{sessions.length}</strong>
             <span>session{sessions.length > 1 ? "s" : ""}</span>
@@ -77,10 +93,8 @@ export default async function Page({ params }) {
             <h2>Biographie</h2>
             <p className={styles.bio}>{speaker.bio}</p>
           </article>
-
           <article className={styles.card}>
             <h2>Liens externes</h2>
-
             {links.length > 0 ? (
               <div className={styles.links}>
                 {links.map(([label, href]) => (
@@ -100,7 +114,6 @@ export default async function Page({ params }) {
             <span className={styles.badge}>Programme</span>
             <h2>Sessions associées</h2>
           </div>
-
           <div className={styles.sessionList}>
             {sessions.map((session) => (
               <Link
@@ -112,11 +125,10 @@ export default async function Page({ params }) {
                   <strong>{session.title}</strong>
                   <p>{session.eventTitle}</p>
                 </div>
-
                 <div className={styles.sessionMeta}>
                   <span>{session.timeRange || session.time}</span>
-                  <span>{session.room}</span>
-                  <span>{session.duration}h</span>
+                  <span>{getRoomName(session.room)}</span>
+                  <span>{getDuration(session.startTime, session.endTime)}</span>
                 </div>
               </Link>
             ))}
@@ -128,7 +140,6 @@ export default async function Page({ params }) {
             <span className={styles.badge}>Questions</span>
             <h2>Questions associées</h2>
           </div>
-
           {questions.length > 0 ? (
             <div className={styles.questionList}>
               {questions.map((question) => (

@@ -6,61 +6,29 @@ import { useRouter } from "next/navigation";
 import useFavorites from "@/hooks/useFavorites";
 import styles from "./EventPage.module.css";
 
-function getSessionSpeakerIds(session) {
-  if (Array.isArray(session.speakerIds)) {
-    return session.speakerIds;
-  }
-
-  return session.speakerId ? [session.speakerId] : [];
-}
-
-function computeEndTime(startTime, duration) {
-  if (!startTime || duration == null) return null;
-
-  const [hours, minutes] = startTime.split(":").map(Number);
-  if (Number.isNaN(hours) || Number.isNaN(minutes)) return null;
-
-  const date = new Date();
-  date.setHours(hours, minutes, 0, 0);
-  date.setMinutes(date.getMinutes() + Math.round(duration * 60));
-
-  return date.toTimeString().slice(0, 5);
-}
-
 function getSessionTimeRange(session) {
-  const startTime = session.startTime || session.time;
-  const endTime = session.endTime || computeEndTime(startTime, session.duration);
-  return endTime ? `${startTime} - ${endTime}` : startTime;
+  const start = session.startTime
+    ? new Date(session.startTime).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+    : "";
+  const end = session.endTime
+    ? new Date(session.endTime).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+    : "";
+  return end ? `${start} - ${end}` : start;
 }
 
-export default function EventPage({
-  event,
-  sessions,
-  speakers,
-  defaultFavorites,
-}) {
+export default function EventPage({ event, sessions, defaultFavorites }) {
   const router = useRouter();
   const { isFavorite, toggleFavorite } = useFavorites(defaultFavorites);
 
-  const startDate = event.startDate || event.date;
-  const endDate = event.endDate || event.date;
-  const dateText = startDate === endDate ? startDate : `${startDate} - ${endDate}`;
-
-  const getSessionSpeakers = (session) => {
-    const speakerIds = getSessionSpeakerIds(session);
-    return speakers.filter((speaker) => speakerIds.includes(speaker.id));
-  };
+  const dateText =
+    event.startDate === event.endDate
+      ? event.startDate
+      : `${event.startDate} - ${event.endDate}`;
 
   const isLive = (session) => {
     const now = new Date();
-    const sessionDate = session.date || event.startDate || event.date;
-    const startTime = session.startTime || session.time;
-    const endTime = session.endTime || computeEndTime(startTime, session.duration);
-    const start = new Date(`${sessionDate}T${startTime}`);
-    const end = endTime
-      ? new Date(`${sessionDate}T${endTime}`)
-      : new Date(start.getTime() + session.duration * 60 * 60 * 1000);
-
+    const start = new Date(session.startTime);
+    const end = new Date(session.endTime);
     return now >= start && now <= end;
   };
 
@@ -71,14 +39,12 @@ export default function EventPage({
           <span className={styles.badge}>Événement</span>
           <h1>{event.title}</h1>
           <p>{event.description}</p>
-
           <div className={styles.meta}>
             <span>{dateText}</span>
             <span>{event.location}</span>
             <span>{sessions.length} sessions</span>
           </div>
         </div>
-
         <button
           type="button"
           className={styles.planningBtn}
@@ -98,46 +64,36 @@ export default function EventPage({
 
         <div className={styles.grid}>
           {sessions.map((session) => {
-            const sessionSpeakers = getSessionSpeakers(session);
             const live = isLive(session);
             const favorite = isFavorite(session.id);
 
             return (
-              <article
-                key={session.id}
-                className={styles.card}
-              >
+              <article key={session.id} className={styles.card}>
                 <div className={styles.cardTop}>
                   <span className={styles.time}>{getSessionTimeRange(session)}</span>
                   {live && <span className={styles.live}>LIVE</span>}
                 </div>
-
                 <h3>{session.title}</h3>
                 <p>{session.description}</p>
-
                 <div className={styles.cardMeta}>
                   <span>{session.room}</span>
-                  <span>{session.duration}h</span>
+                  <span>{((new Date(session.endTime) - new Date(session.startTime)) / (1000 * 60 * 60)).toFixed(1)}h</span>
                   <span>{session.capacity} places</span>
                 </div>
 
-                {sessionSpeakers.length > 0 && (
+                {session.speakers && session.speakers.length > 0 && (
                   <div className={styles.speakers}>
-                    {sessionSpeakers.map((speaker) => (
-                      <Link
-                        key={speaker.id}
-                        href={`/speakers/${speaker.id}`}
-                        className={styles.speaker}
-                      >
+                    {session.speakers.map((speaker) => (
+                      <Link key={speaker.id} href={`/speakers/${speaker.id}`} className={styles.speaker}>
                         <Image
-                          src={speaker.avatar}
+                          src={speaker.photo || "/default-avatar.png"}
                           alt={speaker.name}
                           width={48}
                           height={48}
                         />
                         <div>
                           <strong>{speaker.name}</strong>
-                          <span>{speaker.role}</span>
+                          <span>{speaker.bio || "Intervenant"}</span>
                         </div>
                       </Link>
                     ))}
@@ -145,18 +101,12 @@ export default function EventPage({
                 )}
 
                 <div className={styles.cardActions}>
-                  <Link
-                    href={`/sessions/${session.id}`}
-                    className={styles.detailsBtn}
-                  >
+                  <Link href={`/sessions/${session.id}`} className={styles.detailsBtn}>
                     Voir la session
                   </Link>
-
                   <button
                     type="button"
-                    className={
-                      favorite ? styles.favoriteActive : styles.favoriteBtn
-                    }
+                    className={favorite ? styles.favoriteActive : styles.favoriteBtn}
                     onClick={() => toggleFavorite(session.id)}
                   >
                     {favorite ? "Retirer" : "Ajouter"}
