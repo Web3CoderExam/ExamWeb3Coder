@@ -4,73 +4,85 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model Event {
   id          Int       @id @default(autoincrement())
   title       String
   description String?
-  date        DateTime
-  startDate   DateTime?
-  endDate     DateTime?
+  startDate   DateTime
+  endDate     DateTime
   location    String
   category    String?
   image       String?
+
   sessions    Session[]
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
 }
 
 model Session {
-  id          Int        @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   title       String
   description String?
-  date        DateTime?
-  time        String
-  startTime   String?
-  endTime     String?
-  duration    Float      @default(1)
-  roomId      String?
-  room        String
+
+  startTime   DateTime
+  endTime     DateTime
+
   capacity    Int?
+
   eventId     Int
-  event       Event      @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  speakers    Speaker[]
+  roomId      Int
+
+  event       Event @relation(fields: [eventId], references: [id])
+  room        Room  @relation(fields: [roomId], references: [id])
+
+  speakers    SessionSpeaker[]
   questions   Question[]
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+}
+
+model Room {
+  id          Int      @id @default(autoincrement())
+  name        String
+  capacity    Int?
+  description String?
+
+  sessions    Session[]
 }
 
 model Speaker {
-  id        String    @id
-  name      String
-  role      String?
-  bio       String?
-  avatar    String?
-  image     String?
-  expertise String[]  @default([])
-  links     Json?
-  sessions  Session[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id         String   @id @default(uuid())
+  name       String
+  bio        String?
+  photo      String?
+  expertise  String[]
+
+  sessions   SessionSpeaker[]
+}
+
+model SessionSpeaker {
+  sessionId Int
+  speakerId String
+
+  session Session @relation(fields: [sessionId], references: [id])
+  speaker Speaker @relation(fields: [speakerId], references: [id])
+
+  @@id([sessionId, speakerId])
 }
 
 model Question {
   id        Int      @id @default(autoincrement())
-  sessionId Int
-  session   Session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
   content   String
   author    String?
   upvotes   Int      @default(0)
   createdAt DateTime @default(now())
+
+  sessionId Int
+  session   Session @relation(fields: [sessionId], references: [id])
 }
 
-model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  password  String
-  name      String?
-  role      String?  @default("participant")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model Admin {
+  id           Int    @id @default(autoincrement())
+  email        String @unique
+  password_hash String
+  createdAt    DateTime @default(now())
 }

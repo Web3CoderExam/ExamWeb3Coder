@@ -5,8 +5,7 @@ const FALLBACK_AVATAR = "https://images.unsplash.com/photo-1507003211169-0a1dd72
 
 function toDateString(value) {
   if (!value) return null;
-  if (typeof value === "string") return value.slice(0, 10);
-  return value.toISOString().slice(0, 10);
+  return new Date(value).toISOString().slice(0, 10);
 }
 
 function mapQuestion(question) {
@@ -20,56 +19,22 @@ function mapQuestion(question) {
   };
 }
 
-function computeEndTime(startTime, duration) {
-  if (!startTime || duration == null) return null;
-
-  const [hours, minutes] = startTime.split(":").map(Number);
-  if (Number.isNaN(hours) || Number.isNaN(minutes)) return null;
-
-  const date = new Date();
-  date.setHours(hours, minutes, 0, 0);
-  date.setMinutes(date.getMinutes() + Math.round(duration * 60));
-
-  return date.toTimeString().slice(0, 5);
-}
-
-function getSessionTimeRange({ startTime, endTime, duration }) {
-  const effectiveStart = startTime || null;
-  const effectiveEnd = endTime || computeEndTime(effectiveStart, duration);
-  return effectiveEnd ? `${effectiveStart} - ${effectiveEnd}` : effectiveStart;
-}
-
-export function mapSpeaker(speaker) {
-  const avatar = speaker.avatar || speaker.image || FALLBACK_AVATAR;
-
-  return {
-    id: speaker.id,
-    name: speaker.name,
-    role: speaker.role || speaker.bio || "Intervenant",
-    bio: speaker.bio || "Biographie a venir.",
-    avatar,
-    image: speaker.image || avatar,
-    expertise: speaker.expertise || [],
-    links: speaker.links || {},
-  };
+function getSessionTimeRange(session) {
+  const start = new Date(session.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  const end = new Date(session.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  return `${start} - ${end}`;
 }
 
 function mapSession(session, event) {
   const speakers = session.speakers || [];
-  const speakerIds = speakers.map((speaker) => speaker.id);
-  const startTime = session.startTime || session.time;
-  const endTime = session.endTime || computeEndTime(startTime, session.duration);
-
+  const speakerIds = speakers.map(s => s.speaker?.id || s.id);
   return {
     id: session.id,
     title: session.title,
     description: session.description || "",
-    date: toDateString(session.date || event?.date),
-    time: session.time,
-    startTime,
-    endTime,
-    timeRange: getSessionTimeRange({ startTime, endTime, duration: session.duration }),
-    duration: session.duration,
+    startTime: session.startTime.toISOString(),
+    endTime: session.endTime.toISOString(),
+    timeRange: getSessionTimeRange(session),
     roomId: session.roomId,
     room: session.room,
     capacity: session.capacity,
@@ -79,40 +44,49 @@ function mapSession(session, event) {
   };
 }
 
-export function mapEvent(event) {
-  const date = toDateString(event.date);
-  const startDate = toDateString(event.startDate) || date;
-  const endDate = toDateString(event.endDate) || startDate;
+export function mapSpeaker(speaker) {
+  return {
+    id: speaker.id,
+    name: speaker.name,
+    role: speaker.bio || "Intervenant",
+    bio: speaker.bio || "Biographie à venir.",
+    avatar: speaker.photo || FALLBACK_AVATAR,
+    image: speaker.photo || FALLBACK_AVATAR,
+    expertise: speaker.expertise || [],
+    links: {},
+  };
+}
 
+export function mapEvent(event) {
   return {
     id: event.id,
     title: event.title,
-    date,
-    startDate,
-    endDate,
+    date: toDateString(event.startDate),
+    startDate: toDateString(event.startDate),
+    endDate: toDateString(event.endDate),
     location: event.location,
-    category: event.category || "Evenement",
+    category: event.category || "Événement",
     description: event.description || "",
     image: event.image || FALLBACK_IMAGE,
-    sessions: (event.sessions || []).map((session) => mapSession(session, event)),
+    sessions: (event.sessions || []).map(s => mapSession(s, event)),
   };
 }
 
 const eventInclude = {
   sessions: {
     include: {
-      speakers: true,
+      room: true,
+      speakers: { include: { speaker: true } },
       questions: {
         orderBy: [{ upvotes: "desc" }, { createdAt: "desc" }],
       },
     },
-    orderBy: [{ date: "asc" }, { time: "asc" }],
+    orderBy: [{ startTime: "asc" }],
   },
 };
 
 export async function getEvents(searchQuery) {
   const search = searchQuery?.trim();
-
   const events = await prisma.event.findMany({
     where: search
       ? {
@@ -125,9 +99,8 @@ export async function getEvents(searchQuery) {
         }
       : undefined,
     include: eventInclude,
-    orderBy: [{ date: "asc" }, { id: "asc" }],
+    orderBy: [{ startDate: "asc" }, { id: "asc" }],
   });
-
   return events.map(mapEvent);
 }
 
@@ -136,29 +109,21 @@ export async function getEventById(id) {
     where: { id: Number(id) },
     include: eventInclude,
   });
-
   return event ? mapEvent(event) : null;
 }
 
 export async function getSpeakers() {
-  const speakers = await prisma.speaker.findMany({
-    orderBy: [{ name: "asc" }],
-  });
-
+  const speakers = await prisma.speaker.findMany({ orderBy: [{ name: "asc" }] });
   return speakers.map(mapSpeaker);
 }
 
 export async function getSpeakerById(id) {
-  const speaker = await prisma.speaker.findUnique({
-    where: { id },
-  });
-
+  const speaker = await prisma.speaker.findUnique({ where: { id } });
   return speaker ? mapSpeaker(speaker) : null;
 }
 
 export async function getSessions() {
   const events = await getEvents();
-
   return events.flatMap((event) =>
     event.sessions.map((session) => ({
       ...session,
@@ -173,15 +138,14 @@ export async function getSessionById(id) {
     where: { id: Number(id) },
     include: {
       event: true,
-      speakers: true,
+      room: true,
+      speakers: { include: { speaker: true } },
       questions: {
         orderBy: [{ upvotes: "desc" }, { createdAt: "desc" }],
       },
     },
   });
-
   if (!session) return null;
-
   return {
     event: mapEvent({ ...session.event, sessions: [] }),
     session: mapSession(session, session.event),

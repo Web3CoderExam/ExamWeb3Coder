@@ -3,16 +3,23 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
+import { useEffect, useState } from "react";
 import styles from "./Navbar.module.css";
 
 export default function Navbar() {
   const pathname = usePathname();
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const links = [
     { href: "/accueil", label: "Accueil" },
     { href: "/speakers", label: "Intervenants" },
     { href: "/planning", label: "Planning" },
     { href: "/favorites", label: "Favoris" },
+    { href: "http://localhost:5173", label: "Admin", admin: true },
   ];
 
   return (
@@ -22,15 +29,28 @@ export default function Navbar() {
       </Link>
 
       <nav className={styles.nav}>
-        {links.map((link) => (
-          <Link
-            key={link.href}
-            href={link.href}
-            className={pathname === link.href ? styles.active : ""}
-          >
-            {link.label}
-          </Link>
-        ))}
+        {links.map((link) => {
+          let className = "";
+          if (link.admin) {
+            className = styles.adminLink;
+          } else if (isClient && pathname === link.href) {
+            className = `${styles.navLink} ${styles.active}`;
+          } else {
+            className = styles.navLink;
+          }
+          if (link.admin) {
+            return (
+              <a key={link.href} href={link.href} className={className}>
+                {link.label}
+              </a>
+            );
+          }
+          return (
+            <Link key={link.href} href={link.href} className={className}>
+              {link.label}
+            </Link>
+          );
+        })}
       </nav>
     </header>
   );
