@@ -3,7 +3,7 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log("🌱 Seeding database...");
+  console.log(" Seeding database...");
 
   await prisma.$transaction([
     prisma.sessionSpeaker.deleteMany(),
@@ -97,7 +97,7 @@ async function main() {
     },
   });
 
-  console.log("✅ Database seeded");
+  console.log("Database seeded");
 }
 
 main()

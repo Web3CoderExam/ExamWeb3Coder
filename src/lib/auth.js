@@ -31,13 +31,13 @@ export async function getSession() {
 
   try {
     const { payload } = await jwtVerify(token, SECRET);
-    return payload; // { adminId, email, iat, exp }
+    return payload; 
   } catch {
     return null;
   }
 }
 
-// Supprime le cookie (déconnexion)
+// (déconnexion)
 export async function deleteSession() {
   const cookieStore = await cookies();
   cookieStore.delete(COOKIE_NAME);

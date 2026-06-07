@@ -1,8 +1,8 @@
 import { prisma } from "@/lib/prisma";
 
-// =====================
+
 // EVENTS (ADMIN)
-// =====================
+
 
 export async function createEvent(data) {
   return await prisma.event.create({
@@ -50,9 +50,9 @@ export async function getAdminEvents() {
   });
 }
 
-// =====================
+
 // SESSIONS (ADMIN)
-// =====================
+
 
 export async function createSession(data) {
   return await prisma.session.create({
