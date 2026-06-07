@@ -31,13 +31,25 @@ export async function PUT(req, { params }) {
   const { id } = await params;
   try {
     const body = await req.json();
+
+    let expertise = undefined;
+    if (body.expertise !== undefined) {
+      if (Array.isArray(body.expertise)) {
+        expertise = body.expertise.filter(e => typeof e === 'string' && e.trim() !== '');
+      } else if (typeof body.expertise === 'string') {
+        expertise = body.expertise.split(',').map(e => e.trim()).filter(Boolean);
+      } else {
+        expertise = [];
+      }
+    }
+
     const speaker = await prisma.speaker.update({
       where: { id },
       data: {
         ...(body.name && { name: body.name }),
         ...(body.bio !== undefined && { bio: body.bio }),
         ...(body.photo && { photo: body.photo }),
-        ...(body.expertise && { expertise: body.expertise }),
+        ...(expertise !== undefined && { expertise }),
       },
     });
     return NextResponse.json(speaker, { headers: CORS });

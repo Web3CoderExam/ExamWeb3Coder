@@ -1,6 +1,6 @@
 import { prisma } from '@/lib/prisma'
 import { notFound } from 'next/navigation'
-import SessionView from './SessionView'
+import SessionView from '../../../components/features/session/SessionView'
 
 async function getSessionData(id) {
   const session = await prisma.session.findUnique({
