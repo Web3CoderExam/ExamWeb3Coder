@@ -14,12 +14,21 @@ export default function Navbar() {
     setIsClient(true);
   }, []);
 
+  const handleAdminClick = async (e) => {
+    e.preventDefault();
+    const res = await fetch("/api/auth/me", { credentials: "include" });
+    if (res.ok) {
+      window.location.href = "http://localhost:5173";
+    } else {
+      window.location.href = "/login";
+    }
+  };
+
   const links = [
     { href: "/accueil", label: "Accueil" },
     { href: "/speakers", label: "Intervenants" },
     { href: "/planning", label: "Planning" },
     { href: "/favorites", label: "Favoris" },
-    { href: "http://localhost:5173", label: "Admin", admin: true },
   ];
 
   return (
@@ -30,27 +39,18 @@ export default function Navbar() {
 
       <nav className={styles.nav}>
         {links.map((link) => {
-          let className = "";
-          if (link.admin) {
-            className = styles.adminLink;
-          } else if (isClient && pathname === link.href) {
-            className = `${styles.navLink} ${styles.active}`;
-          } else {
-            className = styles.navLink;
-          }
-          if (link.admin) {
-            return (
-              <a key={link.href} href={link.href} className={className}>
-                {link.label}
-              </a>
-            );
-          }
+          const className = isClient && pathname === link.href
+            ? `${styles.navLink} ${styles.active}`
+            : styles.navLink;
           return (
             <Link key={link.href} href={link.href} className={className}>
               {link.label}
             </Link>
           );
         })}
+        <a href="#" onClick={handleAdminClick} className={styles.adminLink}>
+          Admin
+        </a>
       </nav>
     </header>
   );
