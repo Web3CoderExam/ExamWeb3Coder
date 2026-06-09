@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
 const CORS = {
-  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Origin": "http://localhost:5173",
   "Access-Control-Allow-Methods": "GET,POST,DELETE,OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type, Range, Accept",
 };
@@ -11,7 +11,6 @@ export async function OPTIONS() {
   return NextResponse.json({}, { headers: CORS });
 }
 
-// GET — liste les speakers d'une session
 export async function GET(req, { params }) {
   const { id } = await params;
   try {
@@ -25,7 +24,6 @@ export async function GET(req, { params }) {
   }
 }
 
-// POST — ajoute un speaker à une session
 export async function POST(req, { params }) {
   const { id } = await params;
   try {
@@ -39,7 +37,6 @@ export async function POST(req, { params }) {
   }
 }
 
-// DELETE — retire un speaker d'une session
 export async function DELETE(req, { params }) {
   const { id } = await params;
   try {

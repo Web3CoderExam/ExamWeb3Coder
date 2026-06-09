@@ -38,7 +38,13 @@ export async function PUT(req, { params }) {
         startTime: body.startTime ? new Date(body.startTime) : undefined,
         endTime: body.endTime ? new Date(body.endTime) : undefined,
         roomId: body.roomId,
+        eventId: body.eventId,
         capacity: body.capacity,
+      },
+      include: {
+        speakers: { include: { speaker: true } },
+        room: true,
+        event: true,
       },
     });
     return NextResponse.json(session, { headers: CORS });
