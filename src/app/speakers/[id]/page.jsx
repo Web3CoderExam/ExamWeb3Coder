@@ -52,7 +52,10 @@ export default async function Page({ params }) {
     getSessionSpeakerIds(session).includes(speaker.id)
   );
 
-  const links = Object.entries(speaker.links || {});
+  const linkedinUrl = speaker.linkedin;
+  const websiteUrl = speaker.website;
+  const hasAnyLink = linkedinUrl || websiteUrl;
+
   const questions = sessions
     .flatMap((session) =>
       (session.questions || []).map((question) => ({
@@ -95,13 +98,18 @@ export default async function Page({ params }) {
           </article>
           <article className={styles.card}>
             <h2>Liens externes</h2>
-            {links.length > 0 ? (
+            {hasAnyLink ? (
               <div className={styles.links}>
-                {links.map(([label, href]) => (
-                  <a key={label} href={href} target="_blank" rel="noreferrer">
-                    {label}
+                {websiteUrl && (
+                  <a href={websiteUrl} target="_blank" rel="noreferrer">
+                    Site web
                   </a>
-                ))}
+                )}
+                {linkedinUrl && (
+                  <a href={linkedinUrl} target="_blank" rel="noreferrer">
+                    LinkedIn
+                  </a>
+                )}
               </div>
             ) : (
               <p className={styles.empty}>Aucun lien ajouté pour le moment.</p>

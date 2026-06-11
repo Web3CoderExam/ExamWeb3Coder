@@ -53,6 +53,8 @@ export function mapSpeaker(speaker) {
     avatar: speaker.photo || FALLBACK_AVATAR,
     image: speaker.photo || FALLBACK_AVATAR,
     expertise: speaker.expertise || [],
+    linkedin: speaker.linkedin || null,
+    website: speaker.website || null,
     links: {},
   };
 }

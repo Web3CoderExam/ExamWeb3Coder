@@ -60,6 +60,8 @@ export async function POST(req) {
         bio: body.bio || null,
         photo: body.photo || null,
         expertise: body.expertise || [],
+        linkedin: body.linkedin || null,
+        website: body.website || null,
       },
     });
     return NextResponse.json(speaker, { status: 201, headers: CORS });

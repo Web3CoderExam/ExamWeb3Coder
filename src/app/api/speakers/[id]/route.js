@@ -22,7 +22,6 @@ export async function GET(req, { params }) {
     if (!speaker) return NextResponse.json({ error: "Not found" }, { status: 404, headers: CORS });
     return NextResponse.json(speaker, { headers: CORS });
   } catch (error) {
-    console.error("SPEAKER GET ERROR:", error.message);
     return NextResponse.json({ error: error.message }, { status: 500, headers: CORS });
   }
 }
@@ -46,15 +45,16 @@ export async function PUT(req, { params }) {
     const speaker = await prisma.speaker.update({
       where: { id },
       data: {
-        ...(body.name && { name: body.name }),
-        ...(body.bio !== undefined && { bio: body.bio }),
-        ...(body.photo && { photo: body.photo }),
-        ...(expertise !== undefined && { expertise }),
+        ...(body.name              !== undefined && { name: body.name }),
+        ...(body.bio               !== undefined && { bio: body.bio }),
+        ...(body.photo             !== undefined && { photo: body.photo }),
+        ...(expertise              !== undefined && { expertise }),
+        ...(body.linkedin          !== undefined && { linkedin: body.linkedin }),
+        ...(body.website           !== undefined && { website: body.website }),
       },
     });
     return NextResponse.json(speaker, { headers: CORS });
   } catch (error) {
-    console.error("SPEAKER PUT ERROR:", error.message);
     if (error.code === "P2025")
       return NextResponse.json({ error: "Not found" }, { status: 404, headers: CORS });
     return NextResponse.json({ error: error.message }, { status: 500, headers: CORS });
@@ -68,7 +68,6 @@ export async function DELETE(req, { params }) {
     await prisma.speaker.delete({ where: { id } });
     return NextResponse.json({ id }, { headers: CORS });
   } catch (error) {
-    console.error("SPEAKER DELETE ERROR:", error.message);
     if (error.code === "P2025")
       return NextResponse.json({ error: "Not found" }, { status: 404, headers: CORS });
     return NextResponse.json({ error: error.message }, { status: 500, headers: CORS });

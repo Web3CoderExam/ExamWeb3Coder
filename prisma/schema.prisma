@@ -55,6 +55,8 @@ model Speaker {
   bio        String?
   photo      String?
   expertise  String[]
+  linkedin   String?   
+  website    String?
 
   sessions   SessionSpeaker[]
 }
