@@ -50,12 +50,16 @@ export async function DELETE(req, { params }) {
   const { id: rawId } = await params;
   const id = Number(rawId);
   try {
+
+    const sessions = await prisma.session.findMany({ where: { roomId: id }, select: { id: true } });
+    const sessionIds = sessions.map(s => s.id);
+    await prisma.question.deleteMany({ where: { sessionId: { in: sessionIds } } });
+    await prisma.sessionSpeaker.deleteMany({ where: { sessionId: { in: sessionIds } } });
     await prisma.session.deleteMany({ where: { roomId: id } });
     await prisma.room.delete({ where: { id } });
+
     return NextResponse.json({ id }, { headers: CORS });
   } catch (error) {
-    console.error("DELETE room error code:", error.code);
-    console.error("DELETE room error message:", error.message);
     if (error.code === "P2025")
       return NextResponse.json({ error: "Not found" }, { status: 404, headers: CORS });
     return NextResponse.json({ error: error.message }, { status: 500, headers: CORS });
